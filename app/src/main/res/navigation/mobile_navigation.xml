@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_chats">
+
+    <fragment
+        android:id="@+id/navigation_chats"
+        android:name="com.example.planeapp.ui.chats.ChatsFragment"
+        android:label="@string/title_chats"
+        tools:layout="@layout/fragment_chats" />
+
+    <fragment
+        android:id="@+id/navigation_status"
+        android:name="com.example.planeapp.ui.status.StatusFragment"
+        android:label="@string/title_status"
+        tools:layout="@layout/fragment_status" />
+
+    <fragment
+        android:id="@+id/navigation_calls"
+        android:name="com.example.planeapp.ui.calls.CallsFragment"
+        android:label="@string/title_calls"
+        tools:layout="@layout/fragment_calls" />
+</navigation>
