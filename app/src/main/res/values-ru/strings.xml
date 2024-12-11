@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PlaneApp</string>
+    <string name="title_chats">Чаты</string>
+    <string name="title_status">Статус</string>
+    <string name="title_calls">Звонки</string>
+</resources>

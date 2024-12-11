@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ChatPanelView">
+        <attr format="string" name="username"/>
+        <attr format="string" name="lastmessage"/>
+        <attr format="string" name="lasttime"/>
+    </declare-styleable>
+</resources>

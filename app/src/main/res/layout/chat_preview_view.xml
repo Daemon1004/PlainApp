@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="?selectableItemBackground"
+    android:layout_margin="2dp">
+
+    <ImageView
+        android:id="@+id/userLogo"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:importantForAccessibility="no"
+        app:srcCompat="@drawable/ic_user_black_24dp"
+        app:tint="?attr/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="User name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/lastTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:paddingStart="5dp"
+                android:paddingEnd="15dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="00:00"
+                android:textSize="16sp"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lastMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="Last message"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
