@@ -10,6 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.example.planeapp"
         minSdk = 29
+        //noinspection ExpiredTargetSdkVersion
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
