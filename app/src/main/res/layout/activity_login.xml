@@ -75,6 +75,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
         android:text="@string/log_in"
+        android:textSize="18sp"
+        android:padding="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
