@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">PlaneApp</string>
+    <string name="app_name" translatable="false">PlaneApp</string>
     <string name="title_chats">Chats</string>
     <string name="title_status">Status</string>
     <string name="title_calls">Calls</string>
     <string name="log_in">Log in</string>
     <string name="phone_number">Phone number</string>
     <string name="password">Password</string>
+    <string name="enter_message">Enter message</string>
 </resources>

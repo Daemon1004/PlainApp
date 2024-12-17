@@ -1,16 +1,17 @@
 package com.example.planeapp.ui.chats
 
+import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.planeapp.ChatActivity
 import com.example.planeapp.databinding.ChatPreviewViewBinding
 
-class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewViewHolder>() {
+
+class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewViewHolder>(), View.OnClickListener {
 
     var data: List<ChatPreviewData> = emptyList()
-        set(newValue) {
-            field = newValue
-        }
 
     class ChatPreviewViewHolder(val binding: ChatPreviewViewBinding) : RecyclerView.ViewHolder(binding.root)
     
@@ -27,13 +28,24 @@ class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewVi
         val chatPreview = data[position]
         //val context = holder.itemView.context
 
-        with(holder.binding) {
+        val binding = holder.binding
 
-            userName.text = chatPreview.name
-            lastMessage.text = chatPreview.lastMessage
-            lastTime.text = chatPreview.lastTime
+        binding.userName.text = chatPreview.name
+        binding.lastMessage.text = chatPreview.lastMessage
+        binding.lastTime.text = chatPreview.lastTime
 
-        }
+        binding.root.setOnClickListener(this)
+
+        holder.itemView.tag = chatPreview
+
+    }
+
+    override fun onClick(view: View) {
+
+        val chatPreview = view.tag as ChatPreviewData
+
+        view.context.startActivity(Intent(view.context, ChatActivity::class.java))
+
     }
     
 }

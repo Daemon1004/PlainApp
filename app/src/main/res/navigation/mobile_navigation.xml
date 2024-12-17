@@ -22,4 +22,5 @@
         android:name="com.example.planeapp.ui.calls.CallsFragment"
         android:label="@string/title_calls"
         tools:layout="@layout/fragment_calls" />
+
 </navigation>
