@@ -16,7 +16,6 @@
             android:name=".ChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"
-            android:theme="@style/Theme.PlaneApp.NoActionBar"
             />
         <activity
             android:name=".LoginActivity"

@@ -6,12 +6,13 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="?selectableItemBackground"
-    android:layout_margin="2dp">
+    android:layout_margin="2dp"
+    android:padding="6dp">
 
     <ImageView
         android:id="@+id/userLogo"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:importantForAccessibility="no"
         app:srcCompat="@drawable/ic_user_black_24dp"
         app:tint="?attr/colorPrimary" />
