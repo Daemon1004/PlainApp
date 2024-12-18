@@ -1,15 +1,12 @@
-package com.example.planeapp.ui.chats
+package com.example.planeapp.data
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.example.planeapp.data.Chat
-import com.example.planeapp.data.ChatDatabase
-import com.example.planeapp.data.ChatRepository
 
-class ChatsViewModel(application: Application): AndroidViewModel(application) {
+class ChatViewModel(application: Application): AndroidViewModel(application) {
 
-    private val readAllData: LiveData<List<Chat>>
+    val readAllData: LiveData<List<Chat>>
     private val repository: ChatRepository
 
     init {

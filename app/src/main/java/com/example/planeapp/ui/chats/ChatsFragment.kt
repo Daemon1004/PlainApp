@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.planeapp.data.ChatViewModel
 import com.example.planeapp.databinding.FragmentChatsBinding
 
 class ChatsFragment : Fragment() {
@@ -15,19 +17,24 @@ class ChatsFragment : Fragment() {
 
     private lateinit var adapter: ChatPreviewAdapter
 
+    private lateinit var chatViewModel: ChatViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        //val chatsViewModel = ViewModelProvider(this)[ChatsViewModel::class.java]
-
         _binding = FragmentChatsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val manager = LinearLayoutManager(activity)
         adapter = ChatPreviewAdapter()
+
+        chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        chatViewModel.readAllData.observe(viewLifecycleOwner) { chats ->
+            adapter.data = chats
+        }
 
         /*
         adapter.data = listOf(

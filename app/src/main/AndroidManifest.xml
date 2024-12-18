@@ -13,10 +13,12 @@
         android:theme="@style/Theme.PlaneApp"
         tools:targetApi="31">
         <activity
+            android:name=".ConnectChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChatActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"
-            />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">

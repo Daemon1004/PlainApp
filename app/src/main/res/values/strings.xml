@@ -7,4 +7,5 @@
     <string name="phone_number">Phone number</string>
     <string name="password">Password</string>
     <string name="enter_message">Enter message</string>
+    <string name="connect_chat">New connecting to chat</string>
 </resources>

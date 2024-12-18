@@ -7,4 +7,5 @@
     <string name="phone_number">Номер телефона</string>
     <string name="password">Пароль</string>
     <string name="enter_message">Введите сообщение</string>
+    <string name="connect_chat">Новое подключение к чату</string>
 </resources>

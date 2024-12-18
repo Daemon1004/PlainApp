@@ -16,4 +16,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/newConnect"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="?attr/colorPrimary"
+        android:contentDescription="@string/connect_chat"
+        android:src="@drawable/ic_add_black_24dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:padding="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="?attr/colorOnPrimary" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
