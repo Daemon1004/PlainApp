@@ -1,13 +1,21 @@
 package com.example.planeapp.ui.chats
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.example.planeapp.data.Chat
+import com.example.planeapp.data.ChatDatabase
+import com.example.planeapp.data.ChatRepository
 
-class ChatsViewModel : ViewModel() {
+class ChatsViewModel(application: Application): AndroidViewModel(application) {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is chats Fragment"
+    private val readAllData: LiveData<List<Chat>>
+    private val repository: ChatRepository
+
+    init {
+        val chatDao = ChatDatabase.getDatabase(application).chatDao()
+        repository = ChatRepository(chatDao)
+        readAllData = repository.readAllData
     }
-    val text: LiveData<String> = _text
+
 }

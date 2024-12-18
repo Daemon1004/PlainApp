@@ -18,7 +18,7 @@ class ChatPreviewView(
     private val view: View = View.inflate(context, R.layout.chat_preview_view, this)
 
     init {
-        view.findViewById<TextView>(R.id.userName).text = attributes.getString(R.styleable.ChatPanelView_username)
+        view.findViewById<TextView>(R.id.name).text = attributes.getString(R.styleable.ChatPanelView_username)
         view.findViewById<TextView>(R.id.lastMessage).text = attributes.getString(R.styleable.ChatPanelView_lastmessage)
         view.findViewById<TextView>(R.id.lastTime).text = attributes.getString(R.styleable.ChatPanelView_lasttime)
     }
