@@ -3,9 +3,13 @@
     <string name="title_chats">Chats</string>
     <string name="title_status">Status</string>
     <string name="title_calls">Calls</string>
+    <string name="title_create_chat">Creating new chat</string>
     <string name="log_in">Log in</string>
     <string name="phone_number">Phone number</string>
     <string name="password">Password</string>
     <string name="enter_message">Enter message</string>
     <string name="connect_chat">New connecting to chat</string>
+    <string name="connect">Connect</string>
+    <string name="chat_name">Chat name</string>
+    <string name="create">Create</string>
 </resources>

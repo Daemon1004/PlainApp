@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.planeapp.R
 import com.example.planeapp.data.ChatViewModel
 import com.example.planeapp.databinding.FragmentChatsBinding
 
@@ -26,7 +28,6 @@ class ChatsFragment : Fragment() {
     ): View {
 
         _binding = FragmentChatsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
         val manager = LinearLayoutManager(activity)
         adapter = ChatPreviewAdapter()
@@ -47,7 +48,13 @@ class ChatsFragment : Fragment() {
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = adapter
 
-        return root
+        binding.newChat.setOnClickListener {
+
+            Navigation.findNavController(binding.root).navigate(R.id.navigation_create_chat)
+
+        }
+
+        return binding.root
     }
 
     override fun onDestroyView() {

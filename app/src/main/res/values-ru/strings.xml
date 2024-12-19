@@ -3,9 +3,13 @@
     <string name="title_chats">Чаты</string>
     <string name="title_status">Статус</string>
     <string name="title_calls">Звонки</string>
+    <string name="title_create_chat">Создание нового чата</string>
     <string name="log_in">Войти</string>
     <string name="phone_number">Номер телефона</string>
     <string name="password">Пароль</string>
     <string name="enter_message">Введите сообщение</string>
     <string name="connect_chat">Новое подключение к чату</string>
+    <string name="connect">Подключиться</string>
+    <string name="chat_name">Название чата</string>
+    <string name="create">Создать</string>
 </resources>

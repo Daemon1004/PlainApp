@@ -9,7 +9,11 @@
         android:id="@+id/navigation_chats"
         android:name="com.example.planeapp.ui.chats.ChatsFragment"
         android:label="@string/title_chats"
-        tools:layout="@layout/fragment_chats" />
+        tools:layout="@layout/fragment_chats" >
+        <action
+            android:id="@+id/action_navigation_chats_to_navigation_create_chat"
+            app:destination="@id/navigation_create_chat" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_status"
@@ -21,6 +25,12 @@
         android:id="@+id/navigation_calls"
         android:name="com.example.planeapp.ui.calls.CallsFragment"
         android:label="@string/title_calls"
+        tools:layout="@layout/fragment_calls" />
+
+    <fragment
+        android:id="@+id/navigation_create_chat"
+        android:name="com.example.planeapp.ui.chats.CreateChatFragment"
+        android:label="@string/title_create_chat"
         tools:layout="@layout/fragment_calls" />
 
 </navigation>
