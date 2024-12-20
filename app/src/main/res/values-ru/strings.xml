@@ -12,4 +12,6 @@
     <string name="connect">Подключиться</string>
     <string name="chat_name">Название чата</string>
     <string name="create">Создать</string>
+    <string name="empty_chat_name">Название чата пустое, введите правильное название</string>
+    <string name="sql_constraint_error">Что-то пошло не так, возможно чат с таким именем уже существует</string>
 </resources>

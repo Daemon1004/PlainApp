@@ -34,16 +34,8 @@ class ChatsFragment : Fragment() {
 
         chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
         chatViewModel.readAllData.observe(viewLifecycleOwner) { chats ->
-            adapter.data = chats
+            adapter.setData(chats)
         }
-
-        /*
-        adapter.data = listOf(
-            ChatPreviewData(1, "Кирилл Михайлов", "дароу, как дела?", "14:25"),
-            ChatPreviewData(2, "Максим Варабаев", "да все нормальн", "10:56") ,
-            ChatPreviewData(3, "John Vafler", "im cooking right now", "09:12")
-        )
-        */
 
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = adapter

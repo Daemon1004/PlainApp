@@ -12,4 +12,6 @@
     <string name="connect">Connect</string>
     <string name="chat_name">Chat name</string>
     <string name="create">Create</string>
+    <string name="empty_chat_name">Chat name is empty, please write correct name</string>
+    <string name="sql_constraint_error">Something goes wrong, maybe this name for chat is already exists?</string>
 </resources>

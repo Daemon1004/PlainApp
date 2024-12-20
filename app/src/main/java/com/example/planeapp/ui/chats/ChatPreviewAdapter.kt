@@ -1,5 +1,6 @@
 package com.example.planeapp.ui.chats
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,7 @@ import com.example.planeapp.databinding.ChatPreviewViewBinding
 
 class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewViewHolder>(), View.OnClickListener {
 
-    var data: List<Chat> = emptyList()
+    private var data: List<Chat> = emptyList()
 
     class ChatPreviewViewHolder(val binding: ChatPreviewViewBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -39,6 +40,12 @@ class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewVi
 
         holder.itemView.tag = chat
 
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(newData: List<Chat>) {
+        data = newData
+        notifyDataSetChanged()
     }
 
     override fun onClick(view: View) {
