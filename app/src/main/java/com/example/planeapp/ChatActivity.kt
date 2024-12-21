@@ -51,9 +51,15 @@ class ChatActivity : AppCompatActivity() {
 
             binding.enter.setOnClickListener {
 
-                chatViewModel.addMessage(chat, binding.mytext.text.toString())
+                val text = binding.mytext.text.toString()
 
-                binding.mytext.setText("")
+                if (text.isNotEmpty()) {
+
+                    chatViewModel.addMessage(chat, text)
+
+                    binding.mytext.setText("")
+
+                }
 
             }
 
