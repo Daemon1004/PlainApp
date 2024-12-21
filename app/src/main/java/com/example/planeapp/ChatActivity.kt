@@ -37,6 +37,10 @@ class ChatActivity : AppCompatActivity() {
         adapter = MessageAdapter()
 
         manager.stackFromEnd = true
+        manager.reverseLayout = true
+        manager.isSmoothScrollbarEnabled = true
+
+        var first = true
 
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = adapter
@@ -45,8 +49,12 @@ class ChatActivity : AppCompatActivity() {
 
         chatViewModel.readChat(chatId).observe(this) { chat ->
 
+            binding.chatName.text = chat.name
+
             chatViewModel.readAllMessages(chat).observe(this) { messages ->
                 adapter.setData(messages)
+                if (first) { manager.scrollToPosition(manager.childCount) }
+                first = false
             }
 
             binding.enter.setOnClickListener {
