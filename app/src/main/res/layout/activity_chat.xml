@@ -12,14 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="6dp"
+
         android:padding="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintBottom_toTopOf="@+id/mytext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <EditText
-        android:id="@+id/textView2"
+        android:id="@+id/mytext"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
@@ -31,13 +32,13 @@
         android:padding="16dp"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintEnd_toStartOf="@+id/enter"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="DuplicateSpeakableTextCheck" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/enter"
         android:layout_width="50dp"
         android:layout_height="0dp"
         android:layout_marginEnd="6dp"
@@ -48,7 +49,7 @@
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="@+id/mytext"
         app:srcCompat="@drawable/ic_arrow_black_24dp"
         app:tint="?attr/colorPrimary" />
 

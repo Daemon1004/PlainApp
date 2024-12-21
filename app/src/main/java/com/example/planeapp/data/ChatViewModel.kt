@@ -18,8 +18,16 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
         readAllData = repository.readAllData
     }
 
+    fun readAllMessages(chat: Chat): LiveData<List<Message>> { return repository.readAllMessages(chat) }
+
+    fun readChat(id: Long): LiveData<Chat> { return repository.readChat(id) }
+
     fun addChat(chat: Chat) {
         viewModelScope.launch(Dispatchers.IO) { repository.addChat(chat) }
+    }
+
+    fun addMessage(chat: Chat, text: String) {
+        viewModelScope.launch(Dispatchers.IO) { repository.addMessage(chat, text) }
     }
 
 }

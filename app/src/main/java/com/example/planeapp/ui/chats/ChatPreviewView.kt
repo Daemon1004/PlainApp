@@ -14,13 +14,13 @@ class ChatPreviewView(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private val attributes: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.ChatPanelView)
+    private val attributes: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.ChatPreviewView)
     private val view: View = View.inflate(context, R.layout.chat_preview_view, this)
 
     init {
-        view.findViewById<TextView>(R.id.name).text = attributes.getString(R.styleable.ChatPanelView_username)
-        view.findViewById<TextView>(R.id.lastMessage).text = attributes.getString(R.styleable.ChatPanelView_lastmessage)
-        view.findViewById<TextView>(R.id.lastTime).text = attributes.getString(R.styleable.ChatPanelView_lasttime)
+        view.findViewById<TextView>(R.id.name).text = attributes.getString(R.styleable.ChatPreviewView_username)
+        view.findViewById<TextView>(R.id.lastMessage).text = attributes.getString(R.styleable.ChatPreviewView_lastmessage)
+        view.findViewById<TextView>(R.id.lastTime).text = attributes.getString(R.styleable.ChatPreviewView_lasttime)
     }
 
 }

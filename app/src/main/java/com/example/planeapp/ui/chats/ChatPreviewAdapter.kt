@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.planeapp.ChatActivity
 import com.example.planeapp.data.Chat
 import com.example.planeapp.databinding.ChatPreviewViewBinding
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewViewHolder>(), View.OnClickListener {
@@ -33,12 +36,14 @@ class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewVi
         val binding = holder.binding
 
         binding.name.text = chat.name
-        binding.lastMessage.text = "" //chat.lastMessage
-        binding.lastTime.text = "" //chat.lastTime
+        binding.lastMessage.text = chat.lastMessage
+        binding.lastTime.text = chat.lastTime?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern( "HH:mm" ))
+        }
 
         binding.root.setOnClickListener(this)
 
-        holder.itemView.tag = chat
+        holder.itemView.tag = chat.id
 
     }
 
@@ -50,9 +55,13 @@ class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewVi
 
     override fun onClick(view: View) {
 
-        val chat = view.tag as Chat
+        val chatId = view.tag as Long
 
-        view.context.startActivity(Intent(view.context, ChatActivity::class.java))
+        val intent = Intent(view.context, ChatActivity::class.java)
+
+        intent.putExtra("chatId", chatId)
+
+        view.context.startActivity(intent)
 
     }
     
