@@ -43,3 +43,23 @@ data class Message (
 ) {
     constructor(id: Long, chatId: Long, userId: Long, text: String, time: Long) : this(id, chatId, userId, null, text, time)
 }
+
+@Entity(primaryKeys= [ "chatId", "messageId" ] )
+data class ChatMessages (
+    @ColumnInfo(name = "chatId")
+    val chatId: Long,
+    @ColumnInfo(name = "messageId")
+    val userId: Long,
+) {
+//    constructor(chatId: Long, userId: Long) : this(chatId, userId);
+}
+
+@Entity(primaryKeys= [ "groupId", "messageId" ] )
+data class GroupMessages (
+    @ColumnInfo(name = "groupId")
+    val chatId: Long,
+    @ColumnInfo(name = "messageId")
+    val userId: Long,
+) {
+//    constructor(chatId: Long, userId: Long) : this(chatId, userId);
+}
