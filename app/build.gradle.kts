@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlinx-serialization")
     id("com.google.devtools.ksp")
 }
 
@@ -52,6 +53,8 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.activity)
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.serialization.json)
 
     ksp(libs.room.compiler)
     implementation(libs.androidx.room.runtime)

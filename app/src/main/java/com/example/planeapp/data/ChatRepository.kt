@@ -13,7 +13,7 @@ class ChatRepository(private val chatDao: ChatDao) {
     }
 
     suspend fun addMessage(chat: Chat, text: String){
-        chatDao.addUser(User(1, "Me"))
+        //chatDao.addUser(User(1, "Me"))
         chatDao.addMessage(Message(
             chatId = chat.id,
             userId = 1,
