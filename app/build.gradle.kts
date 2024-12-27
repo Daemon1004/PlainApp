@@ -54,8 +54,6 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.activity)
-    implementation(libs.okhttp)
-    implementation(libs.kotlinx.serialization.json)
 
     ksp(libs.room.compiler)
     implementation(libs.androidx.room.runtime)
@@ -65,4 +63,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.socket.io.client)
+
 }
