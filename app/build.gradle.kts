@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.planeapp"
+    namespace = "com.example.plainapp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.planeapp"
+        applicationId = "com.example.plainapp"
         minSdk = 29
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 35
@@ -40,6 +40,7 @@ android {
         viewBinding = true
     }
 }
+
 
 dependencies {
 

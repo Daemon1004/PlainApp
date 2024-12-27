@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">PlaneApp</string>
+    <string name="app_name" translatable="false">PlainApp</string>
     <string name="title_chats">Chats</string>
     <string name="title_status">Status</string>
     <string name="title_calls">Calls</string>
