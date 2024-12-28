@@ -1,7 +1,6 @@
 package com.example.plainapp.ui.chats
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.plainapp.ChatActivity
 import com.example.plainapp.data.Message
 import com.example.plainapp.databinding.MessageViewBinding
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 
 class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(), View.OnClickListener {
@@ -53,8 +56,13 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
         binding.message.layoutParams = linearLayoutParams
         binding.statusLayout.layoutParams = linearLayoutParams
 
+        val time = LocalDateTime.ofInstant(Instant.parse(message.createdAt), OffsetDateTime.now().offset)
+            .format(DateTimeFormatter.ofPattern("HH:mm"))
+
         binding.message.text = message.body
-        binding.time.text = "" /* Instant.ofEpochMilli(message.time).
+        binding.time.text = time
+
+        /* Instant.ofEpochMilli(message.time).
             atZone(ZoneId.systemDefault()).toLocalDateTime().
             format(DateTimeFormatter.ofPattern( "HH:mm" )) */
 

@@ -95,7 +95,10 @@ class SocketService : Service() {
                         val chatId = (args[0] as String).toLong()
                         val message = Json.decodeFromString<Message>(args[1].toString())
 
-                        scope.launch { repository.addChatMessage(chatId, message) }
+                        scope.launch {
+                            scope.launch { repository.addChatMessage(chatId, message) }.join()
+                            Log.d("debug", "newChatMessage $message in $chatId chat")
+                        }
 
                     }
 
@@ -144,7 +147,10 @@ class SocketService : Service() {
                 updatedAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
                 createdBy = user!!.id
             )
-            scope.launch { repository.addChatMessage(chatId, message) }
+            scope.launch {
+                scope.launch { repository.addChatMessage(chatId, message) }.join()
+                Log.d("debug", "newChatMessage $message in $chatId chat")
+            }
 
         }
 

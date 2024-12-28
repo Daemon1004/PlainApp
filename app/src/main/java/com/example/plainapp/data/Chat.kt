@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import java.sql.Timestamp
 
 @Serializable
 @Entity(tableName = "chat_table",
