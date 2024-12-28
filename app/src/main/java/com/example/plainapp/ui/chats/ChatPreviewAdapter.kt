@@ -2,6 +2,7 @@ package com.example.plainapp.ui.chats
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,10 @@ class ChatPreviewAdapter(
         //val context = holder.itemView.context
 
         val binding = holder.binding
+
+        Log.d("debug", "chat preview $chat")
+        Log.d("debug", "service ${mainActivity.service}")
+        Log.d("debug", "myUser ${mainActivity.service?.user}")
 
         val participant = if (chat.participant1 == mainActivity.service!!.user!!.id) chat.participant2 else chat.participant1
         chatViewModel.readUser(participant).observeOnce(viewLifecycleOwner) { user ->

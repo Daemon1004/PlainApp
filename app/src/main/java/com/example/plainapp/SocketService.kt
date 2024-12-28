@@ -92,7 +92,14 @@ class SocketService : Service() {
 
                     mSocket.on("chatMessage") { args ->
 
-                        val chatId = (args[0] as String).toLong()
+                        val chatId = when (args[0].javaClass) {
+                            Long.Companion::class.java -> args[0] as Long
+                            String.Companion::class.java -> (args[0] as String).toLong()
+                            else -> args[0].toString().toLong()
+                        }
+
+                        //Log.d("debug", "newChatMessage arg0 - ${args[0]} (${args[0].javaClass})")
+
                         val message = Json.decodeFromString<Message>(args[1].toString())
 
                         scope.launch {
@@ -136,7 +143,7 @@ class SocketService : Service() {
         if (user == null) return
 
         //FIXME
-        mSocket.emit("chatMessage", chatId, JSONObject("{\"body\":\"$body\"}"))
+        mSocket.emit("chatMessage", chatId.toString(), JSONObject("{\"body\":\"$body\"}"))
 
         mSocket.once("chatMessageId") { args ->
 
