@@ -61,7 +61,7 @@ class ChatActivity : AppCompatActivity() {
         val manager = LinearLayoutManager(this)
         adapter = MessageAdapter(this)
 
-        manager.stackFromEnd = false
+        manager.stackFromEnd = true
         manager.reverseLayout = true
         manager.isSmoothScrollbarEnabled = true
 
