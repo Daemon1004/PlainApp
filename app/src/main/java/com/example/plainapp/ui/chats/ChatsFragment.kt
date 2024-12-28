@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.plainapp.MainActivity
 import com.example.plainapp.R
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.databinding.FragmentChatsBinding
@@ -29,10 +30,10 @@ class ChatsFragment : Fragment() {
 
         _binding = FragmentChatsBinding.inflate(inflater, container, false)
 
-        val manager = LinearLayoutManager(activity)
-        adapter = ChatPreviewAdapter()
-
         chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        val manager = LinearLayoutManager(activity)
+        adapter = ChatPreviewAdapter(chatViewModel, viewLifecycleOwner, (activity as MainActivity))
+
         chatViewModel.readAllChats.observe(viewLifecycleOwner) { chats ->
             adapter.setData(chats)
         }

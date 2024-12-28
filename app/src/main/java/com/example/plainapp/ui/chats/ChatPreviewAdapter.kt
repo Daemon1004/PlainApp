@@ -5,13 +5,21 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.plainapp.ChatActivity
+import com.example.plainapp.MainActivity
 import com.example.plainapp.data.Chat
+import com.example.plainapp.data.ChatViewModel
+import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.ChatPreviewViewBinding
 
 
-class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewViewHolder>(), View.OnClickListener {
+class ChatPreviewAdapter(
+    private val chatViewModel: ChatViewModel,
+    private val viewLifecycleOwner: LifecycleOwner,
+    private val mainActivity: MainActivity
+) : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewViewHolder>(), View.OnClickListener {
 
     private var data: List<Chat> = emptyList()
 
@@ -32,7 +40,11 @@ class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewVi
 
         val binding = holder.binding
 
-        binding.name.text = "" //chat.name
+        val participant = if (chat.participant1 == mainActivity.service!!.user!!.id) chat.participant2 else chat.participant1
+        chatViewModel.readUser(participant).observeOnce(viewLifecycleOwner) { user ->
+            binding.name.text = user.name
+        }
+
         binding.lastMessage.text = "" //chat.lastMessage
         binding.lastTime.text = ""
         /*chat.lastTime?.let {

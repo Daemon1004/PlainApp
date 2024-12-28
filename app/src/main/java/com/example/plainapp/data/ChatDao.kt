@@ -28,6 +28,7 @@ interface ChatDao {
             "ORDER BY message_table.time DESC")
 
      */
+
     @Query("SELECT * FROM chat_table")
     fun readAllChats(): LiveData<List<Chat>>
 
@@ -50,11 +51,13 @@ interface ChatDao {
             "WHERE message_table.id = chatmessage_table.messageId AND chatmessage_table.chatId = :chatId ORDER BY message_table.id DESC")
     fun readAllChatMessages(chatId: Long): LiveData<List<Message>>
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(user: User)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUsers(users: List<User>)
+
+    @Query("SELECT * FROM user_table WHERE user_table.id = :userId")
+    fun readUser(userId: Long): LiveData<User>
 
 }
