@@ -9,9 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.plainapp.ChatActivity
 import com.example.plainapp.data.Chat
 import com.example.plainapp.databinding.ChatPreviewViewBinding
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 
 class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewViewHolder>(), View.OnClickListener {
@@ -35,11 +32,12 @@ class ChatPreviewAdapter : RecyclerView.Adapter<ChatPreviewAdapter.ChatPreviewVi
 
         val binding = holder.binding
 
-        binding.name.text = chat.name
-        binding.lastMessage.text = chat.lastMessage
-        binding.lastTime.text = chat.lastTime?.let {
+        binding.name.text = "" //chat.name
+        binding.lastMessage.text = "" //chat.lastMessage
+        binding.lastTime.text = ""
+        /*chat.lastTime?.let {
             Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern( "HH:mm" ))
-        }
+        }*/
 
         binding.root.setOnClickListener(this)
 

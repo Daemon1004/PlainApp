@@ -33,7 +33,7 @@ class ChatsFragment : Fragment() {
         adapter = ChatPreviewAdapter()
 
         chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
-        chatViewModel.readAllData.observe(viewLifecycleOwner) { chats ->
+        chatViewModel.readAllChats.observe(viewLifecycleOwner) { chats ->
             adapter.setData(chats)
         }
 

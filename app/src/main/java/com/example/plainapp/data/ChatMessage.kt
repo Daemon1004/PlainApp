@@ -1,12 +1,10 @@
 package com.example.plainapp.data
 
 import androidx.room.ColumnInfo
-import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.Entity
 
-@Entity("chatusers_table",
+@Entity(tableName = "chatmessage_table", primaryKeys= [ "chatId", "messageId" ],
     foreignKeys = [
         ForeignKey(
             entity = Chat::class,
@@ -16,22 +14,17 @@ import androidx.room.PrimaryKey
             onUpdate = ForeignKey.NO_ACTION
         ),
         ForeignKey(
-            entity = User::class,
+            entity = Message::class,
             parentColumns = ["id"],
-            childColumns = ["userId"],
+            childColumns = ["messageId"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.NO_ACTION
         )
-    ],
-    indices = [
-        Index(value = ["chatId", "userId"], unique = true)
     ]
 )
-data class ChatUsers (
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+data class ChatMessage (
     @ColumnInfo(name = "chatId")
     val chatId: Long,
-    @ColumnInfo(name = "userId")
-    val userId: String
+    @ColumnInfo(name = "messageId")
+    val messageId: Long,
 )

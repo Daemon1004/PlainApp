@@ -1,26 +1,11 @@
 package com.example.plainapp.ui.chats
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.util.AttributeSet
-import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
-import com.example.plainapp.R
 
 class ChatPreviewView(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
-
-    private val attributes: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.ChatPreviewView)
-    private val view: View = View.inflate(context, R.layout.chat_preview_view, this)
-
-    init {
-        view.findViewById<TextView>(R.id.name).text = attributes.getString(R.styleable.ChatPreviewView_username)
-        view.findViewById<TextView>(R.id.lastMessage).text = attributes.getString(R.styleable.ChatPreviewView_lastmessage)
-        view.findViewById<TextView>(R.id.lastTime).text = attributes.getString(R.styleable.ChatPreviewView_lasttime)
-    }
-
-}
+) : LinearLayout(context, attrs, defStyleAttr)

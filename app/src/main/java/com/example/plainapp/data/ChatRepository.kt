@@ -4,22 +4,22 @@ import androidx.lifecycle.LiveData
 
 class ChatRepository(private val chatDao: ChatDao) {
 
-    val readAllData: LiveData<List<Chat>> = chatDao.readAllData()
-    fun readAllMessages(chat: Chat): LiveData<List<Message>> { return chatDao.readAllMessages(chat.id) }
+    suspend fun writeChats(chats: List<Chat>) { chatDao.writeChats(chats) }
+    val readAllChats: LiveData<List<Chat>> = chatDao.readAllChats()
+    suspend fun deleteAllChats() { chatDao.deleteAllChats() }
     fun readChat(id: Long): LiveData<Chat> { return chatDao.readChat(id) }
 
-    suspend fun addChat(chat: Chat){
-        chatDao.addChat(chat)
+    fun readAllMessages(chat: Chat): LiveData<List<Message>> { return chatDao.readAllChatMessages(chat.id) }
+
+    suspend fun addChat(chat: Chat){ chatDao.addChat(chat) }
+    suspend fun deleteChat(chatId: Long){ chatDao.deleteChat(chatId) }
+
+    suspend fun addChatMessage(chatId: Long, message: Message){
+        chatDao.addMessage(message)
+        chatDao.addChatMessage(ChatMessage(chatId, message.id))
     }
 
-    suspend fun addMessage(chat: Chat, text: String){
-        //chatDao.addUser(User(1, "Me"))
-        chatDao.addMessage(Message(
-            chatId = chat.id,
-            userId = 1,
-            text = text,
-            time = System.currentTimeMillis(),
-        ))
-    }
+    suspend fun addUser(user: User) { chatDao.addUser(user) }
+    suspend fun addUsers(users: List<User>) { chatDao.addUsers(users) }
 
 }

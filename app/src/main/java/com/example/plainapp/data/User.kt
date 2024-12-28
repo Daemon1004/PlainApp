@@ -9,10 +9,10 @@ import kotlinx.serialization.Serializable
 data class User (
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val name: String?,
-    val nickname: String?,
-    val bio: String?,
-    val birthdate: String?,
+    val nickname: String? = null,
+    val name: String? = null,
+    val bio: String? = null,
+    val birthdate: String? = null,
     val phoneNumber: String,
     val createdAt: String,
     val updatedAt: String

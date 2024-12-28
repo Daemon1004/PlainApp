@@ -1,18 +1,19 @@
 package com.example.plainapp.ui.chats
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.plainapp.ChatActivity
 import com.example.plainapp.data.Message
 import com.example.plainapp.databinding.MessageViewBinding
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 
-class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(), View.OnClickListener {
+class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(), View.OnClickListener {
 
     private var data: List<Message> = emptyList()
 
@@ -32,10 +33,30 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(),
 
         val binding = holder.binding
 
-        binding.message.text = message.text
-        binding.time.text = Instant.ofEpochMilli(message.time).
+        //Log.d("debug", "${message}\n${chatActivity.myUser!!.id}")
+
+        val linearLayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT)
+
+        if (message.createdBy != chatActivity.myUser!!.id) {
+
+            linearLayoutParams.gravity = Gravity.START
+            binding.loadImg.visibility = View.INVISIBLE
+
+        } else {
+
+            linearLayoutParams.gravity = Gravity.END
+            binding.loadImg.visibility = View.VISIBLE
+
+        }
+
+        binding.message.layoutParams = linearLayoutParams
+        binding.statusLayout.layoutParams = linearLayoutParams
+
+        binding.message.text = message.body
+        binding.time.text = "" /* Instant.ofEpochMilli(message.time).
             atZone(ZoneId.systemDefault()).toLocalDateTime().
-            format(DateTimeFormatter.ofPattern( "HH:mm" ))
+            format(DateTimeFormatter.ofPattern( "HH:mm" )) */
 
         binding.root.setOnClickListener(this)
 

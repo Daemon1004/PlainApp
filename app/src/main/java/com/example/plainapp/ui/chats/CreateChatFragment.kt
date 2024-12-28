@@ -33,7 +33,7 @@ class CreateChatFragment : Fragment() {
 
                 val viewModel = ViewModelProvider(this)[ChatViewModel::class.java]
 
-                viewModel.addChat(Chat(0, chatName))
+                //viewModel.addChat(Chat(0, chatName))
 
                 Navigation.findNavController(binding.root).popBackStack()
 

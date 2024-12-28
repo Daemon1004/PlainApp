@@ -1,6 +1,11 @@
 package com.example.plainapp
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -8,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.plainapp.data.ChatViewModel
+import com.example.plainapp.data.User
 import com.example.plainapp.databinding.ActivityChatBinding
 import com.example.plainapp.ui.chats.MessageAdapter
 
@@ -15,6 +21,21 @@ class ChatActivity : AppCompatActivity() {
 
     private var _binding: ActivityChatBinding? = null
     private val binding get() = _binding!!
+
+    var service: SocketService? = null
+    var myUser: User? = null
+
+    private val sConn = object: ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, binder: IBinder)
+        {
+
+            service = (binder as SocketService.MyBinder).service
+            myUser = service!!.user
+
+        }
+        override fun onServiceDisconnected(className: ComponentName)
+        { service = null }
+    }
 
     private lateinit var adapter: MessageAdapter
 
@@ -31,16 +52,17 @@ class ChatActivity : AppCompatActivity() {
             insets
         }
 
+        startService(Intent(this, SocketService::class.java))
+        bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
+
         val chatId = intent.extras?.getLong("chatId") ?: return
 
         val manager = LinearLayoutManager(this)
-        adapter = MessageAdapter()
+        adapter = MessageAdapter(this)
 
-        manager.stackFromEnd = true
+        manager.stackFromEnd = false
         manager.reverseLayout = true
         manager.isSmoothScrollbarEnabled = true
-
-        var first = true
 
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = adapter
@@ -49,12 +71,11 @@ class ChatActivity : AppCompatActivity() {
 
         chatViewModel.readChat(chatId).observe(this) { chat ->
 
-            binding.chatName.text = chat.name
+            binding.chatName.text = "" //chat.name
 
             chatViewModel.readAllMessages(chat).observe(this) { messages ->
                 adapter.setData(messages)
-                if (first) { manager.scrollToPosition(manager.childCount) }
-                first = false
+                manager.scrollToPosition(0)
             }
 
             binding.enter.setOnClickListener {
@@ -63,7 +84,9 @@ class ChatActivity : AppCompatActivity() {
 
                 if (text.isNotEmpty()) {
 
-                    chatViewModel.addMessage(chat, text)
+                    //chatViewModel.addMessage(chat, text)
+
+                    service?.sendMessage(chat.id, text)
 
                     binding.mytext.setText("")
 
