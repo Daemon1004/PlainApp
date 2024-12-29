@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -39,7 +40,6 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        startService(Intent(this, SocketService::class.java))
         bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
 
         binding.button.setOnClickListener {
@@ -51,16 +51,12 @@ class LoginActivity : AppCompatActivity() {
 
                 logIn(phoneNumber)
 
-            }
+            } else {
 
-        }
-
-        if (service != null) {
-            if (service!!.user != null) {
-
-                startMainActivity()
+                Toast.makeText(applicationContext, getString(R.string.empty_phonenumber), Toast.LENGTH_LONG).show()
 
             }
+
         }
 
     }
@@ -70,36 +66,14 @@ class LoginActivity : AppCompatActivity() {
         _binding = null
     }
 
-    /*
-    private fun toast(text: String) {
-
-        this.runOnUiThread {
-
-            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
-
-        }
-
-    }
-    */
-
     private fun logIn(phoneNumber: String) {
 
         if (service == null) return
 
+        service!!.userLiveData.observe(this) { user ->
+            if (user != null ) this.finish()
+        }
         service!!.logIn(phoneNumber)
-
-        startMainActivity()
-
-    }
-
-    private fun startMainActivity() {
-
-        val intent = Intent(
-            this,
-            MainActivity::class.java
-        )
-
-        startActivity(intent)
 
     }
 }

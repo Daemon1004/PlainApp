@@ -14,5 +14,8 @@
         <!-- Customize your theme here. -->
         <item name="colorPlate">@color/dark_grey</item>
         <item name="colorPlateBackground">@color/dark_blue</item>
+        <item name="colorChatTitle">@color/dark_grey</item>
+        <item name="colorMessagePlate">@color/very_dark_grey</item>
+        <item name="colorChatBackground">@color/black</item>
     </style>
 </resources>

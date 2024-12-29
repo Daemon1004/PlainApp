@@ -36,8 +36,6 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
 
         val binding = holder.binding
 
-        //Log.d("debug", "${message}\n${chatActivity.myUser!!.id}")
-
         val linearLayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT)
 
@@ -55,16 +53,13 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
 
         binding.message.layoutParams = linearLayoutParams
         binding.statusLayout.layoutParams = linearLayoutParams
+        binding.messagePlate.layoutParams = linearLayoutParams
 
         val time = LocalDateTime.ofInstant(Instant.parse(message.createdAt), OffsetDateTime.now().offset)
             .format(DateTimeFormatter.ofPattern("HH:mm"))
 
         binding.message.text = message.body
         binding.time.text = time
-
-        /* Instant.ofEpochMilli(message.time).
-            atZone(ZoneId.systemDefault()).toLocalDateTime().
-            format(DateTimeFormatter.ofPattern( "HH:mm" )) */
 
         binding.root.setOnClickListener(this)
 

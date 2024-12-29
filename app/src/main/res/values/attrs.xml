@@ -3,5 +3,8 @@
 
     <attr name="colorPlate" format="reference" />
     <attr name="colorPlateBackground" format="reference" />
+    <attr name="colorChatTitle" format="reference" />
+    <attr name="colorMessagePlate" format="reference" />
+    <attr name="colorChatBackground" format="reference" />
 
 </resources>

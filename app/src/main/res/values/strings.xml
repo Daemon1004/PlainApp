@@ -20,4 +20,5 @@
     <string name="empty_nickname">Empty nickname!</string>
     <string name="write_biography">Write your biography…</string>
     <string name="empty_biography">Your biography is empty!</string>
+    <string name="empty_phonenumber">Please, enter your phonenumber</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="empty_nickname">Пустой никнейм!</string>
     <string name="write_biography">Напишите свою биографию…</string>
     <string name="empty_biography">Ваша биография пуста!</string>
+    <string name="empty_phonenumber">Пожалуйста, введите свой номер телефона</string>
 </resources>

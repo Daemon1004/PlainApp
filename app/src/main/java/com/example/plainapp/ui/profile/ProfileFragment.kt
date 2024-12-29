@@ -27,18 +27,28 @@ class ProfileFragment : Fragment() {
 
         val mainActivity = activity as MainActivity
 
-        val user = mainActivity.service?.user
+        mainActivity.serviceLiveData.value?.userLiveData?.observe(viewLifecycleOwner) { user ->
 
-        if (user != null) {
+            if (user != null) {
 
-            val createdAt = LocalDateTime.ofInstant(Instant.parse(user.createdAt), OffsetDateTime.now().offset)
-                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                val createdAt = LocalDateTime.ofInstant(Instant.parse(user.createdAt),
+                    OffsetDateTime.now().offset).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 
-            binding!!.myName.text = user.name
-            binding!!.myNickname.text = user.nickname ?: getString(R.string.empty_nickname)
-            binding!!.myBio.text = user.bio ?: getString(R.string.empty_biography)
-            binding!!.birthdate.text = user.birthdate ?: "?"
-            binding!!.createdAt.text = createdAt
+                binding!!.myName.text = user.name
+                binding!!.myNickname.text = user.nickname ?: getString(R.string.empty_nickname)
+                binding!!.myBio.text = user.bio ?: getString(R.string.empty_biography)
+                binding!!.birthdate.text = user.birthdate ?: "?"
+                binding!!.createdAt.text = createdAt
+
+            } else {
+
+                binding!!.myName.text = "..."
+                binding!!.myNickname.text = "..."
+                binding!!.myBio.text = "..."
+                binding!!.birthdate.text = "..."
+                binding!!.createdAt.text = "..."
+
+            }
 
         }
         

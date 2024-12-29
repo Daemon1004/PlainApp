@@ -31,7 +31,8 @@ class ChatActivity : AppCompatActivity() {
         {
 
             service = (binder as SocketService.MyBinder).service
-            myUser = service!!.user
+            myUser = service!!.userLiveData.value
+            service!!.userLiveData.observe(this@ChatActivity) { user -> myUser = user }
 
         }
         override fun onServiceDisconnected(className: ComponentName)
@@ -53,7 +54,6 @@ class ChatActivity : AppCompatActivity() {
             insets
         }
 
-        startService(Intent(this, SocketService::class.java))
         bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
 
         val chatId = intent.extras?.getLong("chatId") ?: return

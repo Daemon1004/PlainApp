@@ -5,7 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChatActivity">
+    tools:context=".ChatActivity"
+    android:background="@drawable/rectangle"
+    android:backgroundTint="?attr/colorChatBackground">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -43,7 +45,7 @@
         android:layout_marginEnd="6dp"
         android:layout_marginBottom="6dp"
         android:background="@drawable/circle"
-        android:backgroundTint="?attr/colorOnPrimary"
+        android:backgroundTint="?attr/colorChatBackground"
         android:contentDescription="@string/enter_message"
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -56,7 +58,9 @@
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
+        android:background="@drawable/rounded_edge"
+        android:backgroundTint="?attr/colorChatTitle"
+        android:layout_margin="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

@@ -42,19 +42,16 @@ class ChatPreviewAdapter(
         val binding = holder.binding
 
         Log.d("debug", "chat preview $chat")
-        Log.d("debug", "service ${mainActivity.service}")
-        Log.d("debug", "myUser ${mainActivity.service?.user}")
+        Log.d("debug", "service ${mainActivity.serviceLiveData}")
+        Log.d("debug", "myUser ${mainActivity.serviceLiveData.value?.userLiveData}")
 
-        val participant = if (chat.participant1 == mainActivity.service!!.user!!.id) chat.participant2 else chat.participant1
+        val participant = if (chat.participant1 == mainActivity.serviceLiveData.value!!.userLiveData.value!!.id) chat.participant2 else chat.participant1
         chatViewModel.readUser(participant).observeOnce(viewLifecycleOwner) { user ->
             binding.name.text = user.name
         }
 
-        binding.lastMessage.text = "" //chat.lastMessage
+        binding.lastMessage.text = ""
         binding.lastTime.text = ""
-        /*chat.lastTime?.let {
-            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern( "HH:mm" ))
-        }*/
 
         binding.root.setOnClickListener(this)
 

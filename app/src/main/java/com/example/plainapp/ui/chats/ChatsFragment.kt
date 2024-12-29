@@ -10,7 +10,10 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.plainapp.MainActivity
 import com.example.plainapp.R
+import com.example.plainapp.data.Chat
 import com.example.plainapp.data.ChatViewModel
+import com.example.plainapp.data.User
+import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.FragmentChatsBinding
 
 class ChatsFragment : Fragment() {
@@ -34,8 +37,25 @@ class ChatsFragment : Fragment() {
         val manager = LinearLayoutManager(activity)
         adapter = ChatPreviewAdapter(chatViewModel, viewLifecycleOwner, (activity as MainActivity))
 
-        chatViewModel.readAllChats.observe(viewLifecycleOwner) { chats ->
-            adapter.setData(chats)
+        val mainActivity = activity as MainActivity
+        val serviceLiveData = mainActivity.serviceLiveData
+
+        if (serviceLiveData.value != null) {
+
+            val myUser = serviceLiveData.value!!.userLiveData
+            setUser(myUser.value)
+            myUser.observe(viewLifecycleOwner) { user -> setUser(user) }
+
+        } else {
+
+            serviceLiveData.observeOnce(viewLifecycleOwner) { service ->
+
+                val myUser = service!!.userLiveData
+                setUser(myUser.value)
+                myUser.observe(viewLifecycleOwner) { user -> setUser(user) }
+
+            }
+
         }
 
         binding.recyclerView.layoutManager = manager
@@ -48,6 +68,19 @@ class ChatsFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun setUser(user: User?) {
+
+        if (user != null) {
+            chatViewModel.readAllChats.observe(viewLifecycleOwner) { chats ->
+                adapter.setData(chats)
+            }
+        } else {
+            val list: List<Chat> = emptyList()
+            adapter.setData(list)
+        }
+
     }
 
     override fun onDestroyView() {
