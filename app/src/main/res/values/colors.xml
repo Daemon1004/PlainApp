@@ -9,7 +9,12 @@
     <color name="blue_500">#0043EE</color>
     <color name="blue_700">#002DB3</color>
     <color name="cyan_200">#03B6DA</color>
+    <color name="cyan_400">#03849E</color>
     <color name="cyan_700">#015F87</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_grey">#E7E7E7</color>
+    <color name="dark_grey">#323232</color>
+    <color name="dark_blue">#0C1324</color>
+    <color name="light_blue">#A1B5F2</color>
 </resources>

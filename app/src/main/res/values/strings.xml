@@ -14,4 +14,10 @@
     <string name="create">Create</string>
     <string name="empty_chat_name">Chat name is empty, please write correct name</string>
     <string name="sql_constraint_error">Something goes wrong, maybe this name for chat is already exists?</string>
+    <string name="my_birthdate_is">My birthdate:</string>
+    <string name="created_at">Created at:</string>
+    <string name="my_biography">My biography</string>
+    <string name="empty_nickname">Empty nickname!</string>
+    <string name="write_biography">Write your biography…</string>
+    <string name="empty_biography">Your biography is empty!</string>
 </resources>
