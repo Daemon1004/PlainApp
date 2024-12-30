@@ -8,17 +8,17 @@
     <string name="phone_number">Phone number</string>
     <string name="password">Password</string>
     <string name="enter_message">Enter message</string>
-    <string name="connect_chat">New connecting to chat</string>
+    <string name="connect_chat">New connection to chat</string>
     <string name="connect">Connect</string>
     <string name="chat_name">Chat name</string>
     <string name="create">Create</string>
     <string name="empty_chat_name">Chat name is empty, please write correct name</string>
-    <string name="sql_constraint_error">Something goes wrong, maybe this name for chat is already exists?</string>
+    <string name="sql_constraint_error">Something went wrong, maybe this chat name already exists</string>
     <string name="my_birthdate_is">My birthdate:</string>
     <string name="created_at">Created at:</string>
     <string name="my_biography">My biography</string>
     <string name="empty_nickname">Empty nickname!</string>
     <string name="write_biography">Write your biography…</string>
     <string name="empty_biography">Your biography is empty!</string>
-    <string name="empty_phonenumber">Please, enter your phonenumber</string>
+    <string name="empty_phonenumber">Please, enter your phone number</string>
 </resources>

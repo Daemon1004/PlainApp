@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PlainApp</string>
+    <string name="title_chats">Chats</string>
+    <string name="title_status">Estatus</string>
+    <string name="title_calls">Llamadas</string>
+    <string name="title_create_chat">Crear un nuevo chat</string>
+    <string name="log_in">Iniciar sesión</string>
+    <string name="phone_number">Número de teléfono</string>
+    <string name="password">Contraseña</string>
+    <string name="enter_message">Escribe un mensaje</string>
+    <string name="connect_chat">Nueva conexión a un chat</string>
+    <string name="connect">Conectar</string>
+    <string name="chat_name">Nombre del chat</string>
+    <string name="create">Crear</string>
+    <string name="empty_chat_name">El nombre del chat está vacío, por favor escribe el nombre correcto</string>
+    <string name="sql_constraint_error">Algo salió mal, ¿quizás este nombre de chat ya existe?</string>
+    <string name="my_birthdate_is">Mi fecha de nacimiento:</string>
+    <string name="created_at">Creado en:</string>
+    <string name="my_biography">Mi biografía</string>
+    <string name="empty_nickname">Apodo vacío!</string>
+    <string name="write_biography">Escribe tu biografía…</string>
+    <string name="empty_biography">Tu biografía está vacía!</string>
+    <string name="empty_phonenumber">Por favor, escribe tu número de teléfono</string>
+</resources>
