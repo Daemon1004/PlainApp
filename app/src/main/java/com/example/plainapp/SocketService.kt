@@ -1,10 +1,10 @@
 package com.example.plainapp
 
-import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import com.example.plainapp.data.Chat
 import com.example.plainapp.data.ChatRepository
@@ -16,37 +16,23 @@ import io.socket.client.Socket
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Suppress("NAME_SHADOWING")
-class SocketService : Service() {
+class SocketService : LifecycleService() {
 
     private val scope = CoroutineScope( EmptyCoroutineContext )
-
+    private lateinit var db: LocalDatabase
     private lateinit var mSocket: Socket
-
     private lateinit var repository: ChatRepository
-
-    /*
-    fun listenOnce(event: String, success: Function<Array<Any>>, error: Function<String>) {
-
-        mSocket.once(event) { args ->
-
-            when (args[0] as String) {
-                "OK" -> {}
-                "ERROR" -> {}
-                else -> {}
-            }
-
-        }
-
-    }
-    */
 
     var userLiveData: MutableLiveData<User?> = MutableLiveData<User?>()
 
@@ -55,19 +41,22 @@ class SocketService : Service() {
         mSocket.emit("userByPN", phoneNumber)
         mSocket.once("userByPN") { args -> scope.launch {
 
-            scope.launch { userLiveData.postValue(Json.decodeFromString<User>(args[0].toString())) }.join()
+            val user = Json.decodeFromString<User>(args[0].toString())
+            scope.launch { userLiveData.postValue(user) }.join()
 
-            Log.d("debug", "Get user: ${userLiveData.value}")
+            Log.d("debug", "Get user: $user")
 
-            scope.launch {
-
-                scope.launch { repository.addUser(userLiveData.value!!) }.join()
-
-                signIn()
-
-                init()
-
+            val file = File(filesDir, userFileName)
+            if (!file.exists()) file.createNewFile()
+            else if (file.isDirectory) {
+                file.delete()
+                file.createNewFile()
             }
+            FileOutputStream(file).write(Json.encodeToString(user).toByteArray())
+
+            signIn()
+
+            init()
 
         } }
     }
@@ -87,9 +76,9 @@ class SocketService : Service() {
     private fun updateChats() {
 
         mSocket.emit("myChats")
-        mSocket.once("myChats") { args ->
+        mSocket.once("myChats") { myChatsArgs ->
 
-            val chats = Json.decodeFromString<List<Chat>>(args[0].toString())
+            val chats = Json.decodeFromString<List<Chat>>(myChatsArgs[0].toString())
 
             val userIds = mutableListOf<Long>()
             for (chat in chats) {
@@ -105,24 +94,24 @@ class SocketService : Service() {
             }
 
             mSocket.emit("getUsers", JSONArray(userIds))
-            mSocket.once("getUsers") { args -> scope.launch {
+            mSocket.once("getUsers") { getUsersArgs -> scope.launch {
 
-                scope.launch { repository.addUsers(Json.decodeFromString<List<User>>(args[0].toString())) }.join()
+                scope.launch { repository.addUsers(Json.decodeFromString<List<User>>(getUsersArgs[0].toString())) }.join()
                 scope.launch { repository.deleteAllChats() }.join()
                 scope.launch { repository.writeChats(chats) }.join()
 
-                mSocket.on("chatMessage") { args ->
+                mSocket.on("chatMessage") { chatMessageArgs ->
 
-                    val chatId = when (args[0].javaClass) {
-                        Long.Companion::class.java -> args[0] as Long
-                        Int.Companion::class.java -> (args[0] as Int).toLong()
-                        String.Companion::class.java -> (args[0] as String).toLong()
-                        else -> args[0].toString().toLong()
+                    val chatId = when (chatMessageArgs[0].javaClass) {
+                        Long.Companion::class.java -> chatMessageArgs[0] as Long
+                        Int.Companion::class.java -> (chatMessageArgs[0] as Int).toLong()
+                        String.Companion::class.java -> (chatMessageArgs[0] as String).toLong()
+                        else -> chatMessageArgs[0].toString().toLong()
                     }
 
-                    //Log.d("debug", "newChatMessage arg0 - ${args[0]} (${args[0].javaClass})")
+                    //Log.d("debug", "newChatMessage arg0 - ${chatMessageArgs[0]} (${chatMessageArgs[0].javaClass})")
 
-                    val message = Json.decodeFromString<Message>(args[1].toString())
+                    val message = Json.decodeFromString<Message>(chatMessageArgs[1].toString())
 
                     scope.launch {
                         scope.launch { repository.addChatMessage(chatId, message) }.join()
@@ -146,12 +135,12 @@ class SocketService : Service() {
         Log.d("debug", "sending chatMessage $jsonObj")
         mSocket.emit("chatMessage", chatId.toString(), jsonObj)
 
-        mSocket.once("chatMessageId") { args ->
+        mSocket.once("chatMessageId") { chatMessageIdArgs ->
 
-            Log.d("debug", "get chatMessageId ${args[0]}")
+            Log.d("debug", "get chatMessageId ${chatMessageIdArgs[0]}")
 
             val message = Message(
-                id = (args[0] as String).toLong(),
+                id = (chatMessageIdArgs[0] as String).toLong(),
                 body = body,
                 createdAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
                 updatedAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
@@ -166,20 +155,34 @@ class SocketService : Service() {
 
     }
 
-    var connected = false
+    var connectedLiveData = MutableLiveData(false)
+
+    private val userFileName = "user.json"
 
     override fun onCreate() {
         super.onCreate()
+
+        db = LocalDatabase.getDatabase(this)
 
         repository = ChatRepository(LocalDatabase.getDatabase(application).chatDao())
 
         mSocket = IO.socket("http://plainapp.ru:3000")
 
+        userLiveData.observe(this) { user -> scope.launch {
+            if (user != null) repository.addUser(userLiveData.value!!)
+        } }
+
+        val file = File(filesDir, userFileName)
+        if (file.exists() && file.isFile) {
+            val data = FileInputStream(file).bufferedReader().readText()
+            userLiveData.value = Json.decodeFromString<User>(data)
+        }
+
         mSocket.on(Socket.EVENT_CONNECT) {
 
             Log.d("debug", "SocketIO. Connected")
 
-            connected = true
+            scope.launch { connectedLiveData.postValue(true) }
 
             if (userLiveData.value != null) signIn()
 
@@ -189,7 +192,7 @@ class SocketService : Service() {
 
             Log.d("debug", "SocketIO. Disconnected")
 
-            connected = false
+            scope.launch { connectedLiveData.postValue(false) }
 
         }
 
@@ -220,6 +223,7 @@ class SocketService : Service() {
     private val binder: Binder = MyBinder()
 
     override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
         return binder
     }
 

@@ -12,9 +12,7 @@ import kotlinx.serialization.Serializable
         ForeignKey(
             entity = User::class,
             parentColumns = ["id"],
-            childColumns = ["createdBy"],
-            onDelete = ForeignKey.NO_ACTION,
-            onUpdate = ForeignKey.NO_ACTION
+            childColumns = ["createdBy"]
         )
     ],
     indices = [

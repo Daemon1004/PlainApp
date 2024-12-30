@@ -6,21 +6,16 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
-import java.sql.Timestamp
 
 @Serializable
 @Entity(tableName = "chat_table",
     foreignKeys = [
         ForeignKey(entity = User::class,
             parentColumns = ["id"],
-            childColumns = ["participant1"],
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.NO_ACTION),
+            childColumns = ["participant1"]),
         ForeignKey(entity = User::class,
             parentColumns = ["id"],
-            childColumns = ["participant2"],
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.NO_ACTION)],
+            childColumns = ["participant2"])],
     indices = [Index(value = ["participant1", "participant2"], unique = true)])
 data class Chat (
     @PrimaryKey(autoGenerate = true)

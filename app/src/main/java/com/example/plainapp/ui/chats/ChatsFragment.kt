@@ -10,10 +10,10 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.plainapp.MainActivity
 import com.example.plainapp.R
+import com.example.plainapp.SocketService
 import com.example.plainapp.data.Chat
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.User
-import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.FragmentChatsBinding
 
 class ChatsFragment : Fragment() {
@@ -40,23 +40,8 @@ class ChatsFragment : Fragment() {
         val mainActivity = activity as MainActivity
         val serviceLiveData = mainActivity.serviceLiveData
 
-        if (serviceLiveData.value != null) {
-
-            val myUser = serviceLiveData.value!!.userLiveData
-            setUser(myUser.value)
-            myUser.observe(viewLifecycleOwner) { user -> setUser(user) }
-
-        } else {
-
-            serviceLiveData.observeOnce(viewLifecycleOwner) { service ->
-
-                val myUser = service!!.userLiveData
-                setUser(myUser.value)
-                myUser.observe(viewLifecycleOwner) { user -> setUser(user) }
-
-            }
-
-        }
+        if (serviceLiveData.value != null) { setService(serviceLiveData.value) }
+        serviceLiveData.observe(viewLifecycleOwner) { service -> setService(service) }
 
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = adapter
@@ -68,6 +53,22 @@ class ChatsFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun setService(service: SocketService?) {
+
+        if (service != null) {
+
+            val myUser = service.userLiveData
+            setUser(myUser.value)
+            myUser.observe(viewLifecycleOwner) { user -> setUser(user) }
+
+        } else {
+
+            setUser(user = null)
+
+        }
+
     }
 
     private fun setUser(user: User?) {

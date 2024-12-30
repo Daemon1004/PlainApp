@@ -35,8 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         override fun onServiceDisconnected(className: ComponentName)
-        {
-            serviceLiveData.value = null }
+        { serviceLiveData.value = null }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Chat::class, Message::class, ChatMessage::class, User::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, Chat::class, ChatMessage::class, Message::class], version = 1, exportSchema = false)
 abstract class LocalDatabase: RoomDatabase() {
 
     abstract fun chatDao(): ChatDao
@@ -15,18 +15,14 @@ abstract class LocalDatabase: RoomDatabase() {
         private var INSTANCE: LocalDatabase? = null
 
         fun getDatabase(context: Context): LocalDatabase{
-            val tempInstance = INSTANCE
-            if (tempInstance != null) {
-                return tempInstance
-            }
+            if (INSTANCE != null) return INSTANCE as LocalDatabase
             synchronized(this){
-                val instance = Room.databaseBuilder(
+                INSTANCE = Room.databaseBuilder(
                     context.applicationContext,
                     LocalDatabase::class.java,
-                    "chat_database"
+                    "plainapp_database"
                 ).build()
-                INSTANCE = instance
-                return instance
+                return INSTANCE as LocalDatabase
             }
         }
     }
