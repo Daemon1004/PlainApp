@@ -62,13 +62,20 @@ class ChatsFragment : Fragment() {
             val myUser = service.userLiveData
             setUser(myUser.value)
             myUser.observe(viewLifecycleOwner) { user -> setUser(user) }
+            showLoading(service.updatingChatsStatus.value!!)
+            service.updatingChatsStatus.observe(viewLifecycleOwner) { updating -> showLoading(updating) }
 
         } else {
 
             setUser(user = null)
+            showLoading(true)
 
         }
 
+    }
+
+    private fun showLoading(show: Boolean) {
+        binding.progressBar.visibility = if (show) View.VISIBLE else View.INVISIBLE
     }
 
     private fun setUser(user: User?) {
