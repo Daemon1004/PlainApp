@@ -1,5 +1,6 @@
 package com.example.plainapp
 
+import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -7,6 +8,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -94,6 +96,8 @@ class ChatActivity : AppCompatActivity() {
                     service?.sendMessage(chat.id, text)
 
                     binding.mytext.setText("")
+                    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(binding.enter.windowToken, 0)
 
                 }
 
