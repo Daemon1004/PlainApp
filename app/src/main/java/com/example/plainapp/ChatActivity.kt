@@ -1,5 +1,6 @@
 package com.example.plainapp
 
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -99,6 +100,9 @@ class ChatActivity : AppCompatActivity() {
             }
 
         }
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(chatId.toInt())
 
     }
 

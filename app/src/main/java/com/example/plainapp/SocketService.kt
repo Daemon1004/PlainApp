@@ -1,9 +1,18 @@
 package com.example.plainapp
 
+import android.Manifest
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import com.example.plainapp.data.Chat
@@ -34,7 +43,6 @@ import kotlin.coroutines.EmptyCoroutineContext
 class SocketService : LifecycleService() {
 
     private val scope = CoroutineScope( EmptyCoroutineContext )
-    private lateinit var db: LocalDatabase
     private lateinit var mSocket: Socket
     private lateinit var repository: ChatRepository
 
@@ -263,14 +271,22 @@ class SocketService : LifecycleService() {
 
     }
 
-    var connectedStatus = MutableLiveData(false)
+    private var connectedStatus = MutableLiveData(false)
 
     private val userFileName = "user.json"
 
     override fun onCreate() {
         super.onCreate()
 
-        db = LocalDatabase.getDatabase(this)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val chatsNotifyChannel = "chats"
+        val channel = NotificationChannel(chatsNotifyChannel,  "Chats", NotificationManager.IMPORTANCE_DEFAULT)
+        channel.description = "My channel description"
+        channel.enableLights(true)
+        channel.lightColor = Color.BLUE
+        channel.enableVibration(false)
+        notificationManager.createNotificationChannel(channel)
 
         repository = ChatRepository(LocalDatabase.getDatabase(application).chatDao())
 
@@ -333,6 +349,33 @@ class SocketService : LifecycleService() {
             scope.launch {
                 scope.launch { repository.addChatMessage(chatId, message) }.join()
                 Log.d("debug", "New chat message $message in $chatId chat")
+            }
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+
+                scope.launch { withContext(Dispatchers.Main) {
+                    repository.readUser(message.createdBy).observeOnce(this@SocketService) { user -> scope.launch {
+
+                        val intent = Intent(this@SocketService, ChatActivity::class.java)
+                        intent.putExtra("chatId", chatId)
+                        val pendingIntent = PendingIntent.getActivity(this@SocketService, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+                        val notificationId = chatId.toInt()
+
+                        val builder = Notification.Builder(
+                            this@SocketService, chatsNotifyChannel)
+                            .setSmallIcon(R.mipmap.ic_launcher_round)
+                            .setContentTitle(user.name)
+                            .setContentText(message.body)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+
+                        notificationManager.notify(notificationId, builder.build())
+
+                    } }
+                } }
+
             }
 
         }
