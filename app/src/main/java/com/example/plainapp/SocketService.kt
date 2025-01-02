@@ -100,6 +100,8 @@ class SocketService : LifecycleService() {
 
             Log.d("debug", "Updating chats: tried to invoke new call")
 
+            return
+
         }
 
         updatingChatsStatus.postValue(true)
