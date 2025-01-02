@@ -2,6 +2,7 @@ package com.example.plainapp.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -10,7 +11,10 @@ import androidx.room.Query
 interface ChatDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun writeChats(chats: List<Chat>)
+    suspend fun addChats(chats: List<Chat>)
+
+    @Delete
+    suspend fun deleteChats(chats: List<Chat>)
 
     @Query("DELETE FROM chat_table")
     suspend fun deleteAllChats()

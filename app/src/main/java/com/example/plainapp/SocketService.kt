@@ -11,11 +11,14 @@ import com.example.plainapp.data.ChatRepository
 import com.example.plainapp.data.LocalDatabase
 import com.example.plainapp.data.Message
 import com.example.plainapp.data.User
+import com.example.plainapp.data.observeOnce
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONArray
@@ -56,27 +59,57 @@ class SocketService : LifecycleService() {
 
             signIn()
 
-            init()
-
         } }
     }
 
     private fun signIn() {
 
+        Log.d("debug", "SignIn")
+
         mSocket.emit("signin", userLiveData.value!!.id)
+        mSocket.once("signin") { signInArgs ->
+            val result = signInArgs[0] as String
+            if (result == "OK") {
+
+                Log.d("debug", "SignIn OK")
+
+                updateAll()
+
+            } else {
+
+                Log.d("debug", "SignIn error")
+
+                signIn()
+
+            }
+        }
 
     }
 
-    private fun init() {
+    private fun updateAll() {
 
         updateChats()
 
     }
 
+    var updatingChatsStatus = MutableLiveData(false)
+
     private fun updateChats() {
+
+        if (updatingChatsStatus.value == true) {
+
+            Log.d("debug", "Updating chats: tried to invoke new call")
+
+        }
+
+        updatingChatsStatus.postValue(true)
+
+        Log.d("debug", "Updating chats: started")
 
         mSocket.emit("myChats")
         mSocket.once("myChats") { myChatsArgs ->
+
+            Log.d("debug", "Updating chats: get chats")
 
             val chats = Json.decodeFromString<List<Chat>>(myChatsArgs[0].toString())
 
@@ -96,29 +129,38 @@ class SocketService : LifecycleService() {
             mSocket.emit("getUsers", JSONArray(userIds))
             mSocket.once("getUsers") { getUsersArgs -> scope.launch {
 
+                Log.d("debug", "Updating chats: get users")
+
                 scope.launch { repository.addUsers(Json.decodeFromString<List<User>>(getUsersArgs[0].toString())) }.join()
-                scope.launch { repository.deleteAllChats() }.join()
-                scope.launch { repository.writeChats(chats) }.join()
 
-                mSocket.on("chatMessage") { chatMessageArgs ->
+                scope.launch { withContext(Dispatchers.Main) {
+                    repository.readAllChats.observeOnce(this@SocketService) { localChats -> scope.launch {
 
-                    val chatId = when (chatMessageArgs[0].javaClass) {
-                        Long.Companion::class.java -> chatMessageArgs[0] as Long
-                        Int.Companion::class.java -> (chatMessageArgs[0] as Int).toLong()
-                        String.Companion::class.java -> (chatMessageArgs[0] as String).toLong()
-                        else -> chatMessageArgs[0].toString().toLong()
-                    }
+                        Log.d("debug", "Updating chats: get local chats")
 
-                    //Log.d("debug", "newChatMessage arg0 - ${chatMessageArgs[0]} (${chatMessageArgs[0].javaClass})")
+                        val chatsToDelete = emptyList<Chat>().toMutableList()
+                        for (lChat in localChats) {
+                            if (!chats.contains(lChat))
+                                chatsToDelete += lChat
+                        }
 
-                    val message = Json.decodeFromString<Message>(chatMessageArgs[1].toString())
+                        if (chatsToDelete.isNotEmpty()) { scope.launch { repository.deleteChats(chatsToDelete) }.join() }
 
-                    scope.launch {
-                        scope.launch { repository.addChatMessage(chatId, message) }.join()
-                        Log.d("debug", "newChatMessage $message in $chatId chat")
-                    }
+                        val chatsToAdd = emptyList<Chat>().toMutableList()
+                        for (chat in chats) {
+                            if (!localChats.contains(chat))
+                                chatsToAdd += chat
+                        }
 
-                }
+                        if (chatsToAdd.isNotEmpty()) { scope.launch { repository.addChats(chatsToAdd) }.join() }
+
+                        updatingChatsStatus.postValue(false)
+
+                        Log.d("debug", "Updating chats: finished")
+
+                    } }
+                } }
+
 
             } }
 
@@ -132,12 +174,12 @@ class SocketService : LifecycleService() {
 
         val jsonObj = JSONObject()
         jsonObj.put("body", body)
-        Log.d("debug", "sending chatMessage $jsonObj")
+        Log.d("debug", "Sending chatMessage $jsonObj")
         mSocket.emit("chatMessage", chatId.toString(), jsonObj)
 
         mSocket.once("chatMessageId") { chatMessageIdArgs ->
 
-            Log.d("debug", "get chatMessageId ${chatMessageIdArgs[0]}")
+            Log.d("debug", "Get chatMessageId ${chatMessageIdArgs[0]}")
 
             val message = Message(
                 id = (chatMessageIdArgs[0] as String).toLong(),
@@ -148,14 +190,14 @@ class SocketService : LifecycleService() {
             )
             scope.launch {
                 scope.launch { repository.addChatMessage(chatId, message) }.join()
-                Log.d("debug", "newChatMessage $message in $chatId chat")
+                Log.d("debug", "My chat message $message in $chatId chat")
             }
 
         }
 
     }
 
-    var connectedLiveData = MutableLiveData(false)
+    var connectedStatus = MutableLiveData(false)
 
     private val userFileName = "user.json"
 
@@ -180,9 +222,9 @@ class SocketService : LifecycleService() {
 
         mSocket.on(Socket.EVENT_CONNECT) {
 
-            Log.d("debug", "SocketIO. Connected")
+            Log.d("debug", "SocketIO connected")
 
-            scope.launch { connectedLiveData.postValue(true) }
+            scope.launch { connectedStatus.postValue(true) }
 
             if (userLiveData.value != null) signIn()
 
@@ -190,17 +232,43 @@ class SocketService : LifecycleService() {
 
         mSocket.on(Socket.EVENT_DISCONNECT) {
 
-            Log.d("debug", "SocketIO. Disconnected")
+            Log.d("debug", "SocketIO disconnected")
 
-            scope.launch { connectedLiveData.postValue(false) }
+            scope.launch { connectedStatus.postValue(false) }
 
         }
 
         mSocket.on(Socket.EVENT_CONNECT_ERROR) { err ->
 
-            Log.d("debug", "SocketIO. Connection error: $err")
+            Log.d("debug", "SocketIO connection error: $err")
 
             mSocket.connect()
+
+        }
+
+        //MESSAGES LISTENER
+        mSocket.on("chatMessage") { chatMessageArgs ->
+
+            val chatId = when (chatMessageArgs[0].javaClass) {
+                Long.Companion::class.java -> chatMessageArgs[0] as Long
+                Int.Companion::class.java -> (chatMessageArgs[0] as Int).toLong()
+                String.Companion::class.java -> (chatMessageArgs[0] as String).toLong()
+                else -> chatMessageArgs[0].toString().toLong()
+            }
+
+            val message = Json.decodeFromString<Message>(chatMessageArgs[1].toString())
+
+            scope.launch {
+                scope.launch { repository.addChatMessage(chatId, message) }.join()
+                Log.d("debug", "New chat message $message in $chatId chat")
+            }
+
+        }
+
+        //ERROR LISTENER
+        mSocket.on("error") { errorArgs ->
+
+            Log.d("debug", "SocketIO server error: $errorArgs")
 
         }
 

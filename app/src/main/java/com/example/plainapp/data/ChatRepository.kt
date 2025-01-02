@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 
 class ChatRepository(private val chatDao: ChatDao) {
 
-    suspend fun writeChats(chats: List<Chat>) { chatDao.writeChats(chats) }
+    suspend fun addChats(chats: List<Chat>) { chatDao.addChats(chats) }
     val readAllChats: LiveData<List<Chat>> = chatDao.readAllChats()
     suspend fun deleteAllChats() { chatDao.deleteAllChats() }
+    suspend fun deleteChats(chats: List<Chat>) { chatDao.deleteChats(chats) }
     fun readChat(id: Long): LiveData<Chat> { return chatDao.readChat(id) }
     fun readUser(id: Long): LiveData<User> { return chatDao.readUser(id) }
 
