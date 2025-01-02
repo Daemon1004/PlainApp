@@ -41,9 +41,9 @@ class ChatPreviewAdapter(
 
         val binding = holder.binding
 
-        Log.d("debug", "chat preview $chat")
-        Log.d("debug", "service ${mainActivity.serviceLiveData}")
-        Log.d("debug", "myUser ${mainActivity.serviceLiveData.value?.userLiveData}")
+        Log.d("debug", "ChatPreviewAdapter chat preview $chat")
+        Log.d("debug", "ChatPreviewAdapter service ${mainActivity.serviceLiveData}")
+        Log.d("debug", "ChatPreviewAdapter myUser ${mainActivity.serviceLiveData.value?.userLiveData}")
 
         val participant = if (chat.participant1 == mainActivity.serviceLiveData.value!!.userLiveData.value!!.id) chat.participant2 else chat.participant1
         chatViewModel.readUser(participant).observeOnce(viewLifecycleOwner) { user ->
