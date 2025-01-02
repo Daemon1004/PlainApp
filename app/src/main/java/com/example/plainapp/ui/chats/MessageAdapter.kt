@@ -52,7 +52,6 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
         }
 
         binding.message.layoutParams = linearLayoutParams
-        binding.statusLayout.layoutParams = linearLayoutParams
         binding.messagePlate.layoutParams = linearLayoutParams
 
         val time = LocalDateTime.ofInstant(Instant.parse(message.createdAt), OffsetDateTime.now().offset)
