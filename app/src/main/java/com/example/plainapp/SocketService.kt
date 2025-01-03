@@ -262,6 +262,7 @@ class SocketService : LifecycleService() {
                 updatedAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
                 createdBy = userLiveData.value!!.id
             )
+
             scope.launch {
                 scope.launch { repository.addChatMessage(chatId, message) }.join()
                 Log.d("debug", "My chat message $message in $chatId chat")

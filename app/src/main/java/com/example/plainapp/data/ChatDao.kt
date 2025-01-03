@@ -55,6 +55,10 @@ interface ChatDao {
             "WHERE message_table.id = chatmessage_table.messageId AND chatmessage_table.chatId = :chatId ORDER BY message_table.id DESC")
     fun readAllChatMessages(chatId: Long): LiveData<List<Message>>
 
+    @Query("SELECT * FROM message_table INNER JOIN chatmessage_table " +
+            "WHERE message_table.id = chatmessage_table.messageId AND chatmessage_table.chatId = :chatId ORDER BY message_table.id DESC LIMIT 1")
+    fun readLastChatMessage(chatId: Long): LiveData<Message?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(user: User)
 

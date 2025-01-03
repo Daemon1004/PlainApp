@@ -12,6 +12,7 @@ class ChatRepository(private val chatDao: ChatDao) {
     fun readUser(id: Long): LiveData<User> { return chatDao.readUser(id) }
 
     fun readAllMessages(chat: Chat): LiveData<List<Message>> { return chatDao.readAllChatMessages(chat.id) }
+    fun readLastChatMessage(chatId: Long): LiveData<Message?> { return chatDao.readLastChatMessage(chatId) }
 
     suspend fun addChat(chat: Chat){ chatDao.addChat(chat) }
     suspend fun deleteChat(chatId: Long){ chatDao.deleteChat(chatId) }

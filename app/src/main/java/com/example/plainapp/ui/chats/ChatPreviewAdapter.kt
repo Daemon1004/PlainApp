@@ -14,6 +14,10 @@ import com.example.plainapp.data.Chat
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.ChatPreviewViewBinding
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 
 class ChatPreviewAdapter(
@@ -45,13 +49,31 @@ class ChatPreviewAdapter(
         Log.d("debug", "ChatPreviewAdapter service ${mainActivity.serviceLiveData}")
         Log.d("debug", "ChatPreviewAdapter myUser ${mainActivity.serviceLiveData.value?.userLiveData}")
 
-        val participant = if (chat.participant1 == mainActivity.serviceLiveData.value!!.userLiveData.value!!.id) chat.participant2 else chat.participant1
+        val myUser = mainActivity.serviceLiveData.value!!.userLiveData.value!!
+        val participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
         chatViewModel.readUser(participant).observeOnce(viewLifecycleOwner) { user ->
             binding.name.text = user.name
         }
 
         binding.lastMessage.text = ""
         binding.lastTime.text = ""
+
+        binding.loadImg.visibility = View.INVISIBLE
+
+        chatViewModel.readLastChatMessage(chat.id).observe(viewLifecycleOwner) { message ->
+
+            if (message != null) {
+
+                val time = LocalDateTime.ofInstant(Instant.parse(message.createdAt), OffsetDateTime.now().offset)
+                    .format(DateTimeFormatter.ofPattern("HH:mm"))
+
+                binding.lastMessage.text = message.body
+                binding.lastTime.text = time
+                binding.loadImg.visibility = if (message.createdBy == myUser.id) View.VISIBLE else View.INVISIBLE
+
+            }
+
+        }
 
         binding.root.setOnClickListener(this)
 

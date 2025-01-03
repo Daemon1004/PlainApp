@@ -16,6 +16,7 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun readAllMessages(chat: Chat): LiveData<List<Message>> { return repository.readAllMessages(chat) }
+    fun readLastChatMessage(chatId: Long): LiveData<Message?> { return repository.readLastChatMessage(chatId) }
 
     fun readChat(id: Long): LiveData<Chat> { return repository.readChat(id) }
 
