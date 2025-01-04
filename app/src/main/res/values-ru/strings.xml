@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_chats">Чаты</string>
-    <string name="title_status">Статус</string>
+    <string name="title_profile">Профиль</string>
     <string name="title_calls">Звонки</string>
     <string name="title_create_chat">Создание нового чата</string>
     <string name="log_in">Войти</string>

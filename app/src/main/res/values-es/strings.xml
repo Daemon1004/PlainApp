@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PlainApp</string>
     <string name="title_chats">Chats</string>
-    <string name="title_status">Estatus</string>
+    <string name="title_profile">Perfil</string>
     <string name="title_calls">Llamadas</string>
     <string name="title_create_chat">Crear un nuevo chat</string>
     <string name="log_in">Iniciar sesión</string>

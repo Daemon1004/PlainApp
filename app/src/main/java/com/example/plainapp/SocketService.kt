@@ -1,12 +1,16 @@
 package com.example.plainapp
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Binder
@@ -40,10 +44,11 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.EmptyCoroutineContext
 
+
 class SocketService : LifecycleService() {
 
     private val scope = CoroutineScope( EmptyCoroutineContext )
-    private lateinit var mSocket: Socket
+    lateinit var mSocket: Socket
     private lateinit var repository: ChatRepository
 
     var userLiveData: MutableLiveData<User?> = MutableLiveData<User?>()
@@ -385,6 +390,41 @@ class SocketService : LifecycleService() {
         mSocket.on("error") { errorArgs ->
 
             Log.d("debug", "SocketIO server error: $errorArgs")
+
+        }
+
+        mSocket.on("offer") { offerArgs ->
+
+            val chatId = offerArgs[1].toString().toLong()
+
+            val intent = Intent(this, ResponseCallActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("chatId", chatId)
+            startActivity(intent)
+
+            val brOnActivityResult: BroadcastReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+
+                    unregisterReceiver(this)
+
+                    if (intent.extras?.getInt("requestCode") != Activity.RESULT_OK) return
+
+                    val callIntent = Intent(this@SocketService, CallActivity::class.java)
+                    callIntent.putExtra("offerArgs", offerArgs[0] as String)
+                    callIntent.putExtra("chatId", chatId)
+                    startActivity(callIntent)
+
+                }
+            }
+
+            val brintent = IntentFilter()
+            brintent.addAction("brActionFloatingServiceOnActivityResult")
+
+            @SuppressLint("UnspecifiedRegisterReceiverFlag")
+            if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
+                registerReceiver(brOnActivityResult, brintent, RECEIVER_NOT_EXPORTED)
+            else
+                registerReceiver(brOnActivityResult, brintent)
 
         }
 

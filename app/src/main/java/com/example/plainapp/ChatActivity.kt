@@ -108,6 +108,13 @@ class ChatActivity : AppCompatActivity() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(chatId.toInt())
 
+        binding.callButton.setOnClickListener {
+
+            val intent = Intent(this, CallActivity::class.java)
+            startActivity(intent)
+
+        }
+
     }
 
     override fun onDestroy() {

@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_status"
         android:icon="@drawable/ic_status_black_24dp"
-        android:title="@string/title_status" />
+        android:title="@string/title_profile" />
 
     <item
         android:id="@+id/navigation_calls"

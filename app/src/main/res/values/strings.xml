@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">PlainApp</string>
     <string name="title_chats">Chats</string>
-    <string name="title_status">Status</string>
+    <string name="title_profile">Profile</string>
     <string name="title_calls">Calls</string>
     <string name="title_create_chat">Creating new chat</string>
     <string name="log_in">Log in</string>
