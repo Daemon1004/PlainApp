@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import android.view.View
@@ -99,6 +100,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                     "sdpCandidate" to p0?.sdp
                 )
                 val jsonCandidate = (candidateMap as Map<*, *>?)?.let { JSONObject(it) }
+                Log.d("debug", "call: emit ice candidate $jsonCandidate")
                 mSocket.emit("ice candidate", jsonCandidate, chatId)
             }
 
@@ -117,73 +119,6 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
         rtcClient?.initializeSurfaceView(binding.localView)
         rtcClient?.initializeSurfaceView(binding.remoteView)
         rtcClient?.startLocalVideo(binding.localView)
-
-        val offerArgs = intent.extras?.getString("offerArgs")
-
-        if (offerArgs != null) {
-
-            Log.d("debug", "offerArgs: $offerArgs")
-
-            val session = SessionDescription(
-                SessionDescription.Type.OFFER,
-                JSONObject(offerArgs).get("sdp") as String
-            )
-
-            Log.d("debug", "session: ${session.description}")
-
-            rtcClient?.onRemoteSessionReceived(session)
-            rtcClient?.answer { sdp, type ->
-
-                val hashMap = hashMapOf(
-                    "sdp" to sdp,
-                    "type" to type
-                )
-
-                Log.d("debug", "call: emit answer - hashMap = $hashMap, chatId = $chatId")
-
-                mSocket.emit("answer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
-
-            }
-
-            binding.remoteViewLoading.visibility = View.GONE
-
-        } else {
-
-            rtcClient?.call { sdp, type ->
-
-                val hashMap = hashMapOf(
-                    "sdp" to sdp,
-                    "type" to type
-                )
-
-                Log.d("debug", "call: emit offer - hashMap = $hashMap, chatId = $chatId")
-
-                mSocket.emit("offer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
-
-            }
-
-            mSocket.on("answer") { answerArgs ->
-
-                Log.d("debug", "call: get answer")
-
-                val session = SessionDescription(
-                    SessionDescription.Type.ANSWER,
-                    JSONObject(answerArgs[0] as String).get("sdp") as String
-                )
-                rtcClient?.onRemoteSessionReceived(session)
-
-                runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
-
-            }
-
-        }
-
-        mSocket.on("ice candidate") { iceCandidateArgs ->
-            Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
-            val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0].toString())
-            rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
-                Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
-        }
 
         binding.apply {
             /*
@@ -237,6 +172,83 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 finish()
             }
         }
+
+        mSocket.on("ice candidate") { iceCandidateArgs ->
+            Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
+            val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0].toString())
+            rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
+                Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
+        }
+
+        val timer = object: CountDownTimer(2500, 100) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+
+
+
+                val offerArgs = intent.extras?.getString("offerArgs")
+
+                if (offerArgs != null) {
+
+                    Log.d("debug", "offerArgs: $offerArgs")
+
+                    val session = SessionDescription(
+                        SessionDescription.Type.OFFER,
+                        JSONObject(offerArgs).get("sdp") as String
+                    )
+
+                    Log.d("debug", "session: ${session.description}")
+
+                    rtcClient?.onRemoteSessionReceived(session)
+                    rtcClient?.answer { sdp, type ->
+
+                        val hashMap = hashMapOf(
+                            "sdp" to sdp,
+                            "type" to type
+                        )
+
+                        Log.d("debug", "call: emit answer - hashMap = $hashMap, chatId = $chatId")
+
+                        mSocket.emit("answer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
+
+                    }
+
+                    binding.remoteViewLoading.visibility = View.GONE
+
+                } else {
+
+                    rtcClient?.call { sdp, type ->
+
+                        val hashMap = hashMapOf(
+                            "sdp" to sdp,
+                            "type" to type
+                        )
+
+                        Log.d("debug", "call: emit offer - hashMap = $hashMap, chatId = $chatId")
+
+                        mSocket.emit("offer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
+
+                    }
+
+                    mSocket.on("answer") { answerArgs ->
+
+                        Log.d("debug", "call: get answer")
+
+                        val session = SessionDescription(
+                            SessionDescription.Type.ANSWER,
+                            JSONObject(answerArgs[0] as String).get("sdp") as String
+                        )
+                        rtcClient?.onRemoteSessionReceived(session)
+
+                        runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
+
+                    }
+
+                }
+
+            }
+        }
+        timer.start()
 
     }
 
