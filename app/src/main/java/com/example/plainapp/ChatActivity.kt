@@ -111,6 +111,7 @@ class ChatActivity : AppCompatActivity() {
         binding.callButton.setOnClickListener {
 
             val intent = Intent(this, CallActivity::class.java)
+            intent.putExtra("chatId", chatId)
             startActivity(intent)
 
         }

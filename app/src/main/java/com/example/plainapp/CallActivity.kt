@@ -151,6 +151,8 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 )
                 val jsonCall = (call as Map<*, *>?)?.let { JSONObject(it) }
 
+                Log.d("debug", "call: emit offer - json = $jsonCall, chatId = $chatId")
+
                 mSocket.emit("offer", jsonCall, chatId.toString())
 
             }
