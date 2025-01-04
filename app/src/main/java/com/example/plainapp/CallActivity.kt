@@ -179,7 +179,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
         }
 
         mSocket.on("ice candidate") { iceCandidateArgs ->
-            Log.d("debug", "call: get ice candidate")
+            Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
             val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0].toString())
             rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
                 Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
