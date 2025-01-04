@@ -122,22 +122,24 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
         if (offerArgs != null) {
 
+            Log.d("debug", "offerArgs: $offerArgs")
+
             val session = SessionDescription(
                 SessionDescription.Type.OFFER,
                 offerArgs
             )
+
             rtcClient?.onRemoteSessionReceived(session)
             rtcClient?.answer { sdp, type ->
 
-                val answer = hashMapOf(
+                val hashMap = hashMapOf(
                     "sdp" to sdp,
                     "type" to type
                 )
-                val jsonAnswer = (answer as Map<*, *>?)?.let { JSONObject(it) }
 
-                Log.d("debug", "call: emit answer - json = $jsonAnswer, chatId = $chatId")
+                Log.d("debug", "call: emit answer - hashMap = $hashMap, chatId = $chatId")
 
-                mSocket.emit("answer", jsonAnswer, chatId.toString())
+                mSocket.emit("answer", hashMap.toString(), chatId.toString())
 
             }
 
@@ -147,15 +149,14 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
             rtcClient?.call { sdp, type ->
 
-                val call = hashMapOf(
+                val hashMap = hashMapOf(
                     "sdp" to sdp,
                     "type" to type
                 )
-                val jsonCall = (call as Map<*, *>?)?.let { JSONObject(it) }
 
-                Log.d("debug", "call: emit offer - json = $jsonCall, chatId = $chatId")
+                Log.d("debug", "call: emit offer - hashMap = $hashMap, chatId = $chatId")
 
-                mSocket.emit("offer", jsonCall, chatId.toString())
+                mSocket.emit("offer", hashMap.toString(), chatId.toString())
 
             }
 
@@ -177,7 +178,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
         mSocket.on("ice candidate") { iceCandidateArgs ->
             Log.d("debug", "call: get ice candidate")
-            val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0] as String)
+            val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0].toString())
             rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
                 Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
         }

@@ -1,6 +1,7 @@
 package com.example.plainapp.rtc
 
 import android.app.Application
+import android.util.Log
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer
@@ -120,19 +121,23 @@ class RTCClient(
 
         peerConnection?.createOffer(object : SdpObserver {
             override fun onCreateSuccess(desc: SessionDescription?) {
+                Log.d("peerConnection", "createOffer onCreateSuccess: $desc")
                 peerConnection?.setLocalDescription(object : SdpObserver {
                     override fun onCreateSuccess(p0: SessionDescription?) {
-
+                        Log.d("peerConnection", "createAnswer setLocalDescription onCreateSuccess: $p0")
                     }
 
                     override fun onSetSuccess() {
+                        Log.d("peerConnection", "createOffer setLocalDescription onSetSuccess ${desc?.description}, ${desc?.type}")
                         callCb(desc?.description, desc?.type)
                     }
 
                     override fun onCreateFailure(p0: String?) {
+                        Log.d("peerConnection", "createAnswer setLocalDescription onCreateFailure: $p0")
                     }
 
                     override fun onSetFailure(p0: String?) {
+                        Log.d("peerConnection", "createAnswer setLocalDescription onSetFailure: $p0")
                     }
 
                 }, desc)
@@ -140,12 +145,15 @@ class RTCClient(
             }
 
             override fun onSetSuccess() {
+                Log.d("peerConnection", "createOffer onSetSuccess")
             }
 
             override fun onCreateFailure(p0: String?) {
+                Log.d("peerConnection", "createOffer onCreateFailure")
             }
 
             override fun onSetFailure(p0: String?) {
+                Log.d("peerConnection", "createOffer onSetFailure")
             }
         }, mediaConstraints)
     }
@@ -175,30 +183,38 @@ class RTCClient(
 
         peerConnection?.createAnswer(object : SdpObserver {
             override fun onCreateSuccess(desc: SessionDescription?) {
+                Log.d("peerConnection", "createAnswer onCreateSuccess: $desc")
                 peerConnection?.setLocalDescription(object : SdpObserver {
                     override fun onCreateSuccess(p0: SessionDescription?) {
+                        Log.d("peerConnection", "createAnswer setLocalDescription onCreateSuccess: $p0")
                     }
 
                     override fun onSetSuccess() {
+                        Log.d("peerConnection", "createAnswer setLocalDescription onSetSuccess ${desc?.description}, ${desc?.type}")
                         answerCb(desc?.description, desc?.type)
                     }
 
                     override fun onCreateFailure(p0: String?) {
+                        Log.d("peerConnection", "createAnswer setLocalDescription onCreateFailure: $p0")
                     }
 
                     override fun onSetFailure(p0: String?) {
+                        Log.d("peerConnection", "createAnswer setLocalDescription onSetFailure: $p0")
                     }
 
                 }, desc)
             }
 
             override fun onSetSuccess() {
+                Log.d("peerConnection", "createAnswer onSetSuccess")
             }
 
             override fun onCreateFailure(p0: String?) {
+                Log.d("peerConnection", "createAnswer onCreateFailure: $p0")
             }
 
             override fun onSetFailure(p0: String?) {
+                Log.d("peerConnection", "createAnswer onSetFailure: $p0")
             }
 
         }, constraints)
