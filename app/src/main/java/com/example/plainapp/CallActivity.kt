@@ -180,7 +180,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
         }
 
-        val timer = object: CountDownTimer(2500, 100) {
+        val timer = object: CountDownTimer(6000, 100) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
 
