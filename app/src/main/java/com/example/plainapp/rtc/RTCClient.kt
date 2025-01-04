@@ -161,16 +161,19 @@ class RTCClient(
     fun onRemoteSessionReceived(session: SessionDescription) {
         peerConnection?.setRemoteDescription(object : SdpObserver {
             override fun onCreateSuccess(p0: SessionDescription?) {
-
+                Log.d("peerConnection", "onRemoteSessionReceived onCreateSuccess $p0")
             }
 
             override fun onSetSuccess() {
+                Log.d("peerConnection", "onRemoteSessionReceived onSetSuccess")
             }
 
             override fun onCreateFailure(p0: String?) {
+                Log.d("peerConnection", "onRemoteSessionReceived onCreateFailure $p0")
             }
 
             override fun onSetFailure(p0: String?) {
+                Log.d("peerConnection", "onRemoteSessionReceived onSetFailure $p0")
             }
 
         }, session)

@@ -126,8 +126,10 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
             val session = SessionDescription(
                 SessionDescription.Type.OFFER,
-                offerArgs
+                JSONObject(offerArgs).get("sdp") as String
             )
+
+            Log.d("debug", "session: ${session.description}")
 
             rtcClient?.onRemoteSessionReceived(session)
             rtcClient?.answer { sdp, type ->
@@ -139,7 +141,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
                 Log.d("debug", "call: emit answer - hashMap = $hashMap, chatId = $chatId")
 
-                mSocket.emit("answer", hashMap.toString(), chatId.toString())
+                mSocket.emit("answer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
 
             }
 
@@ -156,7 +158,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
                 Log.d("debug", "call: emit offer - hashMap = $hashMap, chatId = $chatId")
 
-                mSocket.emit("offer", hashMap.toString(), chatId.toString())
+                mSocket.emit("offer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
 
             }
 
