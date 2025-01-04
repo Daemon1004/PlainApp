@@ -3,6 +3,7 @@ package com.example.plainapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,6 +15,8 @@ class ResponseCallActivity : AppCompatActivity() {
 
     private var _binding: ActivityResponseCallBinding? = null
     private val binding get() = _binding!!
+
+    var result: String = "IGNORE"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,31 +31,31 @@ class ResponseCallActivity : AppCompatActivity() {
 
         binding.acceptButton.setOnClickListener {
 
-            setResult(Activity.RESULT_OK)
+            result = "ACCEPT"
             finish()
 
         }
 
         binding.rejectButton.setOnClickListener {
 
-            setResult(Activity.RESULT_CANCELED)
+            result = "REJECT"
             finish()
 
         }
 
     }
 
-    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onDestroy() {
 
         val i = Intent()
         i.setAction("brActionFloatingServiceOnActivityResult")
         i.putExtra("action", "initTextToSpeech")
-        i.putExtra("requestCode", requestCode)
+        i.putExtra("result", result)
         sendBroadcast(i)
 
-        finish()
+        Log.d("debug", "ResponseCallActivity sendBroadcast()")
+
+        super.onDestroy()
     }
 
 }

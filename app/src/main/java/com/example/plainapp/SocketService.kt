@@ -407,12 +407,17 @@ class SocketService : LifecycleService() {
             val brOnActivityResult: BroadcastReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context, intent: Intent) {
 
+                    Log.d("debug", "BroadcastReceiver onReceive()")
+
                     unregisterReceiver(this)
 
-                    if (intent.extras?.getInt("requestCode") != Activity.RESULT_OK) return
+                    if (intent.extras?.getString("result") != "ACCEPT") return
+
+                    Log.d("debug", "call: accept")
 
                     val callIntent = Intent(this@SocketService, CallActivity::class.java)
-                    callIntent.putExtra("offerArgs", offerArgs[0] as String)
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    callIntent.putExtra("offerArgs", offerArgs[0].toString())
                     callIntent.putExtra("chatId", chatId)
                     startActivity(callIntent)
 
