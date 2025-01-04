@@ -58,10 +58,25 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ -> binding.title.text = destination.label }
         binding.navView.setupWithNavController(navController)
 
+
+        val perms = emptyList<String>().toMutableList()
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)
+            perms += Manifest.permission.CAMERA
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
+            perms += Manifest.permission.RECORD_AUDIO
+
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED &&
                 android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
+            perms += Manifest.permission.POST_NOTIFICATIONS
+
+        if (perms.isNotEmpty())
+            ActivityCompat.requestPermissions(this, perms.toTypedArray(), 101)
+
 
         /*
         val packageName = packageName
