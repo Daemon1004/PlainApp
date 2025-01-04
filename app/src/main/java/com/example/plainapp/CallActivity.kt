@@ -168,7 +168,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
                 val session = SessionDescription(
                     SessionDescription.Type.ANSWER,
-                    answerArgs[0] as String
+                    JSONObject(answerArgs[0] as String).get("sdp") as String
                 )
                 rtcClient?.onRemoteSessionReceived(session)
 
