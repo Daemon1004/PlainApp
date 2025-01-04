@@ -75,7 +75,7 @@ class ChatActivity : AppCompatActivity() {
 
         chatViewModel.readChat(chatId).observe(this) { chat ->
 
-            val participant = if (chat.participant1 == myUser!!.id) chat.participant2 else chat.participant1
+            val participant = if (chat.participant1 == (myUser?.id ?: -1)) chat.participant2 else chat.participant1
             chatViewModel.readUser(participant).observeOnce(this) { user ->
                 binding.chatName.text = user.name
             }
