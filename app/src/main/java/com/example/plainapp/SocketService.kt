@@ -395,6 +395,8 @@ class SocketService : LifecycleService() {
 
         mSocket.on("offer") { offerArgs ->
 
+            Log.d("debug", "call: get offer")
+
             val chatId = offerArgs[1].toString().toLong()
 
             val intent = Intent(this, ResponseCallActivity::class.java)

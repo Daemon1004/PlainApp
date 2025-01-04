@@ -76,6 +76,11 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
     }
 
+    override fun onDestroy() {
+        rtcClient?.endCall()
+        super.onDestroy()
+    }
+
     private fun init(){
         val service = serviceLiveData.value!!
         val myUser = service.userLiveData.value!!
@@ -130,7 +135,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 )
                 val jsonAnswer = (answer as Map<*, *>?)?.let { JSONObject(it) }
 
-                mSocket.emit("answer", jsonAnswer, chatId)
+                mSocket.emit("answer", jsonAnswer, chatId.toString())
 
             }
 
@@ -146,11 +151,13 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 )
                 val jsonCall = (call as Map<*, *>?)?.let { JSONObject(it) }
 
-                mSocket.emit("offer", jsonCall, chatId)
+                mSocket.emit("offer", jsonCall, chatId.toString())
 
             }
 
             mSocket.on("answer") { answerArgs ->
+
+                Log.d("debug", "call: get answer")
 
                 val session = SessionDescription(
                     SessionDescription.Type.ANSWER,
@@ -165,6 +172,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
         }
 
         mSocket.on("ice candidate") { iceCandidateArgs ->
+            Log.d("debug", "call: get ice candidate")
             val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0] as String)
             rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
                 Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
@@ -219,10 +227,6 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
             }
             endCallButton.setOnClickListener {
-                setCallLayoutGone()
-                setWhoToCallLayoutVisible()
-                setIncomingCallLayoutGone()
-                rtcClient?.endCall()
                 finish()
             }
         }
