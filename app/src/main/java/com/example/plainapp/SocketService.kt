@@ -399,7 +399,7 @@ class SocketService : LifecycleService() {
             val chatId = offerArgs[1].toString().toLong()
 
             val intent = Intent(this, ResponseCallActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
             intent.putExtra("chatId", chatId)
             startActivity(intent)
 
@@ -415,7 +415,7 @@ class SocketService : LifecycleService() {
                     Log.d("debug", "call: accept")
 
                     val callIntent = Intent(this@SocketService, CallActivity::class.java)
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                     callIntent.putExtra("offerArgs", offerArgs[0].toString())
                     callIntent.putExtra("chatId", chatId)
                     startActivity(callIntent)
