@@ -133,6 +133,36 @@ class CallActivity : AppCompatActivity() {
             override fun onRenegotiationNeeded() {
                 super.onRenegotiationNeeded()
                 Log.d("debug", "call: onRenegotiationNeeded")
+
+                if (isCaller) {
+
+                    rtcClient?.call { sdp, type ->
+
+                        val json = JSONObject()
+                        json.put("type", type)
+                        json.put("sdp", sdp)
+
+                        Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
+
+                        mSocket.emit("offer", json.toString(), chatId.toString())
+
+                    }
+
+                    mSocket.once("answer") { answerArgs ->
+
+                        Log.d("debug", "call: get answer")
+
+                        val session = SessionDescription(
+                            SessionDescription.Type.ANSWER,
+                            JSONObject(answerArgs[0].toString()).get("sdp").toString()
+                        )
+
+                        rtcClient?.onRemoteSessionReceived(session)
+
+                    }
+
+                }
+
             }
         })
 
@@ -143,74 +173,49 @@ class CallActivity : AppCompatActivity() {
                 Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
         }
 
-        if (isCaller) {
+        if (!isCaller) {
+            binding.apply {
 
-            rtcClient?.call { sdp, type ->
+                acceptButton.setOnClickListener {
 
-                val json = JSONObject()
-                json.put("type", type)
-                json.put("sdp", sdp)
+                    Log.d("debug", "call: accept")
 
-                Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
+                    callLayout.visibility = View.VISIBLE
+                    responseLayout.visibility = View.GONE
 
-                mSocket.emit("offer", json.toString(), chatId.toString())
+                    val offerArgs = intent.extras?.getString("offerArgs")
 
-            }
+                    val session = SessionDescription(
+                        SessionDescription.Type.OFFER,
+                        JSONObject(offerArgs!!).get("sdp").toString()
+                    )
 
-            mSocket.once("answer") { answerArgs ->
+                    Log.d("debug", "call: session: ${session.type} ${session.description}")
 
-                Log.d("debug", "call: get answer")
+                    rtcClient?.onRemoteSessionReceived(session)
+                    rtcClient?.answer { sdp, type ->
 
-                val session = SessionDescription(
-                    SessionDescription.Type.ANSWER,
-                    JSONObject(answerArgs[0].toString()).get("sdp").toString()
-                )
+                        val json = JSONObject()
+                        json.put("sdp", sdp)
+                        json.put("type", type)
 
-                rtcClient?.onRemoteSessionReceived(session)
+                        Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
 
-            }
+                        mSocket.emit("answer", json.toString(), chatId.toString())
 
-        } else binding.apply {
+                    }
 
-            acceptButton.setOnClickListener {
+                }
 
-                Log.d("debug", "call: accept")
+                rejectButton.setOnClickListener {
 
-                callLayout.visibility = View.VISIBLE
-                responseLayout.visibility = View.GONE
+                    Log.d("debug", "call: reject")
 
-                val offerArgs = intent.extras?.getString("offerArgs")
-
-                val session = SessionDescription(
-                    SessionDescription.Type.OFFER,
-                    JSONObject(offerArgs!!).get("sdp").toString()
-                )
-
-                Log.d("debug", "call: session: ${session.type} ${session.description}")
-
-                rtcClient?.onRemoteSessionReceived(session)
-                rtcClient?.answer { sdp, type ->
-
-                    val json = JSONObject()
-                    json.put("sdp", sdp)
-                    json.put("type", type)
-
-                    Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
-
-                    mSocket.emit("answer", json.toString(), chatId.toString())
+                    finish()
 
                 }
 
             }
-
-            rejectButton.setOnClickListener {
-
-                Log.d("debug", "call: reject")
-
-                finish()
-
-            }
-
         }
 
         rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
