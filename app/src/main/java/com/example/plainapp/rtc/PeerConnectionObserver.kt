@@ -1,4 +1,4 @@
-package com.example.plainapp.rtc.utils
+package com.example.plainapp.rtc
 
 import org.webrtc.*
 

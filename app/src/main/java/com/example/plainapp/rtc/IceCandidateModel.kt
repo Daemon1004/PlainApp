@@ -1,4 +1,4 @@
-package com.example.plainapp.rtc.models
+package com.example.plainapp.rtc
 
 import kotlinx.serialization.Serializable
 

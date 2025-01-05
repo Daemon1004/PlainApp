@@ -5,21 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.ActivityCallBinding
 import com.example.plainapp.rtc.RTCClient
-import com.example.plainapp.rtc.models.IceCandidateModel
-import com.example.plainapp.rtc.models.MessageModel
-import com.example.plainapp.rtc.utils.NewMessageInterface
-import com.example.plainapp.rtc.utils.PeerConnectionObserver
-import com.example.plainapp.rtc.utils.RTCAudioManager
+import com.example.plainapp.rtc.IceCandidateModel
+import com.example.plainapp.rtc.PeerConnectionObserver
+import com.example.plainapp.rtc.RTCAudioManager
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import org.webrtc.IceCandidate
@@ -27,7 +23,7 @@ import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.SessionDescription
 
-class CallActivity : AppCompatActivity(), NewMessageInterface {
+class CallActivity : AppCompatActivity() {
 
 
     lateinit var binding : ActivityCallBinding
@@ -204,7 +200,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
             val session = SessionDescription(
                 SessionDescription.Type.OFFER,
-                JSONObject(offerArgs).get("sdp") as String
+                offerArgs[0].toString()
             )
 
             Log.d("debug", "session: ${session.description}")
@@ -246,7 +242,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
                 val session = SessionDescription(
                     SessionDescription.Type.ANSWER,
-                    JSONObject(answerArgs[0] as String).get("sdp") as String
+                    answerArgs[0].toString()
                 )
                 rtcClient?.onRemoteSessionReceived(session)
 
@@ -256,105 +252,6 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
 
         }
 
-    }
-
-    override fun onNewMessage(type: String, message: MessageModel) {
-        Log.d("debug", "onNewMessage: $message")
-        when(type){
-
-            /*
-            "call_response"->{
-                if (message.data == "user is not online"){
-                    //user is not reachable
-                    runOnUiThread {
-                        Toast.makeText(this,"user is not reachable",Toast.LENGTH_LONG).show()
-
-                    }
-                }else{
-                    //we are ready for call, we started a call
-                    runOnUiThread {
-                        setWhoToCallLayoutGone()
-                        setCallLayoutVisible()
-                        binding.apply {
-                            rtcClient?.initializeSurfaceView(localView)
-                            rtcClient?.initializeSurfaceView(remoteView)
-                            rtcClient?.startLocalVideo(localView)
-                            rtcClient?.call(targetUserNameEt.text.toString())
-                        }
-
-
-                    }
-
-                }
-            }
-
-             */
-
-            /*
-            "answer_received" ->{
-
-                val session = SessionDescription(
-                    SessionDescription.Type.ANSWER,
-                    message.data.toString()
-                )
-                rtcClient?.onRemoteSessionReceived(session)
-                runOnUiThread {
-                    binding.remoteViewLoading.visibility = View.GONE
-                }
-            }
-
-             */
-
-            /*
-            "offer_received" ->{
-                runOnUiThread {
-                    setIncomingCallLayoutVisible()
-                    binding.incomingNameTV.text = "${message.name.toString()} is calling you"
-                    binding.acceptButton.setOnClickListener {
-                        setIncomingCallLayoutGone()
-                        setCallLayoutVisible()
-                        setWhoToCallLayoutGone()
-
-                        binding.apply {
-                            rtcClient?.initializeSurfaceView(localView)
-                            rtcClient?.initializeSurfaceView(remoteView)
-                            rtcClient?.startLocalVideo(localView)
-                        }
-                        val session = SessionDescription(
-                            SessionDescription.Type.OFFER,
-                            message.data.toString()
-                        )
-                        rtcClient?.onRemoteSessionReceived(session)
-                        rtcClient?.answer()
-                        target = message.name!!
-                        binding.remoteViewLoading.visibility = View.GONE
-
-                    }
-                    binding.rejectButton.setOnClickListener {
-                        setIncomingCallLayoutGone()
-                    }
-
-                }
-
-            }
-
-             */
-
-
-            /*
-            "ice_candidate"->{
-                try {
-                    val receivingCandidate = gson.fromJson(gson.toJson(message.data),
-                        IceCandidateModel::class.java)
-                    rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
-                        Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()),receivingCandidate.sdpCandidate))
-                }catch (e:Exception){
-                    e.printStackTrace()
-                }
-            }
-
-             */
-        }
     }
 
     private fun setIncomingCallLayoutGone(){
@@ -380,34 +277,3 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
         binding.whoToCallLayout.visibility = View.VISIBLE
     }
 }
-
-/*
-runOnUiThread {
-    setIncomingCallLayoutVisible()
-    binding.incomingNameTV.text = "${message.name.toString()} is calling you"
-    binding.acceptButton.setOnClickListener {
-        setIncomingCallLayoutGone()
-        setCallLayoutVisible()
-        setWhoToCallLayoutGone()
-
-        binding.apply {
-            rtcClient?.initializeSurfaceView(localView)
-            rtcClient?.initializeSurfaceView(remoteView)
-            rtcClient?.startLocalVideo(localView)
-        }
-        val session = SessionDescription(
-            SessionDescription.Type.OFFER,
-            message.data.toString()
-        )
-        rtcClient?.onRemoteSessionReceived(session)
-        rtcClient?.answer(message.name!!)
-        target = message.name!!
-        binding.remoteViewLoading.visibility = View.GONE
-
-    }
-    binding.rejectButton.setOnClickListener {
-        setIncomingCallLayoutGone()
-    }
-
-}
-*/
