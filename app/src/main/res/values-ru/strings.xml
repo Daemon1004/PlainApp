@@ -21,4 +21,11 @@
     <string name="write_biography">Напишите свою биографию…</string>
     <string name="empty_biography">Ваша биография пуста!</string>
     <string name="empty_phonenumber">Пожалуйста, введите свой номер телефона</string>
+    <string name="accept_call">Ответить на звонок</string>
+    <string name="reject_call">Отклонить звонок</string>
+    <string name="call_mic_button">Микрофон</string>
+    <string name="call_video_button">Видео</string>
+    <string name="call_end_button">Закончить звонок</string>
+    <string name="call_orientation_button">Изменить ориентацию</string>
+    <string name="call_audio_button">Звук</string>
 </resources>

@@ -64,8 +64,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -93,8 +91,5 @@ dependencies {
     implementation(libs.java.websocket)
     implementation(libs.gson)
     implementation(libs.permissionx)
-
-    implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.fragment.ktx)
 
 }

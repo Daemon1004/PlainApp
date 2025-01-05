@@ -1,15 +1,12 @@
 package com.example.plainapp
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Binder
@@ -398,39 +395,11 @@ class SocketService : LifecycleService() {
 
             val chatId = offerArgs[1].toString().toLong()
 
-            val intent = Intent(this, ResponseCallActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-            intent.putExtra("chatId", chatId)
-            startActivity(intent)
-
-            val brOnActivityResult: BroadcastReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-
-                    Log.d("debug", "BroadcastReceiver onReceive()")
-
-                    unregisterReceiver(this)
-
-                    if (intent.extras?.getString("result") != "ACCEPT") return
-
-                    Log.d("debug", "call: accept")
-
-                    val callIntent = Intent(this@SocketService, CallActivity::class.java)
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-                    callIntent.putExtra("offerArgs", offerArgs[0].toString())
-                    callIntent.putExtra("chatId", chatId)
-                    startActivity(callIntent)
-
-                }
-            }
-
-            val brintent = IntentFilter()
-            brintent.addAction("brActionFloatingServiceOnActivityResult")
-
-            @SuppressLint("UnspecifiedRegisterReceiverFlag")
-            if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
-                registerReceiver(brOnActivityResult, brintent, RECEIVER_NOT_EXPORTED)
-            else
-                registerReceiver(brOnActivityResult, brintent)
+            val callIntent = Intent(this@SocketService, CallActivity::class.java)
+            callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+            callIntent.putExtra("offerArgs", offerArgs[0].toString())
+            callIntent.putExtra("chatId", chatId)
+            startActivity(callIntent)
 
         }
 

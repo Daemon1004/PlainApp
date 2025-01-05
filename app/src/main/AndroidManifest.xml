@@ -25,9 +25,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ResponseCallActivity"
-            android:exported="false" />
-        <activity
             android:name=".CallActivity"
             android:exported="false"
             android:theme="@style/Theme.plainapp" />

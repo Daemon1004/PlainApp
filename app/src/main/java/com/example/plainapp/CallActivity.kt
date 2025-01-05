@@ -10,6 +10,9 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
+import com.example.plainapp.data.ChatViewModel
+import com.example.plainapp.data.User
 import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.ActivityCallBinding
 import com.example.plainapp.rtc.RTCClient
@@ -22,51 +25,54 @@ import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.SessionDescription
+import kotlin.properties.Delegates
 
 class CallActivity : AppCompatActivity() {
-
-
     lateinit var binding : ActivityCallBinding
-    private var userName:String?=null
-    private var rtcClient : RTCClient?=null
+    private var rtcClient : RTCClient ?= null
     private var isMute = false
     private var isCameraPause = false
     private val rtcAudioManager by lazy { RTCAudioManager.create(this) }
     private var isSpeakerMode = true
 
-
-
     var serviceLiveData: MutableLiveData<SocketService?> = MutableLiveData<SocketService?>()
 
     private val sConn = object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName, binder: IBinder)
-        {
-            serviceLiveData.value = (binder as SocketService.MyBinder).service
-
-            /*
-            if (serviceLiveData.value!!.userLiveData.value == null) {
-                startLoginActivity()
-            }
-
-            serviceLiveData.value!!.userLiveData.observe(this@MainActivity) { user ->
-                if (user == null) {
-                    startLoginActivity()
-                }
-            }
-
-             */
-
-        }
+        { serviceLiveData.value = (binder as SocketService.MyBinder).service }
         override fun onServiceDisconnected(className: ComponentName)
         { serviceLiveData.value = null }
     }
 
+    private var myUser: User ?= null
+    private var chatId by Delegates.notNull<Long>()
+    private var participant: User ?= null
 
+    private var isCaller by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCallBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        isCaller = intent.extras?.getString("offerArgs") == null
+        chatId = intent.extras?.getLong("chatId")!!
+
+        binding.apply {
+
+            if (isCaller) {
+
+                callLayout.visibility = View.VISIBLE
+                responseLayout.visibility = View.GONE
+
+            } else {
+
+                callLayout.visibility = View.GONE
+                responseLayout.visibility = View.VISIBLE
+
+            }
+
+        }
 
         serviceLiveData.observeOnce(this) { init() }
 
@@ -80,12 +86,16 @@ class CallActivity : AppCompatActivity() {
     }
 
     private fun init(){
-        val service = serviceLiveData.value!!
-        val myUser = service.userLiveData.value!!
-        val mSocket = service.mSocket
-        val chatId = intent.extras?.getLong("chatId")
 
-        userName = myUser.name
+        val service = serviceLiveData.value!!
+        val mSocket = service.mSocket
+        myUser = service.userLiveData.value
+
+        val chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        chatViewModel.readChat(chatId).observe(this) { chat ->
+            val participantId = if (chat.participant1 == myUser!!.id) chat.participant2 else chat.participant1
+            chatViewModel.readUser(participantId).observe(this) { participant }
+        }
 
         rtcClient = RTCClient(application, object : PeerConnectionObserver() {
             override fun onIceCandidate(p0: IceCandidate?) {
@@ -111,14 +121,10 @@ class CallActivity : AppCompatActivity() {
                 super.onConnectionChange(newState)
                 Log.d("debug", "call: onConnectionChange: $newState")
 
-                /*
-                if (newState == PeerConnection.PeerConnectionState.CONNECTED) {
-
-
-
-                }
-
-                 */
+                if (newState == PeerConnection.PeerConnectionState.CONNECTED)
+                    runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
+                else
+                    runOnUiThread { binding.remoteViewLoading.visibility = View.VISIBLE }
 
             }
 
@@ -128,22 +134,91 @@ class CallActivity : AppCompatActivity() {
             }
         })
 
+        mSocket.on("ice candidate") { iceCandidateArgs ->
+            Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
+            val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0].toString())
+            rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
+                Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
+        }
+
+        if (isCaller) {
+
+            rtcClient?.call { sdp, type ->
+
+                val json = JSONObject()
+                json.put("type", type)
+                json.put("sdp", sdp)
+
+                Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
+
+                mSocket.emit("offer", json.toString(), chatId.toString())
+
+            }
+
+            mSocket.once("answer") { answerArgs ->
+
+                Log.d("debug", "call: get answer")
+
+                val session = SessionDescription(
+                    SessionDescription.Type.ANSWER,
+                    JSONObject(answerArgs[0].toString()).get("sdp").toString()
+                )
+                rtcClient?.onRemoteSessionReceived(session)
+
+            }
+
+        } else binding.apply {
+
+            acceptButton.setOnClickListener {
+
+                Log.d("debug", "call: accept")
+
+                callLayout.visibility = View.VISIBLE
+                responseLayout.visibility = View.GONE
+
+                val offerArgs = intent.extras?.getString("offerArgs")
+
+                Log.d("debug", "call: offerArgs: $offerArgs")
+
+                val session = SessionDescription(
+                    SessionDescription.Type.OFFER,
+                    JSONObject(offerArgs!!).get("sdp").toString()
+                )
+
+                Log.d("debug", "call: session: ${session.type} ${session.description}")
+
+                rtcClient?.onRemoteSessionReceived(session)
+                rtcClient?.answer { sdp, type ->
+
+                    val json = JSONObject()
+                    json.put("sdp", sdp)
+                    json.put("type", type)
+
+                    Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
+
+                    mSocket.emit("answer", json.toString(), chatId.toString())
+
+                }
+
+            }
+
+            rejectButton.setOnClickListener {
+
+                Log.d("debug", "call: reject")
+
+                finish()
+
+            }
+
+        }
+
         rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
 
-        setWhoToCallLayoutGone()
-        setCallLayoutVisible()
         rtcClient?.initializeSurfaceView(binding.localView)
         rtcClient?.initializeSurfaceView(binding.remoteView)
         rtcClient?.startLocalVideo(binding.localView)
 
         binding.apply {
-            /*
-            callBtn.setOnClickListener {
-                socketRepository?.sendMessageToSocket("start_call", MessageModel(userName,targetUserNameEt.text.toString(),null))
-                target = targetUserNameEt.text.toString()
-            }
-
-             */
 
             switchCameraButton.setOnClickListener {
                 rtcClient?.switchCamera()
@@ -184,99 +259,13 @@ class CallActivity : AppCompatActivity() {
                 }
 
             }
+
             endCallButton.setOnClickListener {
                 finish()
             }
-        }
-
-        mSocket.on("ice candidate") { iceCandidateArgs ->
-            Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
-            val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0].toString())
-            rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
-                Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
-        }
-
-
-        val offerArgs = intent.extras?.getString("offerArgs")
-
-        if (offerArgs != null) {
-
-            Log.d("debug", "call: offerArgs: $offerArgs")
-
-            val session = SessionDescription(
-                SessionDescription.Type.OFFER,
-                JSONObject(offerArgs).get("sdp").toString()
-            )
-
-            Log.d("debug", "call: session: ${session.type} ${session.description}")
-
-            rtcClient?.onRemoteSessionReceived(session)
-            rtcClient?.answer { sdp, type ->
-
-                val json = JSONObject()
-                json.put("sdp", sdp)
-                json.put("type", type)
-
-                Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
-
-                mSocket.emit("answer", json.toString(), chatId.toString())
-
-            }
-
-            binding.remoteViewLoading.visibility = View.GONE
-
-        } else {
-
-            rtcClient?.call { sdp, type ->
-
-                val json = JSONObject()
-                json.put("type", type)
-                json.put("sdp", sdp)
-
-                Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
-
-                mSocket.emit("offer", json.toString(), chatId.toString())
-
-            }
-
-            mSocket.on("answer") { answerArgs ->
-
-                Log.d("debug", "call: get answer")
-
-                val session = SessionDescription(
-                    SessionDescription.Type.ANSWER,
-                    JSONObject(answerArgs[0].toString()).get("sdp").toString()
-                )
-                rtcClient?.onRemoteSessionReceived(session)
-
-                runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
-
-            }
 
         }
 
     }
 
-    private fun setIncomingCallLayoutGone(){
-        binding.incomingCallLayout.visibility = View.GONE
-    }
-    private fun setIncomingCallLayoutVisible() {
-        binding.incomingCallLayout.visibility = View.VISIBLE
-    }
-
-    private fun setCallLayoutGone() {
-        binding.callLayout.visibility = View.GONE
-    }
-
-    private fun setCallLayoutVisible() {
-        binding.callLayout.visibility = View.VISIBLE
-    }
-
-    private fun setWhoToCallLayoutGone() {
-        binding.whoToCallLayout.visibility = View.GONE
-    }
-
-    private fun setWhoToCallLayoutVisible() {
-        binding.whoToCallLayout.visibility = View.VISIBLE
-    }
 }

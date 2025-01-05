@@ -21,4 +21,11 @@
     <string name="write_biography">Write your biography…</string>
     <string name="empty_biography">Your biography is empty!</string>
     <string name="empty_phonenumber">Please, enter your phone number</string>
+    <string name="accept_call">Accept call</string>
+    <string name="reject_call">Reject call</string>
+    <string name="call_mic_button">Mic button</string>
+    <string name="call_video_button">Video button</string>
+    <string name="call_end_button">End call button</string>
+    <string name="call_orientation_button">Change orientation device button</string>
+    <string name="call_audio_button">Audio button</string>
 </resources>
