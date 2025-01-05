@@ -458,6 +458,9 @@ class SocketService : LifecycleService() {
 
     override fun onDestroy() {
 
+        bindCount = 0
+        sendOnline()
+
         mSocket.disconnect()
         scope.cancel()
 
