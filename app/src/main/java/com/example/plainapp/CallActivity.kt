@@ -208,14 +208,13 @@ class CallActivity : AppCompatActivity() {
             rtcClient?.onRemoteSessionReceived(session)
             rtcClient?.answer { sdp, type ->
 
-                val hashMap = hashMapOf(
-                    "sdp" to sdp,
-                    "type" to type
-                )
+                val json = JSONObject()
+                json.put("sdp", sdp)
+                json.put("type", type)
 
-                Log.d("debug", "call: emit answer - hashMap = $hashMap, chatId = $chatId")
+                Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
 
-                mSocket.emit("answer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
+                mSocket.emit("answer", json.toString(), chatId.toString())
 
             }
 
@@ -225,14 +224,13 @@ class CallActivity : AppCompatActivity() {
 
             rtcClient?.call { sdp, type ->
 
-                val hashMap = hashMapOf(
-                    "sdp" to sdp,
-                    "type" to type
-                )
+                val json = JSONObject()
+                json.put("sdp", sdp)
+                json.put("type", type)
 
-                Log.d("debug", "call: emit offer - hashMap = $hashMap, chatId = $chatId")
+                Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
 
-                mSocket.emit("offer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
+                mSocket.emit("offer", json.toString(), chatId.toString())
 
             }
 
