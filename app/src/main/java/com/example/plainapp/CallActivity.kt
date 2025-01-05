@@ -15,10 +15,10 @@ import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.User
 import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.ActivityCallBinding
-import com.example.plainapp.rtc.RTCClient
-import com.example.plainapp.rtc.IceCandidateModel
 import com.example.plainapp.rtc.PeerConnectionObserver
 import com.example.plainapp.rtc.RTCAudioManager
+import com.example.plainapp.rtc.RTCClient
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import org.webrtc.IceCandidate
@@ -106,12 +106,7 @@ class CallActivity : AppCompatActivity() {
             override fun onIceCandidate(p0: IceCandidate?) {
                 super.onIceCandidate(p0)
                 rtcClient?.addIceCandidate(p0)
-                val candidateMap = hashMapOf(
-                    "sdpMid" to p0?.sdpMid,
-                    "sdpMLineIndex" to p0?.sdpMLineIndex,
-                    "sdpCandidate" to p0?.sdp
-                )
-                val jsonCandidate = (candidateMap as Map<*, *>?)?.let { JSONObject(it) }
+                val jsonCandidate = Json.encodeToString(p0)
                 Log.d("debug", "call: emit ice candidate $jsonCandidate")
                 mSocket.emit("ice candidate", jsonCandidate, chatId)
             }
@@ -171,9 +166,8 @@ class CallActivity : AppCompatActivity() {
 
         mSocket.on("ice candidate") { iceCandidateArgs ->
             Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
-            val receivingCandidate = Json.decodeFromString<IceCandidateModel>(iceCandidateArgs[0].toString())
-            rtcClient?.addIceCandidate(IceCandidate(receivingCandidate.sdpMid,
-                Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
+            val candidate = Json.decodeFromString<IceCandidate>(iceCandidateArgs[0].toString())
+            rtcClient?.addIceCandidate(candidate)
         }
 
         if (!isCaller) {
