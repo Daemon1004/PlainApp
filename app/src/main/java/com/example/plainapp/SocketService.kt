@@ -2,7 +2,6 @@ package com.example.plainapp
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
