@@ -89,12 +89,13 @@ dependencies {
 
     implementation(libs.mesibo.webrtc)
     implementation(libs.java.websocket)
-    implementation(libs.gson)
     implementation(libs.permissionx)
 
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
+
+    implementation(libs.gson)
 
 }

@@ -18,8 +18,7 @@ import com.example.plainapp.databinding.ActivityCallBinding
 import com.example.plainapp.rtc.PeerConnectionObserver
 import com.example.plainapp.rtc.RTCAudioManager
 import com.example.plainapp.rtc.RTCClient
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.google.gson.Gson
 import org.json.JSONObject
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
@@ -106,7 +105,7 @@ class CallActivity : AppCompatActivity() {
             override fun onIceCandidate(p0: IceCandidate?) {
                 super.onIceCandidate(p0)
                 rtcClient?.addIceCandidate(p0)
-                val jsonCandidate = Json.encodeToString(p0)
+                val jsonCandidate = Gson().toJson(p0)
                 Log.d("debug", "call: emit ice candidate $jsonCandidate")
                 mSocket.emit("ice candidate", jsonCandidate, chatId)
             }
@@ -166,7 +165,7 @@ class CallActivity : AppCompatActivity() {
 
         mSocket.on("ice candidate") { iceCandidateArgs ->
             Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
-            val candidate = Json.decodeFromString<IceCandidate>(iceCandidateArgs[0].toString())
+            val candidate = Gson().fromJson(iceCandidateArgs[0].toString(), IceCandidate::class.java)
             rtcClient?.addIceCandidate(candidate)
         }
 
