@@ -67,6 +67,8 @@ class CallActivity : AppCompatActivity() {
 
             } else {
 
+                Log.d("debug", "call: offerArgs: ${intent.extras?.getString("offerArgs")}")
+
                 callLayout.visibility = View.GONE
                 responseLayout.visibility = View.VISIBLE
 
@@ -163,6 +165,7 @@ class CallActivity : AppCompatActivity() {
                     SessionDescription.Type.ANSWER,
                     JSONObject(answerArgs[0].toString()).get("sdp").toString()
                 )
+
                 rtcClient?.onRemoteSessionReceived(session)
 
             }
@@ -177,8 +180,6 @@ class CallActivity : AppCompatActivity() {
                 responseLayout.visibility = View.GONE
 
                 val offerArgs = intent.extras?.getString("offerArgs")
-
-                Log.d("debug", "call: offerArgs: $offerArgs")
 
                 val session = SessionDescription(
                     SessionDescription.Type.OFFER,
