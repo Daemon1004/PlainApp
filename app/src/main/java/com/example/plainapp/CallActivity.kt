@@ -55,6 +55,7 @@ class CallActivity : AppCompatActivity() {
         binding = ActivityCallBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.chatName.text = ""
         isCaller = intent.extras?.getString("offerArgs") == null
         chatId = intent.extras?.getLong("chatId")!!
 
@@ -96,7 +97,9 @@ class CallActivity : AppCompatActivity() {
         val chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
         chatViewModel.readChat(chatId).observe(this) { chat ->
             val participantId = if (chat.participant1 == myUser!!.id) chat.participant2 else chat.participant1
-            chatViewModel.readUser(participantId).observe(this) { participant }
+            chatViewModel.readUser(participantId).observe(this) { participant
+                binding.chatName.text = participant?.name ?: "?"
+            }
         }
 
         rtcClient = RTCClient(application, object : PeerConnectionObserver() {
