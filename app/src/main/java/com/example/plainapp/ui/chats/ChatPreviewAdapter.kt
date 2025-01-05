@@ -75,6 +75,10 @@ class ChatPreviewAdapter(
 
         }
 
+        chatViewModel.readUserOnline(participant).observe(viewLifecycleOwner) { online ->
+            binding.onlineCircle.visibility = if (online) View.VISIBLE else View.GONE
+        }
+
         binding.root.setOnClickListener(this)
 
         holder.itemView.tag = chat.id

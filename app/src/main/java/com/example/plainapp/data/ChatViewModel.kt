@@ -7,12 +7,14 @@ import androidx.lifecycle.LiveData
 class ChatViewModel(application: Application): AndroidViewModel(application) {
 
     val readAllChats: LiveData<List<Chat>>
+    val readAllUsers: LiveData<List<User>>
     private val repository: ChatRepository
 
     init {
         val chatDao = LocalDatabase.getDatabase(application).chatDao()
         repository = ChatRepository(chatDao)
         readAllChats = repository.readAllChats
+        readAllUsers = repository.readAllUsers
     }
 
     fun readAllMessages(chat: Chat): LiveData<List<Message>> { return repository.readAllMessages(chat) }
@@ -21,5 +23,8 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     fun readChat(id: Long): LiveData<Chat> { return repository.readChat(id) }
 
     fun readUser(id: Long): LiveData<User> { return repository.readUser(id) }
+
+    fun readUserOnline(userId: Long): LiveData<Boolean> { return repository.readUserOnline(userId) }
+    fun readUserTyping(userId: Long): LiveData<Boolean> { return repository.readUserTyping(userId) }
 
 }

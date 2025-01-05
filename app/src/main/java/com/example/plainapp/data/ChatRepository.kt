@@ -11,6 +11,7 @@ class ChatRepository(private val chatDao: ChatDao) {
     fun readChat(id: Long): LiveData<Chat> { return chatDao.readChat(id) }
     fun readUser(id: Long): LiveData<User> { return chatDao.readUser(id) }
 
+    val readAllUsers: LiveData<List<User>> = chatDao.readAllUsers()
     fun readAllMessages(chat: Chat): LiveData<List<Message>> { return chatDao.readAllChatMessages(chat.id) }
     fun readLastChatMessage(chatId: Long): LiveData<Message?> { return chatDao.readLastChatMessage(chatId) }
 
@@ -24,5 +25,10 @@ class ChatRepository(private val chatDao: ChatDao) {
 
     suspend fun addUser(user: User) { chatDao.addUser(user) }
     suspend fun addUsers(users: List<User>) { chatDao.addUsers(users) }
+
+    suspend fun setUserOnline(userOnline: UserOnline) { chatDao.setUserOnline(userOnline) }
+    fun readUserOnline(userId: Long): LiveData<Boolean> { return chatDao.readUserOnline(userId) }
+    suspend fun setUserTyping(userTyping: UserTyping) { chatDao.setUserTyping(userTyping) }
+    fun readUserTyping(userId: Long): LiveData<Boolean> { return chatDao.readUserTyping(userId) }
 
 }

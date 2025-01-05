@@ -15,8 +15,7 @@ import kotlinx.serialization.Serializable
             childColumns = ["participant1"]),
         ForeignKey(entity = User::class,
             parentColumns = ["id"],
-            childColumns = ["participant2"])],
-    indices = [Index(value = ["participant1", "participant2"], unique = true)])
+            childColumns = ["participant2"])])
 data class Chat (
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

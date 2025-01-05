@@ -68,4 +68,19 @@ interface ChatDao {
     @Query("SELECT * FROM user_table WHERE user_table.id = :userId")
     fun readUser(userId: Long): LiveData<User>
 
+    @Query("SELECT * FROM user_table")
+    fun readAllUsers(): LiveData<List<User>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUserOnline(userOnline: UserOnline)
+
+    @Query("SELECT isOnline FROM useronline_table WHERE useronline_table.userId = :userId")
+    fun readUserOnline(userId: Long): LiveData<Boolean>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUserTyping(userTyping: UserTyping)
+
+    @Query("SELECT isTyping FROM usertyping_table WHERE usertyping_table.userId = :userId")
+    fun readUserTyping(userId: Long): LiveData<Boolean>
+
 }

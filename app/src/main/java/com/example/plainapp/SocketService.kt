@@ -20,7 +20,9 @@ import com.example.plainapp.data.ChatRepository
 import com.example.plainapp.data.LocalDatabase
 import com.example.plainapp.data.Message
 import com.example.plainapp.data.User
+import com.example.plainapp.data.UserOnline
 import com.example.plainapp.data.observeOnce
+import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.coroutines.CoroutineScope
@@ -316,6 +318,8 @@ class SocketService : LifecycleService() {
                     repository.readAllChats.observeOnce(this@SocketService) { chats -> scope.launch { updateNewMessages(chats) } }
                 } }
 
+                if (isBind) { sendOnline() }
+
             }
 
         }
@@ -389,6 +393,7 @@ class SocketService : LifecycleService() {
 
         }
 
+        //OFFER LISTENER (CALLING WEBRTC)
         mSocket.on("offer") { offerArgs ->
 
             Log.d("debug", "call: get offer")
@@ -403,9 +408,45 @@ class SocketService : LifecycleService() {
 
         }
 
+        //ONLINE USERS LISTENER
+        mSocket.on("isOnline") { isOnlineArgs ->
+
+            scope.launch { repository.setUserOnline(UserOnline(isOnlineArgs[0].toString().toLong(), true)) }
+
+        }
+        mSocket.on("isOffline") { isOfflineArgs ->
+
+            scope.launch { repository.setUserOnline(UserOnline(isOfflineArgs[0].toString().toLong(), false)) }
+
+        }
+
         mSocket.connect()
 
         Log.d("debug", "Service onCreate()")
+
+    }
+
+    private fun sendOnline() {
+
+        if (mSocket.connected()) return
+
+        if (isBind) {
+
+            scope.launch { withContext(Dispatchers.Main) {
+                repository.readAllUsers.observeOnce(this@SocketService) { users ->
+                    mSocket.emit("isOnline", Gson().toJson(users))
+                }
+            } }
+
+        } else {
+
+            scope.launch { withContext(Dispatchers.Main) {
+                repository.readAllUsers.observeOnce(this@SocketService) { users ->
+                    mSocket.emit("isOffline", Gson().toJson(users))
+                }
+            } }
+
+        }
 
     }
 
@@ -420,10 +461,20 @@ class SocketService : LifecycleService() {
     }
 
     private val binder: Binder = MyBinder()
+    private var bindCount: Int = 0
+    private val isBind get() = bindCount > 0
 
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
+        bindCount++
+        if (bindCount == 1) sendOnline()
         return binder
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        bindCount--
+        if (bindCount == 0) sendOnline()
+        return super.onUnbind(intent)
     }
 
     inner class MyBinder : Binder() {
