@@ -62,7 +62,7 @@ class RTCClient(
             )
             .setVideoDecoderFactory(DefaultVideoDecoderFactory(eglContext.eglBaseContext))
             .setOptions(PeerConnectionFactory.Options().apply {
-                disableEncryption = false
+                disableEncryption = true
                 disableNetworkMonitor = true
             }).createPeerConnectionFactory()
     }
