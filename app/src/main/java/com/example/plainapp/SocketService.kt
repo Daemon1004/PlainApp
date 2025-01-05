@@ -411,10 +411,14 @@ class SocketService : LifecycleService() {
         //ONLINE USERS LISTENER
         mSocket.on("isOnline") { isOnlineArgs ->
 
+            Log.d("debug", "isOnline $isOnlineArgs")
+
             scope.launch { repository.setUserOnline(UserOnline(isOnlineArgs[0].toString().toLong(), true)) }
 
         }
         mSocket.on("isOffline") { isOfflineArgs ->
+
+            Log.d("debug", "isOffline $isOfflineArgs")
 
             scope.launch { repository.setUserOnline(UserOnline(isOfflineArgs[0].toString().toLong(), false)) }
 
@@ -428,12 +432,13 @@ class SocketService : LifecycleService() {
 
     private fun sendOnline() {
 
-        if (mSocket.connected()) return
+        if (!mSocket.connected()) return
 
         if (isBind) {
 
             scope.launch { withContext(Dispatchers.Main) {
                 repository.readAllUsers.observeOnce(this@SocketService) { users ->
+                    Log.d("debug", "send isOnline")
                     mSocket.emit("isOnline", Gson().toJson(users))
                 }
             } }
@@ -442,6 +447,7 @@ class SocketService : LifecycleService() {
 
             scope.launch { withContext(Dispatchers.Main) {
                 repository.readAllUsers.observeOnce(this@SocketService) { users ->
+                    Log.d("debug", "send isOffline")
                     mSocket.emit("isOffline", Gson().toJson(users))
                 }
             } }
