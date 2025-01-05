@@ -196,14 +196,14 @@ class CallActivity : AppCompatActivity() {
 
         if (offerArgs != null) {
 
-            Log.d("debug", "offerArgs: $offerArgs")
+            Log.d("debug", "call: offerArgs: $offerArgs")
 
             val session = SessionDescription(
                 SessionDescription.Type.OFFER,
-                offerArgs[0].toString()
+                JSONObject(offerArgs).get("sdp").toString()
             )
 
-            Log.d("debug", "session: ${session.description}")
+            Log.d("debug", "call: session: ${session.type} ${session.description}")
 
             rtcClient?.onRemoteSessionReceived(session)
             rtcClient?.answer { sdp, type ->
@@ -225,8 +225,8 @@ class CallActivity : AppCompatActivity() {
             rtcClient?.call { sdp, type ->
 
                 val json = JSONObject()
-                json.put("sdp", sdp)
                 json.put("type", type)
+                json.put("sdp", sdp)
 
                 Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
 
@@ -240,7 +240,7 @@ class CallActivity : AppCompatActivity() {
 
                 val session = SessionDescription(
                     SessionDescription.Type.ANSWER,
-                    answerArgs[0].toString()
+                    JSONObject(answerArgs[0].toString()).get("sdp").toString()
                 )
                 rtcClient?.onRemoteSessionReceived(session)
 
