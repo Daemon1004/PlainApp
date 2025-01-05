@@ -121,6 +121,11 @@ class CallActivity : AppCompatActivity() {
                  */
 
             }
+
+            override fun onRenegotiationNeeded() {
+                super.onRenegotiationNeeded()
+                Log.d("debug", "call: onRenegotiationNeeded")
+            }
         })
 
         rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
