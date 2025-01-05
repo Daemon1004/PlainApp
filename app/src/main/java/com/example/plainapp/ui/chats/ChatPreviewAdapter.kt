@@ -76,7 +76,10 @@ class ChatPreviewAdapter(
         }
 
         chatViewModel.readUserOnline(participant).observe(viewLifecycleOwner) { online ->
-            binding.onlineCircle.visibility = if (online) View.VISIBLE else View.GONE
+            if (online != null)
+                binding.onlineCircle.visibility = if (online) View.VISIBLE else View.GONE
+            else
+                binding.onlineCircle.visibility = View.GONE
         }
 
         binding.root.setOnClickListener(this)
