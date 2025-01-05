@@ -35,7 +35,7 @@ class ChatActivity : AppCompatActivity() {
 
             service = (binder as SocketService.MyBinder).service
             myUser = service!!.userLiveData.value
-            service!!.userLiveData.observe(this@ChatActivity) { user -> myUser = user }
+            if (myUser == null) service!!.userLiveData.observeOnce(this@ChatActivity) { user -> myUser = user }
 
         }
         override fun onServiceDisconnected(className: ComponentName)
