@@ -28,4 +28,5 @@
     <string name="call_end_button">Закончить звонок</string>
     <string name="call_orientation_button">Изменить ориентацию</string>
     <string name="call_audio_button">Звук</string>
+    <string name="lost_connection">Потеряно соединение с сервером. Переподключение...</string>
 </resources>

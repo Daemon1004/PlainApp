@@ -273,7 +273,7 @@ class SocketService : LifecycleService() {
 
     }
 
-    private var connectedStatus = MutableLiveData(false)
+    var connectedStatus = MutableLiveData(false)
 
     private val userFileName = "user.json"
 

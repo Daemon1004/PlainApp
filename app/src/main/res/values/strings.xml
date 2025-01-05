@@ -28,4 +28,5 @@
     <string name="call_end_button">End call button</string>
     <string name="call_orientation_button">Change orientation device button</string>
     <string name="call_audio_button">Audio button</string>
+    <string name="lost_connection">Lost connection server. Trying to reconnect...</string>
 </resources>

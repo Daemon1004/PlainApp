@@ -8,6 +8,7 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,21 +27,28 @@ class MainActivity : AppCompatActivity() {
     private val sConn = object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName, binder: IBinder)
         {
-            serviceLiveData.value = (binder as SocketService.MyBinder).service
+            val service = (binder as SocketService.MyBinder).service
+            serviceLiveData.value = service
 
-            if (serviceLiveData.value!!.userLiveData.value == null) {
-                startLoginActivity()
-            }
+            val connectionStatus = service.connectedStatus
 
-            serviceLiveData.value!!.userLiveData.observe(this@MainActivity) { user ->
-                if (user == null) {
-                    startLoginActivity()
-                }
-            }
+            if (service.userLiveData.value == null) { startLoginActivity() }
+            service.userLiveData.observe(this@MainActivity)
+            { user -> if (user == null) { startLoginActivity() } }
+
+            connectionStatus.value?.let { showConnectionProblem(it) }
+            connectionStatus.observe(this@MainActivity)
+            { connected -> showConnectionProblem(connected) }
 
         }
         override fun onServiceDisconnected(className: ComponentName)
         { serviceLiveData.value = null }
+    }
+
+    private fun showConnectionProblem(connected: Boolean) {
+
+        binding.connectionProblemsLayout.visibility = if (connected) View.GONE else View.VISIBLE
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +56,8 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        showConnectionProblem(false)
 
         startService(Intent(this, SocketService::class.java))
         bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
