@@ -24,6 +24,7 @@ import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
+import org.webrtc.PeerConnection
 import org.webrtc.SessionDescription
 
 class CallActivity : AppCompatActivity(), NewMessageInterface {
@@ -107,7 +108,21 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
             override fun onAddStream(p0: MediaStream?) {
                 super.onAddStream(p0)
                 p0?.videoTracks?.get(0)?.addSink(binding.remoteView)
-                Log.d("debug", "onAddStream: $p0")
+                Log.d("debug", "call: onAddStream: $p0")
+            }
+
+            override fun onConnectionChange(newState: PeerConnection.PeerConnectionState?) {
+                super.onConnectionChange(newState)
+                Log.d("debug", "call: onConnectionChange: $newState")
+
+                /*
+                if (newState == PeerConnection.PeerConnectionState.CONNECTED) {
+
+
+
+                }
+
+                 */
 
             }
         })
@@ -180,75 +195,66 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 Math.toIntExact(receivingCandidate.sdpMLineIndex.toLong()), receivingCandidate.sdpCandidate))
         }
 
-        val timer = object: CountDownTimer(6000, 100) {
-            override fun onTick(millisUntilFinished: Long) {}
-            override fun onFinish() {
 
+        val offerArgs = intent.extras?.getString("offerArgs")
 
+        if (offerArgs != null) {
 
-                val offerArgs = intent.extras?.getString("offerArgs")
+            Log.d("debug", "offerArgs: $offerArgs")
 
-                if (offerArgs != null) {
+            val session = SessionDescription(
+                SessionDescription.Type.OFFER,
+                JSONObject(offerArgs).get("sdp") as String
+            )
 
-                    Log.d("debug", "offerArgs: $offerArgs")
+            Log.d("debug", "session: ${session.description}")
 
-                    val session = SessionDescription(
-                        SessionDescription.Type.OFFER,
-                        JSONObject(offerArgs).get("sdp") as String
-                    )
+            rtcClient?.onRemoteSessionReceived(session)
+            rtcClient?.answer { sdp, type ->
 
-                    Log.d("debug", "session: ${session.description}")
+                val hashMap = hashMapOf(
+                    "sdp" to sdp,
+                    "type" to type
+                )
 
-                    rtcClient?.onRemoteSessionReceived(session)
-                    rtcClient?.answer { sdp, type ->
+                Log.d("debug", "call: emit answer - hashMap = $hashMap, chatId = $chatId")
 
-                        val hashMap = hashMapOf(
-                            "sdp" to sdp,
-                            "type" to type
-                        )
-
-                        Log.d("debug", "call: emit answer - hashMap = $hashMap, chatId = $chatId")
-
-                        mSocket.emit("answer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
-
-                    }
-
-                    binding.remoteViewLoading.visibility = View.GONE
-
-                } else {
-
-                    rtcClient?.call { sdp, type ->
-
-                        val hashMap = hashMapOf(
-                            "sdp" to sdp,
-                            "type" to type
-                        )
-
-                        Log.d("debug", "call: emit offer - hashMap = $hashMap, chatId = $chatId")
-
-                        mSocket.emit("offer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
-
-                    }
-
-                    mSocket.on("answer") { answerArgs ->
-
-                        Log.d("debug", "call: get answer")
-
-                        val session = SessionDescription(
-                            SessionDescription.Type.ANSWER,
-                            JSONObject(answerArgs[0] as String).get("sdp") as String
-                        )
-                        rtcClient?.onRemoteSessionReceived(session)
-
-                        runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
-
-                    }
-
-                }
+                mSocket.emit("answer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
 
             }
+
+            binding.remoteViewLoading.visibility = View.GONE
+
+        } else {
+
+            rtcClient?.call { sdp, type ->
+
+                val hashMap = hashMapOf(
+                    "sdp" to sdp,
+                    "type" to type
+                )
+
+                Log.d("debug", "call: emit offer - hashMap = $hashMap, chatId = $chatId")
+
+                mSocket.emit("offer", (hashMap as Map<*, *>?)?.let { JSONObject(it).toString() }, chatId.toString())
+
+            }
+
+            mSocket.on("answer") { answerArgs ->
+
+                Log.d("debug", "call: get answer")
+
+                val session = SessionDescription(
+                    SessionDescription.Type.ANSWER,
+                    JSONObject(answerArgs[0] as String).get("sdp") as String
+                )
+                rtcClient?.onRemoteSessionReceived(session)
+
+                runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
+
+            }
+
         }
-        timer.start()
 
     }
 
