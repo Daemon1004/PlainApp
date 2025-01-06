@@ -2,7 +2,6 @@ package com.example.plainapp.ui.chats
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,23 +31,6 @@ class ChatPreviewAdapter(
     class ChatPreviewViewHolder(val binding: ChatPreviewViewBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount(): Int = data.size
-
-    private var timer: CountDownTimer ?= null
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        timer = object : CountDownTimer(60000, 1000) {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onTick(millisUntilFinished: Long) { notifyDataSetChanged() }
-            override fun onFinish() { start() }
-        }
-        (timer as CountDownTimer).start()
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        if (timer != null) (timer as CountDownTimer).cancel()
-        super.onDetachedFromRecyclerView(recyclerView)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
         val inflater = LayoutInflater.from(parent.context)

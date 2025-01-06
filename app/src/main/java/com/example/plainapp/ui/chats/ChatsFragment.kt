@@ -1,6 +1,8 @@
 package com.example.plainapp.ui.chats
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +55,27 @@ class ChatsFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private var timer: CountDownTimer ?= null
+
+    override fun onStart() {
+        super.onStart()
+
+        timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onTick(millisUntilFinished: Long) { adapter.notifyDataSetChanged() }
+            override fun onFinish() { start() }
+        }
+        (timer as CountDownTimer).start()
+
+    }
+
+    override fun onStop() {
+
+        if (timer != null) (timer as CountDownTimer).cancel()
+
+        super.onStop()
     }
 
     private fun setService(service: SocketService?) {
