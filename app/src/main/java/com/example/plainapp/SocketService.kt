@@ -433,6 +433,8 @@ class SocketService : LifecycleService() {
 
     }
 
+    fun markAsRead(chatId: Long) { mSocket.emit("markAsRead", chatId) }
+
     private val onlineUsers: MutableList<Long> = emptyList<Long>().toMutableList()
 
     fun isUserOnline(userId: Long): Boolean { return onlineUsers.contains(userId) }

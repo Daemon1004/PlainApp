@@ -62,9 +62,11 @@ class ChatActivity : AppCompatActivity() {
             insets
         }
 
-        bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
-
         val chatId = intent.extras?.getLong("chatId") ?: return
+
+        serviceLiveData.observeOnce(this) { service -> service?.markAsRead(chatId) }
+
+        bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
 
         val manager = LinearLayoutManager(this)
         adapter = MessageAdapter(this)
