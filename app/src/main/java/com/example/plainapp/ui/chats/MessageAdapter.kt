@@ -6,14 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.example.plainapp.R
+import com.example.plainapp.copyToClipboard
 import com.example.plainapp.data.Message
 import com.example.plainapp.databinding.MessageViewBinding
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-
 
 class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(), View.OnClickListener {
 
@@ -73,9 +75,32 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
 
     override fun onClick(view: View) {
 
-        //val message = view.tag as Message
+        val message = view.tag as Message
 
+        if (message.createdBy != chatActivity.myUser!!.id) return
 
+        val popupMenu = PopupMenu(chatActivity, (view as MessageView).findViewById(R.id.messagePlate))
+        popupMenu.inflate(R.menu.popup_message_menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.menu1 -> {
+                    copyToClipboard(chatActivity, message.body)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu2 -> {
+                    TODO("edit message")
+                    @Suppress("UNREACHABLE_CODE")
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu3 -> {
+                    TODO("delete message")
+                    @Suppress("UNREACHABLE_CODE")
+                    return@setOnMenuItemClickListener true
+                }
+                else -> return@setOnMenuItemClickListener false
+            }
+        }
+        popupMenu.show()
 
     }
 

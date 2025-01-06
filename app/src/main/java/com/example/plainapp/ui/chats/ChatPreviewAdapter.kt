@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.plainapp.ui.MainActivity
 import com.example.plainapp.data.Chat
 import com.example.plainapp.data.ChatViewModel
-import com.example.plainapp.data.observeOnce
+import com.example.plainapp.observeOnce
 import com.example.plainapp.databinding.ChatPreviewViewBinding
 import java.time.Instant
 import java.time.LocalDateTime

@@ -29,4 +29,8 @@
     <string name="call_orientation_button">Изменить ориентацию</string>
     <string name="call_audio_button">Звук</string>
     <string name="lost_connection">Потеряно соединение с сервером. Переподключение...</string>
+    <string name="copy">Скопировать</string>
+    <string name="edit">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
 </resources>

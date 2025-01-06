@@ -15,7 +15,7 @@ import com.example.plainapp.R
 import com.example.plainapp.SocketService
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.User
-import com.example.plainapp.data.observeOnce
+import com.example.plainapp.observeOnce
 import com.example.plainapp.databinding.ActivityCallBinding
 import com.example.plainapp.rtc.PeerConnectionObserver
 import com.example.plainapp.rtc.RTCAudioManager
