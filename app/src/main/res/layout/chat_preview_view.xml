@@ -67,7 +67,6 @@
                 android:paddingEnd="15dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:text="00:00"
                 android:textSize="15sp"
                 tools:ignore="HardcodedText" />
 
@@ -90,7 +89,6 @@
                 android:maxWidth="255dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:text="Last message"
                 android:maxLines="1"
                 android:textSize="16sp"
                 tools:ignore="HardcodedText" />
@@ -103,6 +101,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="5dp"
                 app:srcCompat="@drawable/ic_done_black_24dp"
+                android:visibility="gone"
                 app:tint="?attr/colorPrimary"
                 tools:ignore="ContentDescription" />
 

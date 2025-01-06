@@ -56,10 +56,9 @@ class ChatPreviewAdapter(
             binding.name.text = user.name
         }
 
-        binding.lastMessage.text = ""
-        binding.lastTime.text = ""
-
-        binding.loadImg.visibility = View.INVISIBLE
+        //binding.lastMessage.text = ""
+        //binding.lastTime.text = ""
+        //binding.loadImg.visibility = View.GONE
 
         chatViewModel.readLastChatMessage(chat.id).observe(viewLifecycleOwner) { message ->
 
@@ -70,7 +69,13 @@ class ChatPreviewAdapter(
 
                 binding.lastMessage.text = message.body
                 binding.lastTime.text = time
-                binding.loadImg.visibility = if (message.createdBy == myUser.id) View.VISIBLE else View.INVISIBLE
+                binding.loadImg.visibility = if (message.createdBy == myUser.id) View.VISIBLE else View.GONE
+
+            } else {
+
+                binding.lastMessage.text = ""
+                binding.lastTime.text = ""
+                binding.loadImg.visibility = View.GONE
 
             }
 
