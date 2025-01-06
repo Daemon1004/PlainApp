@@ -211,7 +211,7 @@ class CallActivity : AppCompatActivity() {
                 super.onRenegotiationNeeded()
                 Log.d("debug", "call: onRenegotiationNeeded")
 
-                //if (isCaller) { call() }
+                if (isCaller) { call() }
 
             }
         })
@@ -242,7 +242,7 @@ class CallActivity : AppCompatActivity() {
                 }
 
             }
-        } else { call() }
+        }
 
         rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
 
