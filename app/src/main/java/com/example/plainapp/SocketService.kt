@@ -20,7 +20,6 @@ import com.example.plainapp.data.ChatRepository
 import com.example.plainapp.data.LocalDatabase
 import com.example.plainapp.data.Message
 import com.example.plainapp.data.User
-import com.example.plainapp.data.UserOnline
 import com.example.plainapp.data.observeOnce
 import com.google.gson.Gson
 import io.socket.client.IO
@@ -413,14 +412,16 @@ class SocketService : LifecycleService() {
 
             Log.d("debug", "isOnline $isOnlineArgs")
 
-            scope.launch { repository.setUserOnline(UserOnline(isOnlineArgs[0].toString().toLong(), true)) }
+            val userId = isOnlineArgs[0].toString().toLong()
+            if (!onlineUsers.contains(userId)) onlineUsers += userId
 
         }
         mSocket.on("isOffline") { isOfflineArgs ->
 
             Log.d("debug", "isOffline $isOfflineArgs")
 
-            scope.launch { repository.setUserOnline(UserOnline(isOfflineArgs[0].toString().toLong(), false)) }
+            val userId = isOfflineArgs[0].toString().toLong()
+            if (onlineUsers.contains(userId)) onlineUsers.remove(userId)
 
         }
 
@@ -429,6 +430,10 @@ class SocketService : LifecycleService() {
         Log.d("debug", "Service onCreate()")
 
     }
+
+    private val onlineUsers: MutableList<Long> = emptyList<Long>().toMutableList()
+
+    fun isUserOnline(userId: Long): Boolean { return onlineUsers.contains(userId) }
 
     private fun sendOnline() {
 

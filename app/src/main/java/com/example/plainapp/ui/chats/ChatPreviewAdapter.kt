@@ -2,6 +2,7 @@ package com.example.plainapp.ui.chats
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,23 @@ class ChatPreviewAdapter(
 
     override fun getItemCount(): Int = data.size
 
+    private var timer: CountDownTimer ?= null
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        timer = object : CountDownTimer(60000, 1000) {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onTick(millisUntilFinished: Long) { notifyDataSetChanged() }
+            override fun onFinish() { start() }
+        }
+        (timer as CountDownTimer).start()
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        if (timer != null) (timer as CountDownTimer).cancel()
+        super.onDetachedFromRecyclerView(recyclerView)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatPreviewViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ChatPreviewViewBinding.inflate(inflater, parent, false)
@@ -49,7 +67,8 @@ class ChatPreviewAdapter(
         Log.d("debug", "ChatPreviewAdapter service ${mainActivity.serviceLiveData}")
         Log.d("debug", "ChatPreviewAdapter myUser ${mainActivity.serviceLiveData.value?.userLiveData}")
 
-        val myUser = mainActivity.serviceLiveData.value!!.userLiveData.value!!
+        val service = mainActivity.serviceLiveData.value!!
+        val myUser = service.userLiveData.value!!
         val participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
         chatViewModel.readUser(participant).observeOnce(viewLifecycleOwner) { user ->
             binding.name.text = user.name
@@ -75,12 +94,7 @@ class ChatPreviewAdapter(
 
         }
 
-        chatViewModel.readUserOnline(participant).observe(viewLifecycleOwner) { online ->
-            if (online != null)
-                binding.onlineCircle.visibility = if (online) View.VISIBLE else View.GONE
-            else
-                binding.onlineCircle.visibility = View.GONE
-        }
+        binding.onlineCircle.visibility = if (service.isUserOnline(participant)) View.VISIBLE else View.GONE
 
         binding.root.setOnClickListener(this)
 

@@ -26,9 +26,4 @@ class ChatRepository(private val chatDao: ChatDao) {
     suspend fun addUser(user: User) { chatDao.addUser(user) }
     suspend fun addUsers(users: List<User>) { chatDao.addUsers(users) }
 
-    suspend fun setUserOnline(userOnline: UserOnline) { chatDao.setUserOnline(userOnline) }
-    fun readUserOnline(userId: Long): LiveData<Boolean> { return chatDao.readUserOnline(userId) }
-    suspend fun setUserTyping(userTyping: UserTyping) { chatDao.setUserTyping(userTyping) }
-    fun readUserTyping(userId: Long): LiveData<Boolean> { return chatDao.readUserTyping(userId) }
-
 }

@@ -24,7 +24,4 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
 
     fun readUser(id: Long): LiveData<User> { return repository.readUser(id) }
 
-    fun readUserOnline(userId: Long): LiveData<Boolean> { return repository.readUserOnline(userId) }
-    fun readUserTyping(userId: Long): LiveData<Boolean> { return repository.readUserTyping(userId) }
-
 }

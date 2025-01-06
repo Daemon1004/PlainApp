@@ -8,8 +8,6 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         User::class,
-        UserOnline::class,
-        UserTyping::class,
         Chat::class,
         ChatMessage::class,
         Message::class
