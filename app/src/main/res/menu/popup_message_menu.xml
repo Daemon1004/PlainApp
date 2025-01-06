@@ -6,14 +6,4 @@
         android:icon="@drawable/copy_icon"
         android:title="@string/copy"/>
 
-    <item
-        android:id="@+id/menu2"
-        android:icon="@drawable/edit_icon"
-        android:title="@string/edit"/>
-
-    <item
-        android:id="@+id/menu3"
-        android:icon="@drawable/delete_icon"
-        android:title="@string/delete"/>
-
 </menu>

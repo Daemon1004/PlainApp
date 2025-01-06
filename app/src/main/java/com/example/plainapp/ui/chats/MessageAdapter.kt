@@ -77,10 +77,8 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
 
         val message = view.tag as Message
 
-        if (message.createdBy != chatActivity.myUser!!.id) return
-
-        val popupMenu = PopupMenu(chatActivity, (view as MessageView).findViewById(R.id.messagePlate))
-        popupMenu.inflate(R.menu.popup_message_menu)
+        val popupMenu = PopupMenu(chatActivity, (view as LinearLayout).findViewById(R.id.messagePlate))
+        popupMenu.inflate(if (message.createdBy == chatActivity.myUser!!.id) R.menu.popup_my_message_menu else R.menu.popup_message_menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.menu1 -> {
