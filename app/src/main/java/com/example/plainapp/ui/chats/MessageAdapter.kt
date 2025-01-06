@@ -41,12 +41,12 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
         if (message.createdBy != chatActivity.myUser!!.id) {
 
             linearLayoutParams.gravity = Gravity.START
-            binding.loadImg.visibility = View.INVISIBLE
+            binding.loadImg.visibility = View.GONE
 
         } else {
 
             linearLayoutParams.gravity = Gravity.END
-            binding.loadImg.visibility = View.VISIBLE
+            binding.loadImg.visibility = if (message.notifyDate != null) View.VISIBLE else View.GONE
 
         }
 
