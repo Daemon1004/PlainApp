@@ -89,6 +89,83 @@ class CallActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    private fun call() {
+
+        val service = serviceLiveData.value!!
+        val mSocket = service.mSocket
+
+        binding.apply {
+            rtcClient?.initializeSurfaceView(localView)
+            rtcClient?.initializeSurfaceView(remoteView)
+            rtcClient?.startLocalVideo(localView)
+        }
+
+        rtcClient?.call { sdp, type ->
+
+            val json = JSONObject()
+            json.put("type", type)
+            json.put("sdp", sdp)
+
+            Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
+
+            mSocket.emit("offer", json.toString(), chatId.toString())
+
+        }
+
+        mSocket.once("answer") { answerArgs ->
+
+            Log.d("debug", "call: get answer")
+
+            val session = SessionDescription(
+                SessionDescription.Type.ANSWER,
+                JSONObject(answerArgs[0].toString())["sdp"].toString()
+            )
+
+            rtcClient?.onRemoteSessionReceived(session)
+
+        }
+
+    }
+
+    private fun answer() {
+
+        val service = serviceLiveData.value!!
+        val mSocket = service.mSocket
+        myUser = service.userLiveData.value
+
+        binding.callLayout.visibility = View.VISIBLE
+        binding.responseLayout.visibility = View.GONE
+
+        val offerArgs = intent.extras?.getString("offerArgs")
+
+        binding.apply {
+            rtcClient?.initializeSurfaceView(localView)
+            rtcClient?.initializeSurfaceView(remoteView)
+            rtcClient?.startLocalVideo(localView)
+        }
+
+        val session = SessionDescription(
+            SessionDescription.Type.OFFER,
+            JSONObject(offerArgs!!)["sdp"].toString()
+        )
+
+        Log.d("debug", "call: session: ${session.type} ${session.description}")
+
+        rtcClient?.onRemoteSessionReceived(session)
+        rtcClient?.answer { sdp, type ->
+
+            val json = JSONObject()
+            json.put("sdp", sdp)
+            json.put("type", type)
+
+            Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
+
+            mSocket.emit("answer", json.toString(), chatId.toString())
+
+        }
+
+    }
+
     private fun initAfterServiceConnected(){
 
         val service = serviceLiveData.value!!
@@ -134,40 +211,7 @@ class CallActivity : AppCompatActivity() {
                 super.onRenegotiationNeeded()
                 Log.d("debug", "call: onRenegotiationNeeded")
 
-                if (isCaller) {
-
-                    binding.apply {
-                        rtcClient?.initializeSurfaceView(localView)
-                        rtcClient?.initializeSurfaceView(remoteView)
-                        rtcClient?.startLocalVideo(localView)
-                    }
-
-                    rtcClient?.call { sdp, type ->
-
-                        val json = JSONObject()
-                        json.put("type", type)
-                        json.put("sdp", sdp)
-
-                        Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
-
-                        mSocket.emit("offer", json.toString(), chatId.toString())
-
-                    }
-
-                    mSocket.once("answer") { answerArgs ->
-
-                        Log.d("debug", "call: get answer")
-
-                        val session = SessionDescription(
-                            SessionDescription.Type.ANSWER,
-                            JSONObject(answerArgs[0].toString())["sdp"].toString()
-                        )
-
-                        rtcClient?.onRemoteSessionReceived(session)
-
-                    }
-
-                }
+                //if (isCaller) { call() }
 
             }
         })
@@ -185,34 +229,7 @@ class CallActivity : AppCompatActivity() {
 
                     Log.d("debug", "call: accept")
 
-                    callLayout.visibility = View.VISIBLE
-                    responseLayout.visibility = View.GONE
-
-                    val offerArgs = intent.extras?.getString("offerArgs")
-
-                    rtcClient?.initializeSurfaceView(localView)
-                    rtcClient?.initializeSurfaceView(remoteView)
-                    rtcClient?.startLocalVideo(localView)
-
-                    val session = SessionDescription(
-                        SessionDescription.Type.OFFER,
-                        JSONObject(offerArgs!!)["sdp"].toString()
-                    )
-
-                    Log.d("debug", "call: session: ${session.type} ${session.description}")
-
-                    rtcClient?.onRemoteSessionReceived(session)
-                    rtcClient?.answer { sdp, type ->
-
-                        val json = JSONObject()
-                        json.put("sdp", sdp)
-                        json.put("type", type)
-
-                        Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
-
-                        mSocket.emit("answer", json.toString(), chatId.toString())
-
-                    }
+                    answer()
 
                 }
 
@@ -225,7 +242,7 @@ class CallActivity : AppCompatActivity() {
                 }
 
             }
-        }
+        } else { call() }
 
         rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
 
