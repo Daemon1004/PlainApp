@@ -71,8 +71,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/connectionProblemsLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="70dp"
         android:layout_margin="12dp"
         android:padding="10dp"
         android:background="@drawable/rounded_edge"
@@ -83,13 +84,17 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:maxWidth="300dp"
-            android:gravity="center"
             android:layout_height="match_parent"
+            android:gravity="center"
+            android:maxWidth="300dp"
             android:text="@string/lost_connection"
             android:textColor="?attr/colorSecondary"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="HardcodedText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
