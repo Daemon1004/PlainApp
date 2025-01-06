@@ -13,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.plainapp.data.ChatViewModel
@@ -26,20 +27,22 @@ class ChatActivity : AppCompatActivity() {
     private var _binding: ActivityChatBinding? = null
     private val binding get() = _binding!!
 
-    var service: SocketService? = null
+    var serviceLiveData: MutableLiveData<SocketService?> = MutableLiveData<SocketService?>()
     var myUser: User? = null
 
     private val sConn = object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName, binder: IBinder)
         {
 
-            service = (binder as SocketService.MyBinder).service
-            myUser = service!!.userLiveData.value
-            if (myUser == null) service!!.userLiveData.observeOnce(this@ChatActivity) { user -> myUser = user }
+            val service = (binder as SocketService.MyBinder).service
+            serviceLiveData.value = service
+            myUser = service.userLiveData.value
+
+            if (myUser == null) service.userLiveData.observeOnce(this@ChatActivity) { user -> myUser = user }
 
         }
         override fun onServiceDisconnected(className: ComponentName)
-        { service = null }
+        { serviceLiveData.value = null }
     }
 
     private lateinit var adapter: MessageAdapter
@@ -91,9 +94,7 @@ class ChatActivity : AppCompatActivity() {
 
                 if (text.isNotEmpty()) {
 
-                    //chatViewModel.addMessage(chat, text)
-
-                    service?.sendMessage(chat.id, text)
+                    serviceLiveData.value?.sendMessage(chat.id, text)
 
                     binding.mytext.setText("")
                     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
