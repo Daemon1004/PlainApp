@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.example.plainapp.ChatActivity
-import com.example.plainapp.MainActivity
+import com.example.plainapp.ui.MainActivity
 import com.example.plainapp.data.Chat
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.observeOnce

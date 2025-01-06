@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.example.plainapp.ChatActivity
 import com.example.plainapp.data.Message
 import com.example.plainapp.databinding.MessageViewBinding
 import java.time.Instant

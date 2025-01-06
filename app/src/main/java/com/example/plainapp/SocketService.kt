@@ -21,6 +21,8 @@ import com.example.plainapp.data.LocalDatabase
 import com.example.plainapp.data.Message
 import com.example.plainapp.data.User
 import com.example.plainapp.data.observeOnce
+import com.example.plainapp.ui.calls.CallActivity
+import com.example.plainapp.ui.chats.ChatActivity
 import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket

@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.plainapp.MainActivity
+import com.example.plainapp.ui.MainActivity
 import com.example.plainapp.R
 import com.example.plainapp.SocketService
 import com.example.plainapp.data.Chat

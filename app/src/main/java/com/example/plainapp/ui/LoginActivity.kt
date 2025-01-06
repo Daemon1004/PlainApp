@@ -1,4 +1,4 @@
-package com.example.plainapp
+package com.example.plainapp.ui
 
 import android.content.ComponentName
 import android.content.Context
@@ -12,6 +12,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.plainapp.R
+import com.example.plainapp.SocketService
 import com.example.plainapp.databinding.ActivityLoginBinding
 
 

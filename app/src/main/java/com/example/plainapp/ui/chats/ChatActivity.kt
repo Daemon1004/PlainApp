@@ -1,4 +1,4 @@
-package com.example.plainapp
+package com.example.plainapp.ui.chats
 
 import android.app.Activity
 import android.app.NotificationManager
@@ -16,11 +16,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.plainapp.R
+import com.example.plainapp.SocketService
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.User
 import com.example.plainapp.data.observeOnce
 import com.example.plainapp.databinding.ActivityChatBinding
-import com.example.plainapp.ui.chats.MessageAdapter
+import com.example.plainapp.ui.calls.CallActivity
 
 class ChatActivity : AppCompatActivity() {
 

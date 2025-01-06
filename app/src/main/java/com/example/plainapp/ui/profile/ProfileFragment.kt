@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.plainapp.MainActivity
+import com.example.plainapp.ui.MainActivity
 import com.example.plainapp.R
 import com.example.plainapp.databinding.FragmentProfileBinding
 import java.time.Instant

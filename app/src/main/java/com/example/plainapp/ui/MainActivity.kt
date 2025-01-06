@@ -1,4 +1,4 @@
-package com.example.plainapp
+package com.example.plainapp.ui
 
 import android.Manifest
 import android.content.ComponentName
@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.plainapp.R
+import com.example.plainapp.SocketService
 import com.example.plainapp.databinding.ActivityMainBinding
 
 
