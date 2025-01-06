@@ -410,7 +410,7 @@ class SocketService : LifecycleService() {
         //ONLINE USERS LISTENER
         mSocket.on("isOnline") { isOnlineArgs ->
 
-            Log.d("debug", "isOnline $isOnlineArgs")
+            Log.d("debug", "get isOnline ${isOnlineArgs[0]}")
 
             val userId = isOnlineArgs[0].toString().toLong()
             if (!onlineUsers.contains(userId)) onlineUsers += userId
@@ -418,7 +418,7 @@ class SocketService : LifecycleService() {
         }
         mSocket.on("isOffline") { isOfflineArgs ->
 
-            Log.d("debug", "isOffline $isOfflineArgs")
+            Log.d("debug", "get isOffline ${isOfflineArgs[0]}")
 
             val userId = isOfflineArgs[0].toString().toLong()
             if (onlineUsers.contains(userId)) onlineUsers.remove(userId)

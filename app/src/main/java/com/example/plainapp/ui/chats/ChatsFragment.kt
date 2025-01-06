@@ -3,6 +3,7 @@ package com.example.plainapp.ui.chats
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,6 +63,8 @@ class ChatsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        Log.d("debug", "ChatsFragment onStart()")
+
         timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
             @SuppressLint("NotifyDataSetChanged")
             override fun onTick(millisUntilFinished: Long) { adapter.notifyDataSetChanged() }
@@ -72,6 +75,8 @@ class ChatsFragment : Fragment() {
     }
 
     override fun onStop() {
+
+        Log.d("debug", "ChatsFragment onStop()")
 
         if (timer != null) (timer as CountDownTimer).cancel()
 
