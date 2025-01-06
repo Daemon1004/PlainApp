@@ -78,7 +78,7 @@ class CallActivity : AppCompatActivity() {
 
         }
 
-        serviceLiveData.observeOnce(this) { init() }
+        serviceLiveData.observeOnce(this) { initAfterServiceConnected() }
 
         bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
 
@@ -89,7 +89,7 @@ class CallActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun init(){
+    private fun initAfterServiceConnected(){
 
         val service = serviceLiveData.value!!
         val mSocket = service.mSocket
@@ -135,6 +135,12 @@ class CallActivity : AppCompatActivity() {
 
                 if (isCaller) {
 
+                    binding.apply {
+                        rtcClient?.initializeSurfaceView(localView)
+                        rtcClient?.initializeSurfaceView(remoteView)
+                        rtcClient?.startLocalVideo(localView)
+                    }
+
                     rtcClient?.call { sdp, type ->
 
                         val json = JSONObject()
@@ -153,7 +159,7 @@ class CallActivity : AppCompatActivity() {
 
                         val session = SessionDescription(
                             SessionDescription.Type.ANSWER,
-                            JSONObject(answerArgs[0].toString()).get("sdp").toString()
+                            JSONObject(answerArgs[0].toString())["sdp"].toString()
                         )
 
                         rtcClient?.onRemoteSessionReceived(session)
@@ -183,9 +189,13 @@ class CallActivity : AppCompatActivity() {
 
                     val offerArgs = intent.extras?.getString("offerArgs")
 
+                    rtcClient?.initializeSurfaceView(localView)
+                    rtcClient?.initializeSurfaceView(remoteView)
+                    rtcClient?.startLocalVideo(localView)
+
                     val session = SessionDescription(
                         SessionDescription.Type.OFFER,
-                        JSONObject(offerArgs!!).get("sdp").toString()
+                        JSONObject(offerArgs!!)["sdp"].toString()
                     )
 
                     Log.d("debug", "call: session: ${session.type} ${session.description}")
@@ -217,10 +227,6 @@ class CallActivity : AppCompatActivity() {
         }
 
         rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
-
-        rtcClient?.initializeSurfaceView(binding.localView)
-        rtcClient?.initializeSurfaceView(binding.remoteView)
-        rtcClient?.startLocalVideo(binding.localView)
 
         binding.apply {
 
