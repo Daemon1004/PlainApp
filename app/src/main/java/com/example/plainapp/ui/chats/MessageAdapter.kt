@@ -75,6 +75,8 @@ class MessageAdapter(private val chatActivity: ChatActivity) : RecyclerView.Adap
 
     override fun onClick(view: View) {
 
+        if (chatActivity.myUser == null) return
+
         val message = view.tag as Message
 
         val popupMenu = PopupMenu(chatActivity, (view as LinearLayout).findViewById(R.id.messagePlate))
