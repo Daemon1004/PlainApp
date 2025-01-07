@@ -123,14 +123,14 @@ class CallActivity : AppCompatActivity() {
         signalingClient = SignalingClient(service.mSocket, chatId)
         sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
 
-        sessionManager!!.initSurfaceViewRenderer(binding.remoteView)
+        sessionManager!!.initSurfaceViewRenderer(binding.localView)
         sessionManager!!.onRemoteVideoTrack { videoTrack ->
             runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
-            videoTrack.addSink(binding.remoteView)
+            videoTrack.addSink(binding.localView)
         }
 
         binding.localView.visibility = View.VISIBLE
-        sessionManager!!.localVideoStart(binding.localView)
+        sessionManager!!.localVideoStart(binding.remoteView)
 
         if (!isCaller) {
             binding.apply {
