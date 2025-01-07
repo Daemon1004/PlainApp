@@ -125,12 +125,16 @@ class WebRtcSessionManagerImpl(
     )
   }
 
-  fun addSinkInSurfaceViewRenderer(surface: SurfaceViewRenderer) {
+  override fun initSurfaceViewRenderer(surface: SurfaceViewRenderer) {
     surface.run {
       setEnableHardwareScaler(true)
       setMirror(true)
       init(peerConnectionFactory.eglBaseContext, null)
     }
+  }
+
+  override fun localVideoStart(surface: SurfaceViewRenderer) {
+    initSurfaceViewRenderer(surface)
     localVideoTrack.addSink(surface)
   }
 
