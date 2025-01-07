@@ -87,8 +87,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.socket.io.client)
 
-    implementation(libs.mesibo.webrtc)
-    implementation(libs.java.websocket)
     implementation(libs.permissionx)
 
     implementation(libs.androidx.activity.compose)
@@ -97,5 +95,6 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
 
     implementation(libs.gson)
+    implementation(libs.stream.webrtc.android)
 
 }
