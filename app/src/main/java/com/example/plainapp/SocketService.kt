@@ -390,7 +390,7 @@ class SocketService : LifecycleService() {
         //ERROR LISTENER
         mSocket.on("error") { errorArgs ->
 
-            Log.d("debug", "SocketIO server error: $errorArgs")
+            Log.d("debug", "SocketIO server error: ${errorArgs[0]}")
 
         }
 

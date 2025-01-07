@@ -17,8 +17,6 @@
 package com.example.plainapp.webrtc
 
 import android.util.Log
-import com.example.plainapp.SocketService
-import com.google.gson.Gson
 import io.socket.client.Socket
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +35,7 @@ class SignalingClient(private val mSocket: Socket, private val chatId: Long) {
 
   fun sendCommand(signalingCommand: SignalingCommand, message: String) {
     Log.d(this::class.java.name, "[sendCommand] $signalingCommand (${signalingCommand.serverSignal}) $message" )
-    mSocket.send(signalingCommand.serverSignal, message, chatId.toString())
+    mSocket.emit(signalingCommand.serverSignal, message, chatId.toString())
   }
 
   init {
