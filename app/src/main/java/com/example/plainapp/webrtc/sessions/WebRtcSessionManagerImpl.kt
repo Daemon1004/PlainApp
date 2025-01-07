@@ -167,6 +167,7 @@ class WebRtcSessionManagerImpl(
         val track = rtpTransceiver?.receiver?.track() ?: return@makePeerConnection
         if (track.kind() == MediaStreamTrack.VIDEO_TRACK_KIND) {
           val videoTrack = track as VideoTrack
+          onRemoteVideoTrackCallback?.invoke(videoTrack)
           sessionManagerScope.launch {
             _remoteVideoTrackFlow.emit(videoTrack)
           }
@@ -189,16 +190,27 @@ class WebRtcSessionManagerImpl(
     }
   }
 
-  override fun onSessionScreenReady(callback: () -> Unit) {
+  override fun onSessionScreenReady(callback: (() -> Unit)?) {
     setupAudio()
     peerConnection.connection.addTrack(localVideoTrack)
     peerConnection.connection.addTrack(localAudioTrack)
+    onLocalVideoTrackCallback?.invoke(localVideoTrack)
     sessionManagerScope.launch {
       // sending local video track to show local video from start
       _localVideoTrackFlow.emit(localVideoTrack)
 
       if (offer != null) sendAnswer(callback) else sendOffer(callback)
     }
+  }
+
+  private var onRemoteVideoTrackCallback: ((VideoTrack) -> Unit)? = null
+  override fun onRemoteVideoTrack(callback: (VideoTrack) -> Unit) {
+    onRemoteVideoTrackCallback = callback
+  }
+
+  private var onLocalVideoTrackCallback: ((VideoTrack) -> Unit)? = null
+  override fun onLocalVideoTrack(callback: (VideoTrack) -> Unit) {
+    onLocalVideoTrackCallback = callback
   }
 
   override fun flipCamera() {
@@ -237,17 +249,17 @@ class WebRtcSessionManagerImpl(
     signalingClient.dispose()
   }
 
-  private suspend fun sendOffer(callback: () -> Unit) {
+  private suspend fun sendOffer(callback: (() -> Unit)? = null) {
     val offer = peerConnection.createOffer().getOrThrow()
     val result = peerConnection.setLocalDescription(offer)
     result.onSuccess {
       signalingClient.sendCommand(SignalingCommand.OFFER, offer.description)
-      callback()
+      callback?.invoke()
     }
     Log.d(this::class.java.name, "[SDP] send offer: ${offer.stringify()}" )
   }
 
-  private suspend fun sendAnswer(callback: () -> Unit) {
+  private suspend fun sendAnswer(callback: (() -> Unit)? = null) {
     peerConnection.setRemoteDescription(
       SessionDescription(SessionDescription.Type.OFFER, offer)
     )
@@ -255,7 +267,7 @@ class WebRtcSessionManagerImpl(
     val result = peerConnection.setLocalDescription(answer)
     result.onSuccess {
       signalingClient.sendCommand(SignalingCommand.ANSWER, answer.description)
-      callback()
+      callback?.invoke()
     }
     Log.d(this::class.java.name, "[SDP] send answer: ${answer.stringify()}" )
   }

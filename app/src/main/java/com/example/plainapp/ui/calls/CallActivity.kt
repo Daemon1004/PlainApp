@@ -18,13 +18,8 @@ import com.example.plainapp.data.User
 import com.example.plainapp.databinding.ActivityCallBinding
 import com.example.plainapp.observeOnce
 import com.example.plainapp.webrtc.SignalingClient
-import com.example.plainapp.webrtc.SignalingCommand
 import com.example.plainapp.webrtc.peer.StreamPeerConnectionFactory
 import com.example.plainapp.webrtc.sessions.WebRtcSessionManagerImpl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 class CallActivity : AppCompatActivity() {
@@ -34,8 +29,6 @@ class CallActivity : AppCompatActivity() {
     private var isSpeakerMode = true
 
     var serviceLiveData: MutableLiveData<SocketService?> = MutableLiveData<SocketService?>()
-
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val sConn = object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName, binder: IBinder)
@@ -64,7 +57,6 @@ class CallActivity : AppCompatActivity() {
         binding.apply {
 
             chatName.text = ""
-            localView.visibility = View.INVISIBLE
             binding.remoteViewLoading.visibility = View.VISIBLE
 
             if (isCaller) {
@@ -89,34 +81,12 @@ class CallActivity : AppCompatActivity() {
 
     }
 
-    private fun onSessionScreenReady() {
-
-        sessionManager!!.onSessionScreenReady {
-
-            scope.launch {
-                sessionManager!!.localVideoTrackFlow.collect { videoTrack ->
-                    runOnUiThread { binding.localView.visibility = View.VISIBLE }
-                    videoTrack.addSink(binding.localView)
-                }
-            }
-
-            scope.launch {
-                sessionManager!!.remoteVideoTrackFlow.collect { videoTrack ->
-                    videoTrack.addSink(binding.remoteView)
-                    runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
-                }
-            }
-
-        }
-
-    }
-
     override fun onDestroy() {
         sessionManager?.disconnect()
         super.onDestroy()
     }
 
-    private fun call() { onSessionScreenReady() }
+    private fun call() { sessionManager!!.onSessionScreenReady() }
 
     private fun answer() {
 
@@ -126,7 +96,20 @@ class CallActivity : AppCompatActivity() {
         val offer = intent.extras?.getString("offerArgs")!!
 
         sessionManager!!.handleOffer(offer)
-        onSessionScreenReady()
+        sessionManager!!.onSessionScreenReady()
+
+    }
+
+    private fun readParticipant(callback: () -> Unit) {
+
+        val chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        chatViewModel.readChat(chatId).observe(this) { chat ->
+            val participantId = if (chat.participant1 == myUser!!.id) chat.participant2 else chat.participant1
+            chatViewModel.readUser(participantId).observe(this) { participant ->
+                this.participant = participant
+                callback()
+            }
+        }
 
     }
 
@@ -135,17 +118,20 @@ class CallActivity : AppCompatActivity() {
         val service = serviceLiveData.value!!
         myUser = service.userLiveData.value
 
-        val chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
-        chatViewModel.readChat(chatId).observe(this) { chat ->
-            val participantId = if (chat.participant1 == myUser!!.id) chat.participant2 else chat.participant1
-            chatViewModel.readUser(participantId).observe(this) { participant ->
-                binding.chatName.text = participant.name ?: "?"
-                this.participant = participant
-            }
-        }
+        readParticipant { binding.chatName.text = participant?.name ?: "?" }
 
         signalingClient = SignalingClient(service.mSocket, chatId)
         sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
+
+        sessionManager!!.onRemoteVideoTrack { videoTrack ->
+            binding.remoteViewLoading.visibility = View.GONE
+            videoTrack.addSink(binding.remoteView)
+        }
+
+        sessionManager!!.onLocalVideoTrack { videoTrack ->
+            binding.localView.visibility = View.VISIBLE
+            videoTrack.addSink(binding.localView)
+        }
 
         if (!isCaller) {
             binding.apply {
