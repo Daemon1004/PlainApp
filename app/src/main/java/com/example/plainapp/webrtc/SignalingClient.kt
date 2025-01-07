@@ -43,7 +43,7 @@ class SignalingClient(service: SocketService, private val chatId: Long) {
 
   fun sendCommand(signalingCommand: SignalingCommand, message: String) {
     Log.d(this::class.java.name, "[sendCommand] $signalingCommand $message" )
-    mSocket.send(signalingCommand.serverSignal, message)
+    mSocket.send(signalingCommand.serverSignal, message, chatId)
   }
 
   init {
