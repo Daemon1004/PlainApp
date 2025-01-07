@@ -45,7 +45,7 @@ class SignalingClient(private val mSocket: Socket, private val chatId: Long) {
     mSocket.on(SignalingCommand.ANSWER.serverSignal) { text -> handleSignalingCommand(SignalingCommand.ANSWER, text[0].toString()) }
   }
 
-  fun handleSignalingCommand(command: SignalingCommand, text: String) {
+  private fun handleSignalingCommand(command: SignalingCommand, text: String) {
     Log.d(this::class.java.name, "received signaling: $command $text" )
     signalingScope.launch {
       _signalingCommandFlow.emit(command to text)

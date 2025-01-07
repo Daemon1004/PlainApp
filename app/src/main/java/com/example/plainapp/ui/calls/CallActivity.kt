@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -92,20 +91,22 @@ class CallActivity : AppCompatActivity() {
 
     private fun onSessionScreenReady() {
 
-        sessionManager!!.onSessionScreenReady()
+        sessionManager!!.onSessionScreenReady {
 
-        scope.launch {
-            sessionManager!!.localVideoTrackFlow.collect { videoTrack ->
-                binding.localView.visibility = View.VISIBLE
-                videoTrack.addSink(binding.localView)
+            scope.launch {
+                sessionManager!!.localVideoTrackFlow.collect { videoTrack ->
+                    runOnUiThread { binding.localView.visibility = View.VISIBLE }
+                    videoTrack.addSink(binding.localView)
+                }
             }
-        }
 
-        scope.launch {
-            sessionManager!!.remoteVideoTrackFlow.collect { videoTrack ->
-                videoTrack.addSink(binding.remoteView)
-                runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
+            scope.launch {
+                sessionManager!!.remoteVideoTrackFlow.collect { videoTrack ->
+                    videoTrack.addSink(binding.remoteView)
+                    runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
+                }
             }
+
         }
 
     }
@@ -124,7 +125,7 @@ class CallActivity : AppCompatActivity() {
 
         val offer = intent.extras?.getString("offerArgs")!!
 
-        signalingClient.handleSignalingCommand(SignalingCommand.OFFER, offer)
+        sessionManager!!.handleOffer(offer)
         onSessionScreenReady()
 
     }

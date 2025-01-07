@@ -189,7 +189,7 @@ class WebRtcSessionManagerImpl(
     }
   }
 
-  override fun onSessionScreenReady() {
+  override fun onSessionScreenReady(callback: () -> Unit) {
     setupAudio()
     peerConnection.connection.addTrack(localVideoTrack)
     peerConnection.connection.addTrack(localAudioTrack)
@@ -197,11 +197,7 @@ class WebRtcSessionManagerImpl(
       // sending local video track to show local video from start
       _localVideoTrackFlow.emit(localVideoTrack)
 
-      if (offer != null) {
-        sendAnswer()
-      } else {
-        sendOffer()
-      }
+      if (offer != null) sendAnswer(callback) else sendOffer(callback)
     }
   }
 
@@ -241,16 +237,17 @@ class WebRtcSessionManagerImpl(
     signalingClient.dispose()
   }
 
-  private suspend fun sendOffer() {
+  private suspend fun sendOffer(callback: () -> Unit) {
     val offer = peerConnection.createOffer().getOrThrow()
     val result = peerConnection.setLocalDescription(offer)
     result.onSuccess {
       signalingClient.sendCommand(SignalingCommand.OFFER, offer.description)
+      callback()
     }
     Log.d(this::class.java.name, "[SDP] send offer: ${offer.stringify()}" )
   }
 
-  private suspend fun sendAnswer() {
+  private suspend fun sendAnswer(callback: () -> Unit) {
     peerConnection.setRemoteDescription(
       SessionDescription(SessionDescription.Type.OFFER, offer)
     )
@@ -258,11 +255,12 @@ class WebRtcSessionManagerImpl(
     val result = peerConnection.setLocalDescription(answer)
     result.onSuccess {
       signalingClient.sendCommand(SignalingCommand.ANSWER, answer.description)
+      callback()
     }
     Log.d(this::class.java.name, "[SDP] send answer: ${answer.stringify()}" )
   }
 
-  private fun handleOffer(sdp: String) {
+  fun handleOffer(sdp: String) {
     Log.d(this::class.java.name, "[SDP] handle offer: $sdp" )
     offer = sdp
   }
