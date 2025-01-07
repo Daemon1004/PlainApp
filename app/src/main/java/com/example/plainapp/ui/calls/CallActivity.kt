@@ -10,11 +10,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.plainapp.R
 import com.example.plainapp.SocketService
 import com.example.plainapp.data.ChatViewModel
@@ -146,7 +143,7 @@ class CallActivity : AppCompatActivity() {
         }
 
         signalingClient = SignalingClient(service, chatId)
-        val sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
+        sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
 
         signalingClient.onStateChangeListener { state ->
             if (state == WebRTCSessionState.Active) binding.remoteViewLoading.visibility = View.GONE
@@ -181,7 +178,7 @@ class CallActivity : AppCompatActivity() {
         binding.apply {
 
             switchCameraButton.setOnClickListener {
-                sessionManager.flipCamera()
+                sessionManager?.flipCamera()
             }
 
             micButton.setOnClickListener {
@@ -192,7 +189,7 @@ class CallActivity : AppCompatActivity() {
                     isMute = true
                     micButton.setImageResource(R.drawable.ic_baseline_mic_24)
                 }
-                sessionManager.enableMicrophone(isMute)
+                sessionManager?.enableMicrophone(isMute)
             }
 
             videoButton.setOnClickListener {
@@ -203,7 +200,7 @@ class CallActivity : AppCompatActivity() {
                     isCameraPause = true
                     videoButton.setImageResource(R.drawable.ic_baseline_videocam_24)
                 }
-                sessionManager.enableCamera(isCameraPause)
+                sessionManager?.enableCamera(isCameraPause)
             }
 
             audioOutputButton.setOnClickListener {
