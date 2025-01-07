@@ -27,6 +27,7 @@ import android.util.Log
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.content.getSystemService
+import com.example.plainapp.ui.calls.VideoTextureViewRenderer
 import com.example.plainapp.webrtc.peer.StreamPeerConnectionFactory
 import com.example.plainapp.webrtc.SignalingClient
 import com.example.plainapp.webrtc.SignalingCommand
@@ -48,6 +49,7 @@ import org.webrtc.CameraEnumerationAndroid
 import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
 import org.webrtc.MediaStreamTrack
+import org.webrtc.RendererCommon
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
 import org.webrtc.SurfaceViewRenderer
@@ -125,15 +127,16 @@ class WebRtcSessionManagerImpl(
     )
   }
 
-  override fun initSurfaceViewRenderer(surface: SurfaceViewRenderer) {
+  override fun initSurfaceViewRenderer(surface: VideoTextureViewRenderer) {
     surface.run {
-      setEnableHardwareScaler(true)
-      setMirror(true)
-      init(peerConnectionFactory.eglBaseContext, null)
+      init(peerConnectionFactory.eglBaseContext, object : RendererCommon.RendererEvents {
+        override fun onFirstFrameRendered() = Unit
+        override fun onFrameResolutionChanged(p0: Int, p1: Int, p2: Int) = Unit
+      })
     }
   }
 
-  override fun localVideoStart(surface: SurfaceViewRenderer) {
+  override fun localVideoStart(surface: VideoTextureViewRenderer) {
     initSurfaceViewRenderer(surface)
     localVideoTrack.addSink(surface)
   }

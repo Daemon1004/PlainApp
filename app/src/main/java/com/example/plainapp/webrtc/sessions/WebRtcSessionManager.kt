@@ -16,6 +16,7 @@
 
 package com.example.plainapp.webrtc.sessions
 
+import com.example.plainapp.ui.calls.VideoTextureViewRenderer
 import com.example.plainapp.webrtc.SignalingClient
 import com.example.plainapp.webrtc.peer.StreamPeerConnectionFactory
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,9 +37,9 @@ interface WebRtcSessionManager {
 
   fun onRemoteVideoTrack(callback: (VideoTrack) -> Unit)
 
-  fun initSurfaceViewRenderer(surface: SurfaceViewRenderer)
+  fun initSurfaceViewRenderer(surface: VideoTextureViewRenderer)
 
-  fun localVideoStart(surface: SurfaceViewRenderer)
+  fun localVideoStart(surface: VideoTextureViewRenderer)
 
   fun flipCamera()
 
