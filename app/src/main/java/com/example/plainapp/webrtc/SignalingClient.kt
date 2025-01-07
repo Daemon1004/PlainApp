@@ -42,7 +42,7 @@ class SignalingClient(service: SocketService, private val chatId: Long) {
   val signalingCommandFlow: SharedFlow<Pair<SignalingCommand, String>> = _signalingCommandFlow
 
   fun sendCommand(signalingCommand: SignalingCommand, message: String) {
-    Log.d(this::class.java.name, "[sendCommand] $signalingCommand $message" )
+    Log.d(this::class.java.name, "[sendCommand] $signalingCommand ${signalingCommand.serverSignal} $message" )
     mSocket.send(signalingCommand.serverSignal, message, chatId.toString())
   }
 
@@ -66,10 +66,9 @@ class SignalingClient(service: SocketService, private val chatId: Long) {
   }
 
   fun handleSignalingCommand(command: SignalingCommand, text: String) {
-    val value = text
-    Log.d(this::class.java.name, "received signaling: $command $value" )
+    Log.d(this::class.java.name, "received signaling: $command $text" )
     signalingScope.launch {
-      _signalingCommandFlow.emit(command to value)
+      _signalingCommandFlow.emit(command to text)
     }
   }
 
