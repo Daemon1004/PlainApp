@@ -48,10 +48,10 @@ class SignalingClient(service: SocketService, private val chatId: Long) {
 
   init {
 
-    mSocket.on(SignalingCommand.OFFER.serverSignal) { text -> handleSignalingCommand(SignalingCommand.OFFER, text.toString()) }
-    mSocket.on(SignalingCommand.ICE.serverSignal) { text -> handleSignalingCommand(SignalingCommand.ICE, text.toString()) }
-    mSocket.on(SignalingCommand.ANSWER.serverSignal) { text -> handleSignalingCommand(SignalingCommand.ANSWER, text.toString()) }
-    mSocket.on(SignalingCommand.STATE.serverSignal) { text -> handleStateMessage(text.toString()) }
+    mSocket.on(SignalingCommand.OFFER.serverSignal) { text -> handleSignalingCommand(SignalingCommand.OFFER, text[0].toString()) }
+    mSocket.on(SignalingCommand.ICE.serverSignal) { text -> handleSignalingCommand(SignalingCommand.ICE, text[0].toString()) }
+    mSocket.on(SignalingCommand.ANSWER.serverSignal) { text -> handleSignalingCommand(SignalingCommand.ANSWER, text[0].toString()) }
+    mSocket.on(SignalingCommand.STATE.serverSignal) { text -> handleStateMessage(text[0].toString()) }
 
   }
 
