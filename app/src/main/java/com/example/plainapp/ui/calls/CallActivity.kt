@@ -124,12 +124,12 @@ class CallActivity : AppCompatActivity() {
         sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
 
         sessionManager!!.onRemoteVideoTrack { videoTrack ->
-            binding.remoteViewLoading.visibility = View.GONE
+            runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
             videoTrack.addSink(binding.remoteView)
         }
 
         sessionManager!!.onLocalVideoTrack { videoTrack ->
-            binding.localView.visibility = View.VISIBLE
+            runOnUiThread { binding.localView.visibility = View.VISIBLE }
             videoTrack.addSink(binding.localView)
         }
 
