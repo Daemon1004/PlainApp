@@ -181,9 +181,9 @@ class WebRtcSessionManagerImpl(
         val track = rtpTransceiver?.receiver?.track() ?: return@makePeerConnection
         if (track.kind() == MediaStreamTrack.VIDEO_TRACK_KIND) {
           val videoTrack = track as VideoTrack
-          onRemoteVideoTrackCallback?.invoke(videoTrack)
           sessionManagerScope.launch {
             _remoteVideoTrackFlow.emit(videoTrack)
+            onRemoteVideoTrackCallback?.invoke(videoTrack)
           }
         }
       }
