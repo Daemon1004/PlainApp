@@ -132,7 +132,7 @@ class CallActivity : AppCompatActivity() {
         }
 
         binding.localView.visibility = View.VISIBLE
-        sessionManager!!.localVideoStart(binding.localView)
+        //sessionManager!!.localVideoStart(binding.localView)
 
         if (!isCaller) {
             binding.apply {
