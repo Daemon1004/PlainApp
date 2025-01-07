@@ -20,7 +20,6 @@ import com.example.plainapp.databinding.ActivityCallBinding
 import com.example.plainapp.observeOnce
 import com.example.plainapp.webrtc.SignalingClient
 import com.example.plainapp.webrtc.SignalingCommand
-import com.example.plainapp.webrtc.WebRTCSessionState
 import com.example.plainapp.webrtc.peer.StreamPeerConnectionFactory
 import com.example.plainapp.webrtc.sessions.WebRtcSessionManagerImpl
 import kotlinx.coroutines.CoroutineScope
@@ -67,6 +66,7 @@ class CallActivity : AppCompatActivity() {
 
             chatName.text = ""
             localView.visibility = View.INVISIBLE
+            binding.remoteViewLoading.visibility = View.VISIBLE
 
             if (isCaller) {
 
@@ -104,6 +104,7 @@ class CallActivity : AppCompatActivity() {
         scope.launch {
             sessionManager!!.remoteVideoTrackFlow.collect { videoTrack ->
                 videoTrack.addSink(binding.remoteView)
+                runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
             }
         }
 
@@ -142,16 +143,8 @@ class CallActivity : AppCompatActivity() {
             }
         }
 
-        signalingClient = SignalingClient(service, chatId)
+        signalingClient = SignalingClient(service.mSocket, chatId)
         sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
-
-        signalingClient.onStateChangeListener { state ->
-            if (state == WebRTCSessionState.Active) binding.remoteViewLoading.visibility = View.GONE
-            else binding.remoteViewLoading.visibility = View.VISIBLE
-            Toast.makeText(this, state.name, Toast.LENGTH_SHORT).show()
-        }
-
-
 
         if (!isCaller) {
             binding.apply {
