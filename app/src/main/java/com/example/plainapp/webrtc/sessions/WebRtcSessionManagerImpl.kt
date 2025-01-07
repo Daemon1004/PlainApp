@@ -50,6 +50,7 @@ import org.webrtc.MediaConstraints
 import org.webrtc.MediaStreamTrack
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
+import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoCapturer
 import org.webrtc.VideoTrack
 import java.util.UUID
@@ -124,6 +125,15 @@ class WebRtcSessionManagerImpl(
     )
   }
 
+  fun addSinkInSurfaceViewRenderer(surface: SurfaceViewRenderer) {
+    surface.run {
+      setEnableHardwareScaler(true)
+      setMirror(true)
+      init(peerConnectionFactory.eglBaseContext, null)
+    }
+    localVideoTrack.addSink(surface)
+  }
+
   /** Audio properties */
 
   private val audioHandler: AudioHandler by lazy {
@@ -184,7 +194,6 @@ class WebRtcSessionManagerImpl(
             SignalingCommand.OFFER -> handleOffer(commandToValue.second)
             SignalingCommand.ANSWER -> handleAnswer(commandToValue.second)
             SignalingCommand.ICE -> handleIce(commandToValue.second)
-            else -> Unit
           }
         }
     }
@@ -194,7 +203,6 @@ class WebRtcSessionManagerImpl(
     setupAudio()
     peerConnection.connection.addTrack(localVideoTrack)
     peerConnection.connection.addTrack(localAudioTrack)
-    onLocalVideoTrackCallback?.invoke(localVideoTrack)
     sessionManagerScope.launch {
       // sending local video track to show local video from start
       _localVideoTrackFlow.emit(localVideoTrack)
@@ -206,11 +214,6 @@ class WebRtcSessionManagerImpl(
   private var onRemoteVideoTrackCallback: ((VideoTrack) -> Unit)? = null
   override fun onRemoteVideoTrack(callback: (VideoTrack) -> Unit) {
     onRemoteVideoTrackCallback = callback
-  }
-
-  private var onLocalVideoTrackCallback: ((VideoTrack) -> Unit)? = null
-  override fun onLocalVideoTrack(callback: (VideoTrack) -> Unit) {
-    onLocalVideoTrackCallback = callback
   }
 
   override fun flipCamera() {

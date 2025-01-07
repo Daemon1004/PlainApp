@@ -35,8 +35,6 @@ interface WebRtcSessionManager {
 
   fun onRemoteVideoTrack(callback: (VideoTrack) -> Unit)
 
-  fun onLocalVideoTrack(callback: (VideoTrack) -> Unit)
-
   fun flipCamera()
 
   fun enableMicrophone(enabled: Boolean)

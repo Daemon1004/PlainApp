@@ -128,10 +128,8 @@ class CallActivity : AppCompatActivity() {
             videoTrack.addSink(binding.remoteView)
         }
 
-        sessionManager!!.onLocalVideoTrack { videoTrack ->
-            runOnUiThread { binding.localView.visibility = View.VISIBLE }
-            videoTrack.addSink(binding.localView)
-        }
+        binding.localView.visibility = View.VISIBLE
+        sessionManager!!.addSinkInSurfaceViewRenderer(binding.localView)
 
         if (!isCaller) {
             binding.apply {

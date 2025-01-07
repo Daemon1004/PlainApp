@@ -110,8 +110,8 @@ class StreamPeerConnectionFactory constructor(
       .setAudioDeviceModule(
         JavaAudioDeviceModule
           .builder(context)
-          .setUseHardwareAcousticEchoCanceler(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-          .setUseHardwareNoiseSuppressor(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+          .setUseHardwareAcousticEchoCanceler(true)
+          .setUseHardwareNoiseSuppressor(true)
           .setAudioRecordErrorCallback(object :
               JavaAudioDeviceModule.AudioRecordErrorCallback {
               override fun onWebRtcAudioRecordInitError(p0: String?) {
