@@ -52,7 +52,6 @@ import org.webrtc.MediaStreamTrack
 import org.webrtc.RendererCommon
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
-import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoCapturer
 import org.webrtc.VideoTrack
 import java.util.UUID

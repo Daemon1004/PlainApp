@@ -86,7 +86,22 @@ class CallActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun call() { sessionManager!!.onSessionScreenReady() }
+    private fun call() {
+
+        sessionManager!!.initSurfaceViewRenderer(binding.remoteView)
+        sessionManager!!.onRemoteVideoTrack { videoTrack ->
+            runOnUiThread {
+                binding.remoteViewLoading.visibility = View.GONE
+                videoTrack.addSink(binding.remoteView)
+            }
+        }
+
+        binding.localView.visibility = View.VISIBLE
+        sessionManager!!.localVideoStart(binding.localView)
+
+        sessionManager!!.onSessionScreenReady()
+
+    }
 
     private fun answer() {
 
@@ -96,6 +111,18 @@ class CallActivity : AppCompatActivity() {
         val offer = intent.extras?.getString("offerArgs")!!
 
         sessionManager!!.handleOffer(offer)
+
+        sessionManager!!.initSurfaceViewRenderer(binding.remoteView)
+        sessionManager!!.onRemoteVideoTrack { videoTrack ->
+            runOnUiThread {
+                binding.remoteViewLoading.visibility = View.GONE
+                videoTrack.addSink(binding.remoteView)
+            }
+        }
+
+        binding.localView.visibility = View.VISIBLE
+        sessionManager!!.localVideoStart(binding.localView)
+
         sessionManager!!.onSessionScreenReady()
 
     }
@@ -122,17 +149,6 @@ class CallActivity : AppCompatActivity() {
 
         signalingClient = SignalingClient(service.mSocket, chatId)
         sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
-
-        sessionManager!!.initSurfaceViewRenderer(binding.remoteView)
-        sessionManager!!.onRemoteVideoTrack { videoTrack ->
-            runOnUiThread {
-                binding.remoteViewLoading.visibility = View.GONE
-                videoTrack.addSink(binding.remoteView)
-            }
-        }
-
-        binding.localView.visibility = View.VISIBLE
-        //sessionManager!!.localVideoStart(binding.localView)
 
         if (!isCaller) {
             binding.apply {
