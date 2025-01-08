@@ -95,6 +95,6 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
 
     implementation(libs.gson)
-    implementation(libs.stream.webrtc.android)
+    implementation(libs.webrtc)
 
 }

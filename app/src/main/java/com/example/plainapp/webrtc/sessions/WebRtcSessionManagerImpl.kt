@@ -137,6 +137,7 @@ class WebRtcSessionManagerImpl(
 
   override fun localVideoStart(surface: VideoTextureViewRenderer) {
     initSurfaceViewRenderer(surface)
+    Log.d(this::class.java.name, "[localVideoStart] ${localVideoTrack.id()} ${localVideoTrack.state()} ${localVideoTrack.kind()}" )
     localVideoTrack.addSink(surface)
   }
 
@@ -185,6 +186,7 @@ class WebRtcSessionManagerImpl(
           val videoTrack = track as VideoTrack
           sessionManagerScope.launch {
             _remoteVideoTrackFlow.emit(videoTrack)
+            Log.d(this::class.java.name, "[onVideoTrack] ${videoTrack.id()} ${videoTrack.state()} ${videoTrack.kind()}" )
             onRemoteVideoTrackCallback?.invoke(videoTrack)
           }
         }
