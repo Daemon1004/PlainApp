@@ -59,8 +59,6 @@ class StreamPeerConnection(
   private val onStreamAdded: ((MediaStream) -> Unit)?,
   private val onNegotiationNeeded: ((StreamPeerConnection, StreamPeerType) -> Unit)?,
   private val onIceCandidate: ((IceCandidate, StreamPeerType) -> Unit)?,
-  private val onConnectionChange: ((PeerConnection.PeerConnectionState) -> Unit)? = null,
-  private val onIceConnectionChange: ((PeerConnection.IceConnectionState) -> Unit)? = null,
   private val onVideoTrack: ((RtpTransceiver?) -> Unit)?
 ) : PeerConnection.Observer {
 
@@ -255,7 +253,6 @@ class StreamPeerConnection(
    * @param newState The new state of the [PeerConnection].
    */
   override fun onIceConnectionChange(newState: PeerConnection.IceConnectionState?) {
-    onIceConnectionChange(newState)
     Log.i(this::class.java.name, "[onIceConnectionChange] #sfu; newState: $newState")
     when (newState) {
       PeerConnection.IceConnectionState.CLOSED,
@@ -319,7 +316,6 @@ class StreamPeerConnection(
   }
 
   override fun onConnectionChange(newState: PeerConnection.PeerConnectionState?) {
-    onConnectionChange(newState)
     Log.i(this::class.java.name, "[onConnectionChange] #sfu; newState: $newState")
   }
 

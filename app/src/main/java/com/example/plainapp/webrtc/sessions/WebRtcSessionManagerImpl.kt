@@ -190,12 +190,6 @@ class WebRtcSessionManagerImpl(
             onRemoteVideoTrackCallback?.invoke(videoTrack)
           }
         }
-      },
-      onIceConnectionChange = { iceConnectionState ->
-        //Log.d(this::class.java.name, "[onIceConnectionChange] ${iceConnectionState.name}" )
-      },
-      onConnectionChange = { connectionSate ->
-        //Log.d(this::class.java.name, "[onConnectionChange] ${connectionSate.name}" )
       }
     )
   }
