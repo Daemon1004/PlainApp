@@ -192,10 +192,10 @@ class WebRtcSessionManagerImpl(
         }
       },
       onIceConnectionChange = { iceConnectionState ->
-        Log.d(this::class.java.name, "[onIceConnectionChange] ${iceConnectionState.name}" )
+        //Log.d(this::class.java.name, "[onIceConnectionChange] ${iceConnectionState.name}" )
       },
       onConnectionChange = { connectionSate ->
-        Log.d(this::class.java.name, "[onConnectionChange] ${connectionSate.name}" )
+        //Log.d(this::class.java.name, "[onConnectionChange] ${connectionSate.name}" )
       }
     )
   }
