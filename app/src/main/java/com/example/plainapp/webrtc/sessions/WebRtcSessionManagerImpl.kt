@@ -137,7 +137,7 @@ class WebRtcSessionManagerImpl(
 
   override fun localVideoStart(surface: VideoTextureViewRenderer) {
     initSurfaceViewRenderer(surface)
-    Log.d(this::class.java.name, "[localVideoStart] ${localVideoTrack.id()} ${localVideoTrack.state()} ${localVideoTrack.kind()}" )
+    Log.d(this::class.java.name, "[localVideoStart] ${localVideoTrack.id()} ${localVideoTrack.state()} ${localVideoTrack.kind()} ${localVideoTrack.enabled()}" )
     localVideoTrack.addSink(surface)
   }
 
@@ -186,10 +186,16 @@ class WebRtcSessionManagerImpl(
           val videoTrack = track as VideoTrack
           sessionManagerScope.launch {
             _remoteVideoTrackFlow.emit(videoTrack)
-            Log.d(this::class.java.name, "[onVideoTrack] ${videoTrack.id()} ${videoTrack.state()} ${videoTrack.kind()}" )
+            Log.d(this::class.java.name, "[onVideoTrack] ${videoTrack.id()} ${videoTrack.state()} ${videoTrack.kind()} ${videoTrack.enabled()}" )
             onRemoteVideoTrackCallback?.invoke(videoTrack)
           }
         }
+      },
+      onIceConnectionChange = { iceConnectionState ->
+        Log.d(this::class.java.name, "[onIceConnectionChange] ${iceConnectionState.name}" )
+      },
+      onConnectionChange = { connectionSate ->
+        Log.d(this::class.java.name, "[onConnectionChange] ${connectionSate.name}" )
       }
     )
   }
