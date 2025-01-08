@@ -59,8 +59,8 @@ class StreamPeerConnection(
   private val onStreamAdded: ((MediaStream) -> Unit)?,
   private val onNegotiationNeeded: ((StreamPeerConnection, StreamPeerType) -> Unit)?,
   private val onIceCandidate: ((IceCandidate, StreamPeerType) -> Unit)?,
-  private val onConnectionChange: ((PeerConnection.PeerConnectionState?) -> Unit)? = null,
-  private val onIceConnectionChange: ((PeerConnection.IceConnectionState?) -> Unit)? = null,
+  private val onConnectionChange: ((PeerConnection.PeerConnectionState) -> Unit)? = null,
+  private val onIceConnectionChange: ((PeerConnection.IceConnectionState) -> Unit)? = null,
   private val onVideoTrack: ((RtpTransceiver?) -> Unit)?
 ) : PeerConnection.Observer {
 
