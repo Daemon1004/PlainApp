@@ -65,6 +65,7 @@ class StreamPeerConnectionFactory constructor(
     sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN
     continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
     iceTransportsType = PeerConnection.IceTransportsType.ALL
+    candidateNetworkPolicy = PeerConnection.CandidateNetworkPolicy.ALL
   }
 
   /**
