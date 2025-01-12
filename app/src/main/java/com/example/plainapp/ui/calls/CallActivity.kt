@@ -127,8 +127,8 @@ class CallActivity : AppCompatActivity() {
         sessionManager!!.onRemoteVideoTrack { videoTrack ->
             runOnUiThread {
                 binding.remoteViewLoading.visibility = View.GONE
-                videoTrack.addSink(binding.remoteView)
             }
+            videoTrack.addSink(binding.remoteView)
         }
 
         binding.localView.visibility = View.VISIBLE

@@ -86,7 +86,7 @@ class StreamPeerConnectionFactory constructor(
       PeerConnectionFactory.InitializationOptions.builder(context)
         .setEnableInternalTracer(true)
         .setFieldTrials("WebRTC-IgnoreLoopbackNetwork/Enabled/")
-        .setFieldTrials("WebRTC-SoftwareH264/Enabled/")
+        //.setFieldTrials("WebRTC-SoftwareH264/Enabled/")
         .setInjectableLogger({ message, severity, label ->
           when (severity) {
             Logging.Severity.LS_VERBOSE -> {
