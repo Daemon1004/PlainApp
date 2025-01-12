@@ -110,8 +110,8 @@ class StreamPeerConnectionFactory constructor(
 
     val opts = PeerConnectionFactory.Options()
     opts.networkIgnoreMask = 0
-    opts.disableEncryption = false
-    opts.disableNetworkMonitor = false
+    opts.disableEncryption = true
+    opts.disableNetworkMonitor = true
 
     PeerConnectionFactory.builder()
       .setOptions(opts)
