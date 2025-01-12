@@ -84,6 +84,7 @@ class StreamPeerConnectionFactory constructor(
   private val factory by lazy {
     PeerConnectionFactory.initialize(
       PeerConnectionFactory.InitializationOptions.builder(context)
+        .setFieldTrials("WebRTC-IgnoreLoopbackNetwork/Enabled/")
         .setInjectableLogger({ message, severity, label ->
           when (severity) {
             Logging.Severity.LS_VERBOSE -> {
