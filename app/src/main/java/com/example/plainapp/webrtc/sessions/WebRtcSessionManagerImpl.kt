@@ -277,7 +277,7 @@ class WebRtcSessionManagerImpl(
       signalingClient.sendCommand(SignalingCommand.OFFER, offer.description)
       callback?.invoke()
     }
-    Log.d(this::class.java.name, "[SDP] send offer: ${offer.stringify()}" )
+    Log.d(this::class.java.name, "[SDP] send offer: ${offer.description}" )
   }
 
   private suspend fun sendAnswer(callback: (() -> Unit)? = null) {
@@ -290,7 +290,7 @@ class WebRtcSessionManagerImpl(
       signalingClient.sendCommand(SignalingCommand.ANSWER, answer.description)
       callback?.invoke()
     }
-    Log.d(this::class.java.name, "[SDP] send answer: ${answer.stringify()}" )
+    Log.d(this::class.java.name, "[SDP] send answer: ${answer.description}" )
   }
 
   fun handleOffer(sdp: String) {
