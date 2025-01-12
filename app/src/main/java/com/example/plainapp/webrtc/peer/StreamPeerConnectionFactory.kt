@@ -64,6 +64,7 @@ class StreamPeerConnectionFactory constructor(
     // it's very important to use new unified sdp semantics PLAN_B is deprecated
     sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN
     continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
+    iceTransportsType = PeerConnection.IceTransportsType.ALL
   }
 
   /**
@@ -106,6 +107,8 @@ class StreamPeerConnectionFactory constructor(
 
     val opts = PeerConnectionFactory.Options()
     opts.networkIgnoreMask = 0
+    opts.disableEncryption = false
+    opts.disableNetworkMonitor = false
 
     PeerConnectionFactory.builder()
       .setOptions(opts)
