@@ -45,15 +45,6 @@ class StreamPeerConnectionFactory constructor(
     EglBase.create().eglBaseContext
   }
 
-  /**
-   * Default video decoder factory used to unpack video from the remote tracks.
-   */
-  private val videoDecoderFactory by lazy {
-    DefaultVideoDecoderFactory(
-      eglBaseContext
-    )
-  }
-
   // rtcConfig contains STUN and TURN servers list
   val rtcConfig = PeerConnection.RTCConfiguration(
     arrayListOf(
@@ -75,6 +66,15 @@ class StreamPeerConnectionFactory constructor(
   private val videoEncoderFactory by lazy {
     val hardwareEncoder = HardwareVideoEncoderFactory(eglBaseContext, true, true)
     SimulcastVideoEncoderFactory(hardwareEncoder, SoftwareVideoEncoderFactory())
+  }
+
+  /**
+   * Default video decoder factory used to unpack video from the remote tracks.
+   */
+  private val videoDecoderFactory by lazy {
+    DefaultVideoDecoderFactory(
+      eglBaseContext
+    )
   }
 
   /**
