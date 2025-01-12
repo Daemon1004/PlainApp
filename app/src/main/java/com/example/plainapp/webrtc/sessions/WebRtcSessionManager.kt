@@ -37,9 +37,9 @@ interface WebRtcSessionManager {
 
   fun onRemoteVideoTrack(callback: (VideoTrack) -> Unit)
 
-  fun initSurfaceViewRenderer(surface: VideoTextureViewRenderer)
+  fun initSurfaceViewRenderer(surface: SurfaceViewRenderer)
 
-  fun localVideoStart(surface: VideoTextureViewRenderer)
+  fun localVideoStart(surface: SurfaceViewRenderer)
 
   fun flipCamera()
 

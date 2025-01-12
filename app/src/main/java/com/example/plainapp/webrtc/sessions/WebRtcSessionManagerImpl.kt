@@ -24,6 +24,7 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
 import android.util.Log
+import android.view.TextureView
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.content.getSystemService
@@ -52,6 +53,7 @@ import org.webrtc.MediaStreamTrack
 import org.webrtc.RendererCommon
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
+import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoCapturer
 import org.webrtc.VideoTrack
 import java.util.UUID
@@ -126,16 +128,24 @@ class WebRtcSessionManagerImpl(
     )
   }
 
-  override fun initSurfaceViewRenderer(surface: VideoTextureViewRenderer) {
+  override fun initSurfaceViewRenderer(surface: SurfaceViewRenderer) {
+    /*
     surface.run {
       init(peerConnectionFactory.eglBaseContext, object : RendererCommon.RendererEvents {
         override fun onFirstFrameRendered() = Unit
         override fun onFrameResolutionChanged(p0: Int, p1: Int, p2: Int) = Unit
       })
     }
+
+     */
+    surface.run {
+      setEnableHardwareScaler(true)
+      setMirror(true)
+      init(peerConnectionFactory.eglBaseContext, null)
+    }
   }
 
-  override fun localVideoStart(surface: VideoTextureViewRenderer) {
+  override fun localVideoStart(surface: SurfaceViewRenderer) {
     initSurfaceViewRenderer(surface)
     Log.d(this::class.java.name, "[localVideoStart] ${localVideoTrack.id()} ${localVideoTrack.state()} ${localVideoTrack.kind()} ${localVideoTrack.enabled()}" )
     localVideoTrack.addSink(surface)
