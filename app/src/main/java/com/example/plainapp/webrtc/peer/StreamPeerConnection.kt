@@ -32,6 +32,7 @@ import kotlinx.coroutines.sync.withLock
 import org.webrtc.CandidatePairChangeEvent
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
+import org.webrtc.IceCandidateErrorEvent
 import org.webrtc.MediaConstraints
 import org.webrtc.MediaStream
 import org.webrtc.MediaStreamTrack
@@ -290,6 +291,9 @@ class StreamPeerConnection(
   /**
    * Domain - [PeerConnection] and [PeerConnection.Observer] related callbacks.
    */
+  override fun onRemoveTrack(receiver: RtpReceiver?) {
+    Log.i(this::class.java.name, "[onRemoveTrack] #sfu; receiver: $receiver")
+  }
 
   override fun onSignalingChange(newState: PeerConnection.SignalingState?) {
     Log.d(this::class.java.name, "[onSignalingChange] #sfu; newState: $newState")
@@ -305,6 +309,10 @@ class StreamPeerConnection(
 
   override fun onIceCandidatesRemoved(iceCandidates: Array<out IceCandidate>?) {
     Log.i(this::class.java.name, "[onIceCandidatesRemoved] #sfu; iceCandidates: $iceCandidates")
+  }
+
+  override fun onIceCandidateError(event: IceCandidateErrorEvent?) {
+    Log.e(this::class.java.name, "[onIceCandidateError] #sfu; event: $event")
   }
 
   override fun onConnectionChange(newState: PeerConnection.PeerConnectionState?) {
