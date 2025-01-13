@@ -312,7 +312,7 @@ class StreamPeerConnection(
   }
 
   override fun onIceCandidateError(event: IceCandidateErrorEvent?) {
-    Log.e(this::class.java.name, "[onIceCandidateError] #sfu; event: $event")
+    Log.e(this::class.java.name, "[onIceCandidateError] #sfu; event: " + if (event != null) event.errorText else "null")
   }
 
   override fun onConnectionChange(newState: PeerConnection.PeerConnectionState?) {
