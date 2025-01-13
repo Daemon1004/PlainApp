@@ -23,6 +23,7 @@ import org.webrtc.AudioSource
 import org.webrtc.AudioTrack
 import org.webrtc.DefaultVideoDecoderFactory
 import org.webrtc.EglBase
+import org.webrtc.HardwareVideoDecoderFactory
 import org.webrtc.HardwareVideoEncoderFactory
 import org.webrtc.SimulcastVideoEncoderFactory
 import org.webrtc.IceCandidate
@@ -71,9 +72,8 @@ class StreamPeerConnectionFactory constructor(
    * Default video decoder factory used to unpack video from the remote tracks.
    */
   private val videoDecoderFactory by lazy {
-    DefaultVideoDecoderFactory(
-      eglBaseContext
-    )
+    //DefaultVideoDecoderFactory(eglBaseContext)
+    HardwareVideoDecoderFactory(eglBaseContext)
   }
 
   /**
