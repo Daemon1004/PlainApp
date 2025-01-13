@@ -24,6 +24,7 @@ import org.webrtc.AudioTrack
 import org.webrtc.DefaultVideoDecoderFactory
 import org.webrtc.EglBase
 import org.webrtc.HardwareVideoEncoderFactory
+import org.webrtc.SimulcastVideoEncoderFactory
 import org.webrtc.IceCandidate
 import org.webrtc.Logging
 import org.webrtc.MediaConstraints
@@ -63,11 +64,8 @@ class StreamPeerConnectionFactory constructor(
    * Default encoder factory that supports Simulcast, used to send video tracks to the server.
    */
   private val videoEncoderFactory by lazy {
-    DefaultVideoEncoderFactory(
-      eglBaseContext,
-      true,
-      true
-    )
+    val hardwareEncoder = HardwareVideoEncoderFactory(eglBaseContext, true, true)
+    SimulcastVideoEncoderFactory(hardwareEncoder, SoftwareVideoEncoderFactory())
   }
 
   /**
