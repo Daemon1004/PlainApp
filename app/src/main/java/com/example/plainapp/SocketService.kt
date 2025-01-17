@@ -430,7 +430,7 @@ class SocketService : LifecycleService() {
             val userId = isOnlineArgs[0].toString().toLong()
 
             Log.d("debug", "send isOnline? to user (id = $userId)")
-            mSocket.emit("isOnline?", Gson().toJson(listOf(userId)))
+            mSocket.emit("isOnline", Gson().toJson(listOf(userId)))
 
         }
 
