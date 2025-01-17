@@ -455,10 +455,11 @@ class SocketService : LifecycleService() {
 
             scope.launch { withContext(Dispatchers.Main) {
                 repository.readAllUsers.observeOnce(this@SocketService) { users ->
-                    val usersToSend = emptyList<User>().toMutableList()
-                    for (user in users) if (user.id != userLiveData.value!!.id) usersToSend += user
-                    Log.d("debug", "send isOnline")
-                    mSocket.emit("isOnline?", Gson().toJson(usersToSend))
+                    val usersToSend = emptyList<Long>().toMutableList()
+                    for (user in users) if (user.id != userLiveData.value!!.id) usersToSend += user.id
+                    val json = Gson().toJson(usersToSend)
+                    Log.d("debug", "send isOnline? $json")
+                    mSocket.emit("isOnline?", json)
                 }
             } }
 
@@ -466,10 +467,11 @@ class SocketService : LifecycleService() {
 
             scope.launch { withContext(Dispatchers.Main) {
                 repository.readAllUsers.observeOnce(this@SocketService) { users ->
-                    val usersToSend = emptyList<User>().toMutableList()
-                    for (user in users) if (user.id != userLiveData.value!!.id) usersToSend += user
-                    Log.d("debug", "send isOffline")
-                    mSocket.emit("isOffline", Gson().toJson(usersToSend))
+                    val usersToSend = emptyList<Long>().toMutableList()
+                    for (user in users) if (user.id != userLiveData.value!!.id) usersToSend += user.id
+                    val json = Gson().toJson(usersToSend)
+                    Log.d("debug", "send isOffline $json")
+                    mSocket.emit("isOffline", json)
                 }
             } }
 
