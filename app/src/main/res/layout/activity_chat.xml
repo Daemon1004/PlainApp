@@ -66,17 +66,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView2"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
             android:layout_width="46dp"
             android:layout_height="46dp"
             android:layout_margin="9dp"
-            android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_user_black_24dp"
-            app:tint="?attr/colorPrimary" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/onlineCircle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                app:srcCompat="@drawable/circle_outline" />
+
+            <ImageView
+                android:id="@+id/userLogo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                app:srcCompat="@drawable/ic_user_black_24dp"
+                app:tint="?attr/colorPrimary" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/chatName"
@@ -88,7 +102,7 @@
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintStart_toEndOf="@+id/constraintLayout2"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="HardcodedText" />
 

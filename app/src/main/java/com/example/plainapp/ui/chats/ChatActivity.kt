@@ -1,5 +1,6 @@
 package com.example.plainapp.ui.chats
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
@@ -7,7 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.IBinder
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +26,7 @@ import com.example.plainapp.data.User
 import com.example.plainapp.observeOnce
 import com.example.plainapp.databinding.ActivityChatBinding
 import com.example.plainapp.ui.calls.CallActivity
+import kotlin.properties.Delegates
 
 class ChatActivity : AppCompatActivity() {
 
@@ -31,6 +35,8 @@ class ChatActivity : AppCompatActivity() {
 
     var serviceLiveData: MutableLiveData<SocketService?> = MutableLiveData<SocketService?>()
     var myUser: User? = null
+    private var participant: Long? = null
+    var chatId by Delegates.notNull<Long>()
 
     private val sConn = object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName, binder: IBinder)
@@ -38,9 +44,9 @@ class ChatActivity : AppCompatActivity() {
 
             val service = (binder as SocketService.MyBinder).service
             serviceLiveData.value = service
-            myUser = service.userLiveData.value
 
-            if (myUser == null) service.userLiveData.observeOnce(this@ChatActivity) { user -> myUser = user }
+            if (service.userLiveData.value != null) userInit(service.userLiveData.value!!)
+            service.userLiveData.observe(this@ChatActivity) { user -> if (user != null) userInit(user) }
 
         }
         override fun onServiceDisconnected(className: ComponentName)
@@ -62,11 +68,21 @@ class ChatActivity : AppCompatActivity() {
             insets
         }
 
-        val chatId = intent.extras?.getLong("chatId") ?: return
+        binding.onlineCircle.visibility = View.GONE
 
+        chatId = intent.extras?.getLong("chatId") ?: return
         serviceLiveData.observeOnce(this) { service -> service?.markAsRead(chatId) }
-
         bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
+
+    }
+
+    private var inited = false
+    private fun userInit(myUser: User) {
+
+        if (inited) return
+        inited = true
+
+        this.myUser = myUser
 
         val manager = LinearLayoutManager(this)
         adapter = MessageAdapter(this)
@@ -82,8 +98,8 @@ class ChatActivity : AppCompatActivity() {
 
         chatViewModel.readChat(chatId).observe(this) { chat ->
 
-            val participant = if (chat.participant1 == (myUser?.id ?: -1)) chat.participant2 else chat.participant1
-            chatViewModel.readUser(participant).observeOnce(this) { user ->
+            participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
+            chatViewModel.readUser(participant!!).observeOnce(this) { user ->
                 binding.chatName.text = user.name
             }
 
@@ -121,6 +137,30 @@ class ChatActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    private var timer: CountDownTimer ?= null
+
+    override fun onStart() {
+        super.onStart()
+
+        timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onTick(millisUntilFinished: Long) {
+                if (participant != null && serviceLiveData.value != null)
+                    binding.onlineCircle.visibility = if (serviceLiveData.value!!.isUserOnline(participant!!)) View.VISIBLE else View.GONE
+            }
+            override fun onFinish() { start() }
+        }
+        (timer as CountDownTimer).start()
+
+    }
+
+    override fun onStop() {
+
+        if (timer != null) (timer as CountDownTimer).cancel()
+
+        super.onStop()
     }
 
     override fun onDestroy() {
