@@ -319,7 +319,7 @@ class SocketService : LifecycleService() {
                     repository.readAllChats.observeOnce(this@SocketService) { chats -> scope.launch { updateNewMessages(chats) } }
                 } }
 
-                if (isBind) { sendOnline() }
+                sendOnline(true)
 
             }
 
@@ -445,12 +445,12 @@ class SocketService : LifecycleService() {
 
     fun isUserOnline(userId: Long): Boolean { return onlineUsers.contains(userId) }
 
-    private fun sendOnline() {
+    private fun sendOnline(online: Boolean) {
 
         if (!mSocket.connected()) return
         if (userLiveData.value == null) return
 
-        if (isBind) {
+        if (online) {
 
             scope.launch { withContext(Dispatchers.Main) {
                 repository.readAllUsers.observeOnce(this@SocketService) { users ->
@@ -478,8 +478,7 @@ class SocketService : LifecycleService() {
 
     override fun onDestroy() {
 
-        bindCount = 0
-        sendOnline()
+        sendOnline(false)
 
         mSocket.disconnect()
         scope.cancel()
@@ -490,20 +489,10 @@ class SocketService : LifecycleService() {
     }
 
     private val binder: Binder = MyBinder()
-    private var bindCount: Int = 0
-    private val isBind get() = bindCount > 0
 
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
-        bindCount++
-        if (bindCount == 1) sendOnline()
         return binder
-    }
-
-    override fun onUnbind(intent: Intent?): Boolean {
-        bindCount--
-        if (bindCount == 0) sendOnline()
-        return super.onUnbind(intent)
     }
 
     inner class MyBinder : Binder() {
