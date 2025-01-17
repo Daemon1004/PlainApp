@@ -429,7 +429,9 @@ class SocketService : LifecycleService() {
 
         //ISONLINE? LISTENER
         mSocket.on("isOnline?") { isOnlineArgs ->
-            mSocket.emit("isOnline", Gson().toJson(listOf(isOnlineArgs[0].toString())))
+            val sendStr = Gson().toJson(listOf(isOnlineArgs[0].toString().toLong()))
+            Log.d("debug", "send isOnline? $sendStr")
+            mSocket.emit("isOnline", sendStr)
         }
 
         mSocket.connect()
