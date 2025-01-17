@@ -86,6 +86,18 @@ class MainActivity : AppCompatActivity() {
                 android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
             perms += Manifest.permission.POST_NOTIFICATIONS
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_DENIED)
+            perms += Manifest.permission.MODIFY_AUDIO_SETTINGS
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_DENIED)
+            perms += Manifest.permission.ACCESS_NETWORK_STATE
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.INTERNET) == PackageManager.PERMISSION_DENIED)
+            perms += Manifest.permission.INTERNET
+
         if (perms.isNotEmpty())
             ActivityCompat.requestPermissions(this, perms.toTypedArray(), 101)
 

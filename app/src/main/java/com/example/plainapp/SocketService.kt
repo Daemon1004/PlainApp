@@ -22,6 +22,7 @@ import com.example.plainapp.data.Message
 import com.example.plainapp.data.User
 import com.example.plainapp.ui.calls.CallActivity
 import com.example.plainapp.ui.chats.ChatActivity
+import com.example.plainapp.webrtc.SignalingCommand
 import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -389,12 +390,12 @@ class SocketService : LifecycleService() {
         //ERROR LISTENER
         mSocket.on("error") { errorArgs ->
 
-            Log.d("debug", "SocketIO server error: $errorArgs")
+            Log.d("debug", "SocketIO server error: ${errorArgs[0]}")
 
         }
 
         //OFFER LISTENER (CALLING WEBRTC)
-        mSocket.on("offer") { offerArgs ->
+        mSocket.on(SignalingCommand.OFFER.serverSignal) { offerArgs ->
 
             Log.d("debug", "call: get offer")
 

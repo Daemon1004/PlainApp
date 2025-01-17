@@ -15,25 +15,17 @@ import com.example.plainapp.R
 import com.example.plainapp.SocketService
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.User
-import com.example.plainapp.observeOnce
 import com.example.plainapp.databinding.ActivityCallBinding
-import com.example.plainapp.rtc.PeerConnectionObserver
-import com.example.plainapp.rtc.RTCAudioManager
-import com.example.plainapp.rtc.RTCClient
-import com.google.gson.Gson
-import org.json.JSONObject
-import org.webrtc.IceCandidate
-import org.webrtc.MediaStream
-import org.webrtc.PeerConnection
-import org.webrtc.SessionDescription
+import com.example.plainapp.observeOnce
+import com.example.plainapp.webrtc.SignalingClient
+import com.example.plainapp.webrtc.peer.StreamPeerConnectionFactory
+import com.example.plainapp.webrtc.sessions.WebRtcSessionManagerImpl
 import kotlin.properties.Delegates
 
 class CallActivity : AppCompatActivity() {
     lateinit var binding : ActivityCallBinding
-    private var rtcClient : RTCClient ?= null
     private var isMute = false
     private var isCameraPause = false
-    private val rtcAudioManager by lazy { RTCAudioManager.create(this) }
     private var isSpeakerMode = true
 
     var serviceLiveData: MutableLiveData<SocketService?> = MutableLiveData<SocketService?>()
@@ -49,6 +41,9 @@ class CallActivity : AppCompatActivity() {
     private var chatId by Delegates.notNull<Long>()
     private var participant: User ?= null
 
+    private lateinit var signalingClient: SignalingClient
+    private var sessionManager: WebRtcSessionManagerImpl? = null
+
     private var isCaller by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,11 +51,13 @@ class CallActivity : AppCompatActivity() {
         binding = ActivityCallBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.chatName.text = ""
         isCaller = intent.extras?.getString("offerArgs") == null
         chatId = intent.extras?.getLong("chatId")!!
 
         binding.apply {
+
+            chatName.text = ""
+            binding.remoteViewLoading.visibility = View.VISIBLE
 
             if (isCaller) {
 
@@ -85,83 +82,33 @@ class CallActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        rtcClient?.endCall()
+        sessionManager?.disconnect()
         super.onDestroy()
     }
 
-    private fun call() {
-
-        val service = serviceLiveData.value!!
-        val mSocket = service.mSocket
-
-        binding.apply {
-            rtcClient?.initializeSurfaceView(localView)
-            rtcClient?.initializeSurfaceView(remoteView)
-            rtcClient?.startLocalVideo(localView)
-        }
-
-        rtcClient?.call { sdp, type ->
-
-            val json = JSONObject()
-            json.put("type", type)
-            json.put("sdp", sdp)
-
-            Log.d("debug", "call: emit offer - json = $json, chatId = $chatId")
-
-            mSocket.emit("offer", json.toString(), chatId.toString())
-
-        }
-
-        mSocket.once("answer") { answerArgs ->
-
-            Log.d("debug", "call: get answer")
-
-            val session = SessionDescription(
-                SessionDescription.Type.ANSWER,
-                JSONObject(answerArgs[0].toString())["sdp"].toString()
-            )
-
-            rtcClient?.onRemoteSessionReceived(session)
-
-        }
-
-    }
+    private fun call() { sessionManager!!.onSessionScreenReady() }
 
     private fun answer() {
-
-        val service = serviceLiveData.value!!
-        val mSocket = service.mSocket
-        myUser = service.userLiveData.value
 
         binding.callLayout.visibility = View.VISIBLE
         binding.responseLayout.visibility = View.GONE
 
-        val offerArgs = intent.extras?.getString("offerArgs")
+        val offer = intent.extras?.getString("offerArgs")!!
 
-        binding.apply {
-            rtcClient?.initializeSurfaceView(localView)
-            rtcClient?.initializeSurfaceView(remoteView)
-            rtcClient?.startLocalVideo(localView)
-        }
+        sessionManager!!.handleOffer(offer)
+        sessionManager!!.onSessionScreenReady()
 
-        val session = SessionDescription(
-            SessionDescription.Type.OFFER,
-            JSONObject(offerArgs!!)["sdp"].toString()
-        )
+    }
 
-        Log.d("debug", "call: session: ${session.type} ${session.description}")
+    private fun readParticipant(callback: () -> Unit) {
 
-        rtcClient?.onRemoteSessionReceived(session)
-        rtcClient?.answer { sdp, type ->
-
-            val json = JSONObject()
-            json.put("sdp", sdp)
-            json.put("type", type)
-
-            Log.d("debug", "call: emit answer - json = $json, chatId = $chatId")
-
-            mSocket.emit("answer", json.toString(), chatId.toString())
-
+        val chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        chatViewModel.readChat(chatId).observe(this) { chat ->
+            val participantId = if (chat.participant1 == myUser!!.id) chat.participant2 else chat.participant1
+            chatViewModel.readUser(participantId).observe(this) { participant ->
+                this.participant = participant
+                callback()
+            }
         }
 
     }
@@ -169,58 +116,23 @@ class CallActivity : AppCompatActivity() {
     private fun initAfterServiceConnected(){
 
         val service = serviceLiveData.value!!
-        val mSocket = service.mSocket
         myUser = service.userLiveData.value
 
-        val chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
-        chatViewModel.readChat(chatId).observe(this) { chat ->
-            val participantId = if (chat.participant1 == myUser!!.id) chat.participant2 else chat.participant1
-            chatViewModel.readUser(participantId).observe(this) { participant ->
-                binding.chatName.text = participant?.name ?: "?"
-                this.participant = participant
+        readParticipant { binding.chatName.text = participant?.name ?: "?" }
+
+        signalingClient = SignalingClient(service.mSocket, chatId)
+        sessionManager = WebRtcSessionManagerImpl(this, signalingClient, StreamPeerConnectionFactory(this))
+
+        sessionManager!!.initSurfaceViewRenderer(binding.remoteView)
+        sessionManager!!.onRemoteVideoTrack { videoTrack ->
+            runOnUiThread {
+                binding.remoteViewLoading.visibility = View.GONE
             }
+            videoTrack.addSink(binding.remoteView)
         }
 
-        rtcClient = RTCClient(application, object : PeerConnectionObserver() {
-            override fun onIceCandidate(p0: IceCandidate?) {
-                super.onIceCandidate(p0)
-                rtcClient?.addIceCandidate(p0)
-                val jsonCandidate = Gson().toJson(p0)
-                Log.d("debug", "call: emit ice candidate $jsonCandidate")
-                mSocket.emit("ice candidate", jsonCandidate, chatId)
-            }
-
-            override fun onAddStream(p0: MediaStream?) {
-                super.onAddStream(p0)
-                p0?.videoTracks?.get(0)?.addSink(binding.remoteView)
-                Log.d("debug", "call: onAddStream: $p0")
-            }
-
-            override fun onConnectionChange(newState: PeerConnection.PeerConnectionState?) {
-                super.onConnectionChange(newState)
-                Log.d("debug", "call: onConnectionChange: $newState")
-
-                if (newState == PeerConnection.PeerConnectionState.CONNECTED)
-                    runOnUiThread { binding.remoteViewLoading.visibility = View.GONE }
-                else
-                    runOnUiThread { binding.remoteViewLoading.visibility = View.VISIBLE }
-
-            }
-
-            override fun onRenegotiationNeeded() {
-                super.onRenegotiationNeeded()
-                Log.d("debug", "call: onRenegotiationNeeded")
-
-                //if (isCaller) { call() }
-
-            }
-        })
-
-        mSocket.on("ice candidate") { iceCandidateArgs ->
-            Log.d("debug", "call: get ice candidate ${iceCandidateArgs[0]}")
-            val candidate = Gson().fromJson(iceCandidateArgs[0].toString(), IceCandidate::class.java)
-            rtcClient?.addIceCandidate(candidate)
-        }
+        binding.localView.visibility = View.VISIBLE
+        sessionManager!!.localVideoStart(binding.localView)
 
         if (!isCaller) {
             binding.apply {
@@ -244,12 +156,10 @@ class CallActivity : AppCompatActivity() {
             }
         } else { call() }
 
-        rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
-
         binding.apply {
 
             switchCameraButton.setOnClickListener {
-                rtcClient?.switchCamera()
+                sessionManager?.flipCamera()
             }
 
             micButton.setOnClickListener {
@@ -260,7 +170,7 @@ class CallActivity : AppCompatActivity() {
                     isMute = true
                     micButton.setImageResource(R.drawable.ic_baseline_mic_24)
                 }
-                rtcClient?.toggleAudio(isMute)
+                sessionManager?.enableMicrophone(isMute)
             }
 
             videoButton.setOnClickListener {
@@ -271,18 +181,18 @@ class CallActivity : AppCompatActivity() {
                     isCameraPause = true
                     videoButton.setImageResource(R.drawable.ic_baseline_videocam_24)
                 }
-                rtcClient?.toggleCamera(isCameraPause)
+                sessionManager?.enableCamera(isCameraPause)
             }
 
             audioOutputButton.setOnClickListener {
                 if (isSpeakerMode){
                     isSpeakerMode = false
                     audioOutputButton.setImageResource(R.drawable.ic_baseline_hearing_24)
-                    rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.EARPIECE)
+                    //rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.EARPIECE)
                 }else{
                     isSpeakerMode = true
                     audioOutputButton.setImageResource(R.drawable.ic_baseline_speaker_up_24)
-                    rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
+                    //rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
 
                 }
 
