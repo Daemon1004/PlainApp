@@ -427,6 +427,11 @@ class SocketService : LifecycleService() {
 
         }
 
+        //ISONLINE? LISTENER
+        mSocket.on("isOnline?") { isOnlineArgs ->
+            mSocket.emit("isOnline", Gson().toJson(listOf(isOnlineArgs[0].toString())))
+        }
+
         mSocket.connect()
 
         Log.d("debug", "Service onCreate()")
@@ -442,13 +447,16 @@ class SocketService : LifecycleService() {
     private fun sendOnline() {
 
         if (!mSocket.connected()) return
+        if (userLiveData.value == null) return
 
         if (isBind) {
 
             scope.launch { withContext(Dispatchers.Main) {
                 repository.readAllUsers.observeOnce(this@SocketService) { users ->
+                    val usersToSend = emptyList<User>().toMutableList()
+                    for (user in users) if (user.id != userLiveData.value!!.id) usersToSend += user
                     Log.d("debug", "send isOnline")
-                    mSocket.emit("isOnline", Gson().toJson(users))
+                    mSocket.emit("isOnline", Gson().toJson(usersToSend))
                 }
             } }
 
@@ -456,8 +464,10 @@ class SocketService : LifecycleService() {
 
             scope.launch { withContext(Dispatchers.Main) {
                 repository.readAllUsers.observeOnce(this@SocketService) { users ->
+                    val usersToSend = emptyList<User>().toMutableList()
+                    for (user in users) if (user.id != userLiveData.value!!.id) usersToSend += user
                     Log.d("debug", "send isOffline")
-                    mSocket.emit("isOffline", Gson().toJson(users))
+                    mSocket.emit("isOffline", Gson().toJson(usersToSend))
                 }
             } }
 
