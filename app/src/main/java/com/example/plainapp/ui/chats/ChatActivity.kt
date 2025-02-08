@@ -74,6 +74,8 @@ class ChatActivity : AppCompatActivity() {
         serviceLiveData.observeOnce(this) { service -> service?.markAsRead(chatId) }
         bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
 
+        binding.profile.visibility = View.GONE
+
     }
 
     private var inited = false
@@ -101,6 +103,7 @@ class ChatActivity : AppCompatActivity() {
             participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
             chatViewModel.readUser(participant!!).observeOnce(this) { user ->
                 binding.chatName.text = user.name
+                binding.bio.text = user.bio
             }
 
             chatViewModel.readAllMessages(chat).observe(this) { messages ->
@@ -134,6 +137,12 @@ class ChatActivity : AppCompatActivity() {
             val intent = Intent(this, CallActivity::class.java)
             intent.putExtra("chatId", chatId)
             startActivity(intent)
+
+        }
+
+        binding.userLogo.setOnClickListener {
+            
+            binding.profile.visibility = if (binding.profile.visibility == View.GONE) View.VISIBLE else View.GONE
 
         }
 

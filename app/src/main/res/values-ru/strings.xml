@@ -37,4 +37,5 @@
     <string name="new_user_name">Введите новое имя пользователя</string>
     <string name="edit_name">Изменить имя пользователя</string>
     <string name="new_user_nickname">Введите никнейм пользователя</string>
+    <string name="user_biography">Биография пользователя:</string>
 </resources>
