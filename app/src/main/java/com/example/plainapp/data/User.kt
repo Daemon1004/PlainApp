@@ -13,8 +13,8 @@ data class User (
     val name: String? = null,
     val bio: String? = null,
     val birthdate: String? = null,
-    val phoneNumber: String,
-    val createdAt: String,
-    val updatedAt: String,
-    val lastConnected: String
+    val phoneNumber: String? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null,
+    val lastConnected: String? = null
 )

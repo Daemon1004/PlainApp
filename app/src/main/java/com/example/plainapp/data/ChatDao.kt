@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface ChatDao {
@@ -70,5 +71,11 @@ interface ChatDao {
 
     @Query("SELECT * FROM user_table")
     fun readAllUsers(): LiveData<List<User>>
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun  updateUsers(users: List<User>)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun  updateUser(user: User)
 
 }

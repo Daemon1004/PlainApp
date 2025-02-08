@@ -26,4 +26,7 @@ class ChatRepository(private val chatDao: ChatDao) {
     suspend fun addUser(user: User) { chatDao.addUser(user) }
     suspend fun addUsers(users: List<User>) { chatDao.addUsers(users) }
 
+    suspend fun updateUser(user: User) { chatDao.updateUser(user) }
+    suspend fun updateUsers(users: List<User>) { chatDao.updateUsers(users) }
+
 }

@@ -317,6 +317,20 @@ class SocketService : LifecycleService() {
 
     }
 
+    private fun resetUpdatedUsers() {
+
+        mSocket.emit("updatedContacts")
+        Log.d("debug", "send updatedContacts")
+        mSocket.once("updatedContacts") { args ->
+
+            Log.d("debug", "get updatedContacts ${args[0]}")
+
+            scope.launch { repository.updateUsers(Json.decodeFromString<List<User>>(args[0].toString())) }
+
+        }
+
+    }
+
     var connectedStatus = MutableLiveData(false)
 
     private val userFileName = "user.json"
@@ -361,6 +375,8 @@ class SocketService : LifecycleService() {
                 } }
 
                 sendOnline(true)
+
+                resetUpdatedUsers()
 
             }
 
@@ -476,6 +492,20 @@ class SocketService : LifecycleService() {
 
         }
 
+        //USERS LISTENER
+        mSocket.on("updateContact") { args ->
+
+            Log.d("debug", "get updateContact ${args[0]} ${args[1]}")
+
+            val id = args[0].toString().toLong()
+            val json = JSONObject(args[1].toString())
+            json.put("id", id)
+            val user = Json.decodeFromString<User>(json.toString())
+
+            scope.launch { repository.updateUser(user) }
+
+        }
+
         mSocket.connect()
 
         Log.d("debug", "Service onCreate()")
@@ -502,33 +532,43 @@ class SocketService : LifecycleService() {
                     lastConnected = user.lastConnected
                 )
 
-                val json = JSONObject()
-                json.put("bio", bio)
-                mSocket.emit("updateUser", json)
-                Log.d("debug", "send updateUser")
-                mSocket.once("updateUser") {
+                scope.launch {
+                    withContext(Dispatchers.Main) {
+                        repository.readAllUsers.observeOnce(this@SocketService) {
+                            users -> scope.launch {
 
-                    Log.d("debug", "get updateUser")
+                                val userIds = emptyList<Long>().toMutableList()
+                                for (u in users) userIds += u.id
 
-                    userLiveData.postValue(newUser)
-                    writeUserToFile(newUser)
+                                val json = JSONObject()
+                                json.put("bio", bio)
+                                mSocket.emit("updateUser", json, Json.encodeToString(userIds))
+                                Log.d("debug", "send updateUser")
+                                mSocket.once("updateUser") {
 
-                    callback(true, "")
+                                    Log.d("debug", "get updateUser")
 
+                                    userLiveData.postValue(newUser)
+                                    writeUserToFile(newUser)
+
+                                    callback(true, "")
+
+                                }
+                                mSocket.once("updateUserError") { errorArgs ->
+
+                                    Log.d("debug", "get updateUserError ${errorArgs[0]}")
+
+                                    if (errorArgs[0] != null)
+                                        callback(false, errorArgs[0].toString())
+                                    else
+                                        callback(false, "Unknown error")
+
+                                }
+                            }
+                        }
+                    }
                 }
-                mSocket.once("updateUserError") { errorArgs ->
-
-                    Log.d("debug", "get updateUserError ${errorArgs[0]}")
-
-                    if (errorArgs[0] != null)
-                        callback(false, errorArgs[0].toString())
-                    else
-                        callback(false, "Unknown error")
-
-                }
-
             }
-
         }
 
     }
@@ -553,33 +593,44 @@ class SocketService : LifecycleService() {
                     lastConnected = user.lastConnected
                 )
 
-                val json = JSONObject()
-                json.put("name", name)
-                mSocket.emit("updateUser", json)
-                Log.d("debug", "send updateUser")
-                mSocket.once("updateUser") {
+                scope.launch {
+                    withContext(Dispatchers.Main) {
+                        repository.readAllUsers.observeOnce(this@SocketService) { users ->
+                            scope.launch {
 
-                    Log.d("debug", "get updateUser")
+                                val userIds = emptyList<Long>().toMutableList()
+                                for (u in users) userIds += u.id
 
-                    userLiveData.postValue(newUser)
-                    writeUserToFile(newUser)
+                                val json = JSONObject()
 
-                    callback(true, "")
+                                json.put("name", name)
+                                mSocket.emit("updateUser", json, Json.encodeToString(userIds))
+                                Log.d("debug", "send updateUser")
+                                mSocket.once("updateUser") {
 
+                                    Log.d("debug", "get updateUser")
+
+                                    userLiveData.postValue(newUser)
+                                    writeUserToFile(newUser)
+
+                                    callback(true, "")
+
+                                }
+                                mSocket.once("updateUserError") { errorArgs ->
+
+                                    Log.d("debug", "get updateUserError ${errorArgs[0]}")
+
+                                    if (errorArgs[0] != null)
+                                        callback(false, errorArgs[0].toString())
+                                    else
+                                        callback(false, "Unknown error")
+
+                                }
+                            }
+                        }
+                    }
                 }
-                mSocket.once("updateUserError") { errorArgs ->
-
-                    Log.d("debug", "get updateUserError ${errorArgs[0]}")
-
-                    if (errorArgs[0] != null)
-                        callback(false, errorArgs[0].toString())
-                    else
-                        callback(false, "Unknown error")
-
-                }
-
             }
-
         }
 
     }
