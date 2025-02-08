@@ -3,14 +3,14 @@
     <string name="title_chats">Chats</string>
     <string name="title_profile">Profile</string>
     <string name="title_calls">Calls</string>
-    <string name="title_create_chat">Creating new chat</string>
+    <string name="title_search_chat">Search user</string>
     <string name="log_in">Log in</string>
     <string name="phone_number">Phone number</string>
     <string name="password">Password</string>
     <string name="enter_message">Enter message</string>
     <string name="connect_chat">New connection to chat</string>
     <string name="connect">Connect</string>
-    <string name="chat_name">Chat name</string>
+    <string name="search_chat">Enter user name</string>
     <string name="create">Create</string>
     <string name="empty_chat_name">Chat name is empty, please write correct name</string>
     <string name="sql_constraint_error">Something went wrong, maybe this chat name already exists</string>

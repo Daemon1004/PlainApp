@@ -3,14 +3,14 @@
     <string name="title_chats">Чаты</string>
     <string name="title_profile">Профиль</string>
     <string name="title_calls">Звонки</string>
-    <string name="title_create_chat">Создание нового чата</string>
+    <string name="title_search_chat">Поиск пользователя</string>
     <string name="log_in">Войти</string>
     <string name="phone_number">Номер телефона</string>
     <string name="password">Пароль</string>
     <string name="enter_message">Введите сообщение</string>
     <string name="connect_chat">Новое подключение к чату</string>
     <string name="connect">Подключиться</string>
-    <string name="chat_name">Название чата</string>
+    <string name="search_chat">Введите имя пользователя</string>
     <string name="create">Создать</string>
     <string name="empty_chat_name">Название чата пустое, введите правильное название</string>
     <string name="sql_constraint_error">Что-то пошло не так, возможно чат с таким именем уже существует</string>

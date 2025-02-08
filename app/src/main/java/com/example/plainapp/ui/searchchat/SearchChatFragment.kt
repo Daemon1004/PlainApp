@@ -1,21 +1,17 @@
-package com.example.plainapp.ui.chats
+package com.example.plainapp.ui.searchchat
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
-import com.example.plainapp.R
-import com.example.plainapp.data.Chat
-import com.example.plainapp.data.ChatViewModel
-import com.example.plainapp.databinding.FragmentCreateChatBinding
+import com.example.plainapp.databinding.FragmentSearchChatBinding
 
-class CreateChatFragment : Fragment() {
+class SearchChatFragment : Fragment() {
 
-    private var _binding: FragmentCreateChatBinding? = null
+    private var _binding: FragmentSearchChatBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -23,9 +19,9 @@ class CreateChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentCreateChatBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchChatBinding.inflate(inflater, container, false)
 
-        binding.button.setOnClickListener {
+        /*binding.button.setOnClickListener {
 
             val chatName = binding.chatName.text.toString()
 
@@ -44,6 +40,24 @@ class CreateChatFragment : Fragment() {
                 Toast.makeText(requireContext(), getString(R.string.empty_chat_name), Toast.LENGTH_LONG).show()
 
             }
+
+        } */
+
+        val timer = object : CountDownTimer(1000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {  }
+            override fun onFinish() {
+
+                binding.progressBar.visibility = View.GONE
+
+            }
+        }
+
+        binding.chatName.addTextChangedListener {
+
+            binding.progressBar.visibility = View.VISIBLE
+
+            timer.cancel()
+            timer.start()
 
         }
 

@@ -29,8 +29,8 @@
 
     <fragment
         android:id="@+id/navigation_create_chat"
-        android:name="com.example.plainapp.ui.chats.CreateChatFragment"
-        android:label="@string/title_create_chat"
+        android:name="com.example.plainapp.ui.searchchat.SearchChatFragment"
+        android:label="@string/title_search_chat"
         tools:layout="@layout/fragment_calls" />
 
 </navigation>
