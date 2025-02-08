@@ -5,7 +5,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -52,27 +51,69 @@ class SocketService : LifecycleService() {
 
     var userLiveData: MutableLiveData<User?> = MutableLiveData<User?>()
 
-    fun logIn(phoneNumber: String) {
+    fun reg(phoneNumber: String, name: String, nickname: String, errorCallback: (text: String) -> Unit) {
+
+        val json = JSONObject()
+        json.put("phoneNumber", phoneNumber)
+        json.put("name", name)
+        json.put("nickname", nickname)
+
+        mSocket.emit("createUser", json)
+        Log.d("debug", "send createUser $json")
+        mSocket.once("createUser") { args ->
+
+            Log.d("debug", "get createUser ${args[0]}")
+            try {
+
+                args[0].toString().toLong()
+                logIn(phoneNumber) { errorCallback("?") }
+
+            }
+            catch(e: Exception) { errorCallback(args[0].toString()) }
+
+        }
+
+    }
+
+    fun logIn(phoneNumber: String, errorCallback: () -> Unit) {
 
         mSocket.emit("userByPN", phoneNumber)
+        Log.d("debug", "send userByPN")
         mSocket.once("userByPN") { args -> scope.launch {
 
-            val user = Json.decodeFromString<User>(args[0].toString())
-            scope.launch { userLiveData.postValue(user) }.join()
+            Log.d("debug", "get userByPN ${args[0]}")
 
-            Log.d("debug", "Get user: $user")
+            if (args[0] != null) {
 
-            val file = File(filesDir, userFileName)
-            if (!file.exists()) file.createNewFile()
-            else if (file.isDirectory) {
-                file.delete()
-                file.createNewFile()
+                val user = Json.decodeFromString<User>(args[0].toString())
+                scope.launch { userLiveData.postValue(user) }.join()
+
+                Log.d("debug", "Get user: $user")
+
+                writeUserToFile(user)
+
+                signIn { updateAll() }
+
+            } else {
+
+                errorCallback()
+
             }
-            FileOutputStream(file).write(Json.encodeToString(user).toByteArray())
-
-            signIn { updateAll() }
 
         } }
+
+    }
+
+    private fun writeUserToFile(user: User) {
+
+        val file = File(filesDir, userFileName)
+        if (!file.exists()) file.createNewFile()
+        else if (file.isDirectory) {
+            file.delete()
+            file.createNewFile()
+        }
+        FileOutputStream(file).write(Json.encodeToString(user).toByteArray())
+
     }
 
     private fun signIn(callback: () -> Unit) {
@@ -283,7 +324,7 @@ class SocketService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         val chatsNotifyChannel = "chats"
         val channel = NotificationChannel(chatsNotifyChannel,  "Chats", NotificationManager.IMPORTANCE_DEFAULT)
@@ -438,6 +479,108 @@ class SocketService : LifecycleService() {
         mSocket.connect()
 
         Log.d("debug", "Service onCreate()")
+
+    }
+
+    fun newBio(bio: String, callback: (success: Boolean, text: String)->Unit) {
+
+        scope.launch {
+
+            val user = userLiveData.value
+
+            if (user != null) {
+
+                val newUser = User(
+                    id = user.id,
+                    nickname = user.nickname,
+                    name = user.name,
+                    bio = bio,
+                    birthdate = user.birthdate,
+                    phoneNumber = user.phoneNumber,
+                    createdAt = user.createdAt,
+                    updatedAt = user.updatedAt,
+                    lastConnected = user.lastConnected
+                )
+
+                val json = JSONObject()
+                json.put("bio", bio)
+                mSocket.emit("updateUser", json)
+                Log.d("debug", "send updateUser")
+                mSocket.once("updateUser") {
+
+                    Log.d("debug", "get updateUser")
+
+                    userLiveData.postValue(newUser)
+                    writeUserToFile(newUser)
+
+                    callback(true, "")
+
+                }
+                mSocket.once("updateUserError") { errorArgs ->
+
+                    Log.d("debug", "get updateUserError ${errorArgs[0]}")
+
+                    if (errorArgs[0] != null)
+                        callback(false, errorArgs[0].toString())
+                    else
+                        callback(false, "Unknown error")
+
+                }
+
+            }
+
+        }
+
+    }
+
+    fun newName(name: String, callback: (success: Boolean, text: String)->Unit) {
+
+        scope.launch {
+
+            val user = userLiveData.value
+
+            if (user != null) {
+
+                val newUser = User(
+                    id = user.id,
+                    nickname = user.nickname,
+                    name = name,
+                    bio = user.bio,
+                    birthdate = user.birthdate,
+                    phoneNumber = user.phoneNumber,
+                    createdAt = user.createdAt,
+                    updatedAt = user.updatedAt,
+                    lastConnected = user.lastConnected
+                )
+
+                val json = JSONObject()
+                json.put("name", name)
+                mSocket.emit("updateUser", json)
+                Log.d("debug", "send updateUser")
+                mSocket.once("updateUser") {
+
+                    Log.d("debug", "get updateUser")
+
+                    userLiveData.postValue(newUser)
+                    writeUserToFile(newUser)
+
+                    callback(true, "")
+
+                }
+                mSocket.once("updateUserError") { errorArgs ->
+
+                    Log.d("debug", "get updateUserError ${errorArgs[0]}")
+
+                    if (errorArgs[0] != null)
+                        callback(false, errorArgs[0].toString())
+                    else
+                        callback(false, "Unknown error")
+
+                }
+
+            }
+
+        }
 
     }
 

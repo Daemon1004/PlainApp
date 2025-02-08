@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/rectangle"
-    android:backgroundTint="?attr/colorPlateBackground"
-    tools:context=".ui.profile.ProfileFragment">
+    tools:context=".ui.profile.ProfileFragment"
+    android:background="?attr/colorPlateBackground">
 
     <View
         android:id="@+id/view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="-100dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_edge"
@@ -21,7 +20,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myImage" />
+        app:layout_constraintTop_toBottomOf="@+id/myName" />
 
     <View
         android:id="@+id/view2"
@@ -36,12 +35,11 @@
 
     <ImageView
         android:id="@+id/myImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="60dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
         android:importantForAccessibility="no"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_user_black_24dp"
@@ -51,49 +49,97 @@
         android:id="@+id/myName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="9dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:maxWidth="300dp"
-        android:text="My User Name"
+        android:maxWidth="188dp"
+        android:text="My User Names"
         android:textColor="?attr/colorPrimary"
         android:textSize="26sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myImage"
+        app:layout_constraintStart_toEndOf="@+id/view2"
+        app:layout_constraintTop_toTopOf="@+id/view2"
         tools:ignore="HardcodedText" />
+
+    <ImageButton
+        android:id="@+id/nameEdit"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        android:backgroundTint="?attr/colorPlateBackground"
+        android:contentDescription="@string/edit_name"
+        android:padding="10dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/myName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/myName"
+        app:srcCompat="@drawable/edit_icon"
+        app:tint="?attr/colorPrimary" />
 
     <TextView
         android:id="@+id/myNickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
+        android:layout_margin="16dp"
+        android:maxWidth="220dp"
         android:text="My Nickname"
+        android:singleLine="true"
         android:textColor="?attr/colorSecondary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myName"
+        app:layout_constraintStart_toEndOf="@+id/view2"
+        app:layout_constraintTop_toTopOf="@+id/view"
         tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/bioLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="70dp"
         android:text="@string/my_biography"
         android:textColor="?attr/colorSecondary"
         android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myNickname" />
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
 
-    <TextView
+    <ImageButton
+        android:id="@+id/bioEdit"
+        app:srcCompat="@drawable/edit_icon"
+        android:padding="10dp"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="30dp"
+        android:contentDescription="@string/edit_bio"
+        android:backgroundTint="?attr/colorPlate"
+        app:layout_constraintBottom_toBottomOf="@+id/bioLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bioLabel"
+        app:tint="?attr/colorSecondary"/>
+
+    <ImageButton
+        android:id="@+id/bioAccept"
+        app:srcCompat="@drawable/ic_done_black_24dp"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="30dp"
+        android:contentDescription="@string/edit_bio"
+        android:backgroundTint="?attr/colorPlate"
+        android:textColor="?attr/colorSecondary"
+        app:layout_constraintBottom_toBottomOf="@+id/bioLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bioLabel"
+        app:tint="?attr/colorSecondary"/>
+
+    <EditText
         android:id="@+id/myBio"
+        android:autofillHints=""
+        android:enabled="false"
+        android:gravity="top"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="30dp"
@@ -101,13 +147,13 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="12dp"
         android:hint="@string/empty_biography"
+        android:inputType="textMultiLine"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/birthdateLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bioLabel"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toBottomOf="@+id/bioLabel" />
 
     <TextView
         android:id="@+id/birthdateLabel"
@@ -162,5 +208,60 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/createdAtLabel"
         tools:ignore="HardcodedText" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/editNameLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="18dp"
+        android:background="@drawable/rounded_edge"
+        android:backgroundTint="?attr/colorPlate"
+        android:elevation="20dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_user_name"
+            android:textColor="?attr/colorSecondary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/newName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:autofillHints=""
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:singleLine="true"
+            app:layout_constraintEnd_toStartOf="@+id/newNameAccept"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <ImageButton
+            android:id="@+id/newNameAccept"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:backgroundTint="?attr/colorPlate"
+            android:contentDescription="@string/edit_name"
+            android:textColor="?attr/colorSecondary"
+            app:layout_constraintBottom_toBottomOf="@+id/newName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/newName"
+            app:srcCompat="@drawable/ic_done_black_24dp"
+            app:tint="?attr/colorSecondary" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

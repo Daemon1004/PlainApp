@@ -33,4 +33,8 @@
     <string name="edit">Изменить</string>
     <string name="delete">Удалить</string>
     <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
+    <string name="edit_bio">Изменить биографию</string>
+    <string name="new_user_name">Введите новое имя пользователя</string>
+    <string name="edit_name">Изменить имя пользователя</string>
+    <string name="new_user_nickname">Введите никнейм пользователя</string>
 </resources>

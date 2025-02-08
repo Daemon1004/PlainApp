@@ -8,6 +8,7 @@
     tools:context=".ui.LoginActivity">
 
     <EditText
+        android:visibility="visible"
         android:id="@+id/textPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,12 +26,49 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="VisualLintTextFieldSize" />
 
+    <EditText
+        android:visibility="gone"
+        android:id="@+id/userName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="476dp"
+        android:layout_marginEnd="42dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/new_user_name"
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="VisualLintTextFieldSize" />
+
+    <EditText
+        android:visibility="gone"
+        android:id="@+id/userNickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="42dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginTop="6dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/new_user_nickname"
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userName"
+        tools:ignore="VisualLintTextFieldSize" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="120dp"
         android:layout_height="120dp"
+        android:layout_marginTop="160dp"
         android:importantForAccessibility="no"
-        app:layout_constraintBottom_toTopOf="@+id/textPhone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

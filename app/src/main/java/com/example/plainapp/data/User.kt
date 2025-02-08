@@ -15,5 +15,6 @@ data class User (
     val birthdate: String? = null,
     val phoneNumber: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val lastConnected: String
 )

@@ -13,7 +13,7 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="colorPlate">@color/light_grey</item>
-        <item name="colorPlateBackground">@color/light_blue</item>
+        <item name="colorPlateBackground">@color/white</item>
         <item name="colorChatTitle">@color/light_grey</item>
         <item name="colorMessagePlate">@color/light_grey</item>
         <item name="colorChatBackground">@color/white</item>

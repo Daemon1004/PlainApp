@@ -33,4 +33,8 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="edit_bio">Edit biography</string>
+    <string name="new_user_name">Enter new user name</string>
+    <string name="edit_name">Edit user name</string>
+    <string name="new_user_nickname">Enter new user nickname</string>
 </resources>

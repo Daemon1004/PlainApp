@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -68,14 +69,35 @@ class LoginActivity : AppCompatActivity() {
         _binding = null
     }
 
+    private var notfound = false
     private fun logIn(phoneNumber: String) {
 
         if (service == null) return
 
-        service!!.userLiveData.observe(this) { user ->
-            if (user != null ) this.finish()
+        if (!notfound) {
+
+            service!!.userLiveData.observe(this) { user ->
+                if (user != null) this.finish()
+            }
+            service!!.logIn(phoneNumber) {
+                runOnUiThread {
+
+                    notfound = true
+
+                    binding.textPhone.visibility = View.GONE
+                    binding.userName.visibility = View.VISIBLE
+                    binding.userNickname.visibility = View.VISIBLE
+
+                }
+            }
+
+        } else {
+
+            service!!.reg(phoneNumber, binding.userName.text.toString(), binding.userNickname.text.toString()) { error ->
+                runOnUiThread { Toast.makeText(this, error, Toast.LENGTH_SHORT).show() }
+            }
+
         }
-        service!!.logIn(phoneNumber)
 
     }
 }
