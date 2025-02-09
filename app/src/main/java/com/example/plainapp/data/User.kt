@@ -14,6 +14,5 @@ data class User (
     val bio: String? = null,
     val birthdate: String? = null,
     val phoneNumber: String,
-    val createdAt: String,
-    val updatedAt: String
+    val createdAt: String
 )

@@ -103,7 +103,7 @@ class ChatActivity : AppCompatActivity() {
 
             participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
             chatViewModel.readUser(participant!!).observeOnce(this) { user ->
-                binding.chatName.text = user.name
+                binding.chatName.text = user!!.name
             }
 
             binding.userLogo.setOnClickListener {

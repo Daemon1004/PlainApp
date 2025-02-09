@@ -22,6 +22,6 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
 
     fun readChat(id: Long): LiveData<Chat> { return repository.readChat(id) }
 
-    fun readUser(id: Long): LiveData<User> { return repository.readUser(id) }
+    fun readUser(id: Long): LiveData<User?> { return repository.readUser(id) }
 
 }

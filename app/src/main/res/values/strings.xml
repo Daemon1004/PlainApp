@@ -38,4 +38,5 @@
     <string name="edit_name">Edit user name</string>
     <string name="new_user_nickname">Enter new user nickname</string>
     <string name="user_biography">User biography:</string>
+    <string name="add_user">Add user</string>
 </resources>

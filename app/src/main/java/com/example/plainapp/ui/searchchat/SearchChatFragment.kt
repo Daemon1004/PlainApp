@@ -7,7 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.plainapp.databinding.FragmentSearchChatBinding
+import com.example.plainapp.ui.MainActivity
+import com.example.plainapp.ui.profile.UserPreviewAdapter
 
 class SearchChatFragment : Fragment() {
 
@@ -21,43 +24,52 @@ class SearchChatFragment : Fragment() {
 
         _binding = FragmentSearchChatBinding.inflate(inflater, container, false)
 
-        /*binding.button.setOnClickListener {
+        val mainActivity = activity as MainActivity
 
-            val chatName = binding.chatName.text.toString()
+        val manager = LinearLayoutManager(mainActivity)
+        val adapter = UserPreviewAdapter()
 
-            if (chatName.isNotEmpty()) {
-
-                val viewModel = ViewModelProvider(this)[ChatViewModel::class.java]
-
-                //viewModel.addChat(Chat(0, chatName))
-
-                Navigation.findNavController(binding.root).popBackStack()
-
-                //Toast.makeText(requireContext(), getString(R.string.sql_constraint_error), Toast.LENGTH_LONG).show()
-
-            } else {
-
-                Toast.makeText(requireContext(), getString(R.string.empty_chat_name), Toast.LENGTH_LONG).show()
-
-            }
-
-        } */
+        binding.recyclerView.layoutManager = manager
+        binding.recyclerView.adapter = adapter
 
         val timer = object : CountDownTimer(1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {  }
             override fun onFinish() {
 
-                binding.progressBar.visibility = View.GONE
+                val text = binding.chatName.text.toString()
+
+                mainActivity.serviceLiveData.value?.searchUsers(text) { users ->
+                    mainActivity.runOnUiThread {
+
+                        adapter.setData(users)
+
+                        binding.progressBar.visibility = View.GONE
+
+                    }
+                }
 
             }
         }
 
         binding.chatName.addTextChangedListener {
 
-            binding.progressBar.visibility = View.VISIBLE
-
             timer.cancel()
-            timer.start()
+
+            val text = binding.chatName.text.toString()
+
+            if (text.trim().length <= -1) {
+
+                binding.progressBar.visibility = View.GONE
+
+            } else {
+
+                binding.progressBar.visibility = View.VISIBLE
+
+                timer.start()
+
+            }
+
+            adapter.setData(emptyList())
 
         }
 

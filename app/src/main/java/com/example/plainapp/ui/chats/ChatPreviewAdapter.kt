@@ -51,7 +51,7 @@ class ChatPreviewAdapter(
         val myUser = service.userLiveData.value!!
         val participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
         chatViewModel.readUser(participant).observeOnce(viewLifecycleOwner) { user ->
-            binding.name.text = user.name
+            binding.name.text = user!!.name
         }
 
         //binding.lastMessage.text = ""

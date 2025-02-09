@@ -67,7 +67,7 @@ interface ChatDao {
     suspend fun addUsers(users: List<User>)
 
     @Query("SELECT * FROM user_table WHERE user_table.id = :userId")
-    fun readUser(userId: Long): LiveData<User>
+    fun readUser(userId: Long): LiveData<User?>
 
     @Query("SELECT * FROM user_table")
     fun readAllUsers(): LiveData<List<User>>

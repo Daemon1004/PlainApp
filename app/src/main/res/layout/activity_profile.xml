@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.ProfileActivity"
     android:background="?attr/colorPlateBackground">
-    
+
     <View
         android:id="@+id/view"
         android:layout_width="0dp"
@@ -17,7 +17,7 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_edge"
         android:backgroundTint="?attr/colorPlate"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name" />
@@ -142,13 +142,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="14dp"
         android:text="@string/created_at"
         android:textColor="?attr/colorSecondary"
         android:textSize="17sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -219,5 +218,18 @@
             app:tint="?attr/colorSecondary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:visibility="gone"
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:textSize="14sp"
+        android:text="@string/add_user"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -89,13 +89,12 @@ class SocketService : LifecycleService() {
 
                 val user = User(
                     id = json["id"].toString().toLong(),
-                    nickname = json["nickname"] as String,
-                    name = json["name"] as String,
-                    bio = json["bio"] as String,
+                    nickname = json["nickname"].toString(),
+                    name = json["name"].toString(),
+                    bio = json["bio"].toString(),
                     birthdate = json["birthdate"].toString(),
                     phoneNumber = phoneNumber,
-                    createdAt = json["createdAt"].toString(),
-                    updatedAt = json["updatedAt"].toString()
+                    createdAt = json["createdAt"].toString()
                 )
 
                 Log.d("debug", "Get user: $user")
@@ -136,7 +135,7 @@ class SocketService : LifecycleService() {
 
         mSocket.emit("signin", userLiveData.value!!.id)
         mSocket.once("signin") { signInArgs ->
-            val result = signInArgs[0] as String
+            val result = signInArgs[0].toString()
             if (result == "OK") {
 
                 Log.d("debug", "SignIn OK")
@@ -279,9 +278,9 @@ class SocketService : LifecycleService() {
 
                     val message = Message(
                         id = jsonObj.get("id").toString().toLong(),
-                        body = jsonObj.get("body") as String,
-                        createdAt = jsonObj.get("createdAt") as String,
-                        updatedAt = jsonObj.get("updatedAt") as String,
+                        body = jsonObj.get("body").toString(),
+                        createdAt = jsonObj.get("createdAt").toString(),
+                        updatedAt = jsonObj.get("updatedAt").toString(),
                         createdBy = participant
                     )
 
@@ -310,7 +309,7 @@ class SocketService : LifecycleService() {
             Log.d("debug", "Get chatMessageId ${chatMessageIdArgs[0]}")
 
             val message = Message(
-                id = (chatMessageIdArgs[0] as String).toLong(),
+                id = (chatMessageIdArgs[0].toString()).toLong(),
                 body = body,
                 createdAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
                 updatedAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
@@ -328,7 +327,7 @@ class SocketService : LifecycleService() {
 
     private fun getString(json: JSONObject, key: String): String? {
         return try {
-            json.get(key) as String
+            json.get(key).toString()
         } catch (_: Exception) { null }
     }
 
@@ -338,18 +337,19 @@ class SocketService : LifecycleService() {
             repository.readUser(userId).observeOnce(this@SocketService) { oldUser -> scope.launch {
 
                 try {
-                    repository.addUser(
-                        User(
-                            id = userId,
-                            nickname = getString(json, "nickname") ?: oldUser.nickname,
-                            name = getString(json, "name") ?: oldUser.name,
-                            bio = getString(json, "bio") ?: oldUser.bio,
-                            birthdate = getString(json, "birthdate") ?: oldUser.birthdate,
-                            phoneNumber = getString(json, "phoneNumber") ?: oldUser.phoneNumber,
-                            createdAt = getString(json, "createdAt") ?: oldUser.createdAt,
-                            updatedAt = getString(json, "updatedAt") ?: oldUser.updatedAt
+                    if (oldUser != null) {
+                        repository.addUser(
+                            User(
+                                id = userId,
+                                nickname = getString(json, "nickname") ?: oldUser.nickname,
+                                name = getString(json, "name") ?: oldUser.name,
+                                bio = getString(json, "bio") ?: oldUser.bio,
+                                birthdate = getString(json, "birthdate") ?: oldUser.birthdate,
+                                phoneNumber = getString(json, "phoneNumber") ?: oldUser.phoneNumber,
+                                createdAt = getString(json, "createdAt") ?: oldUser.createdAt
+                            )
                         )
-                    )
+                    }
                 } catch (_: Exception) {}
 
             } }
@@ -377,6 +377,8 @@ class SocketService : LifecycleService() {
         }
 
     }
+
+    fun createChat(userId: Long) { mSocket.emit("createChat", userId) }
 
     var connectedStatus = MutableLiveData(false)
 
@@ -451,7 +453,7 @@ class SocketService : LifecycleService() {
             val chatId = when (chatMessageArgs[0].javaClass) {
                 Long.Companion::class.java -> chatMessageArgs[0] as Long
                 Int.Companion::class.java -> (chatMessageArgs[0] as Int).toLong()
-                String.Companion::class.java -> (chatMessageArgs[0] as String).toLong()
+                String.Companion::class.java -> (chatMessageArgs[0].toString()).toLong()
                 else -> chatMessageArgs[0].toString().toLong()
             }
 
@@ -466,7 +468,7 @@ class SocketService : LifecycleService() {
                     Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
 
                 scope.launch { withContext(Dispatchers.Main) {
-                    repository.readUser(message.createdBy).observeOnce(this@SocketService) { user -> scope.launch {
+                    repository.readUser(message.createdBy).observeOnce(this@SocketService) { user -> if (user != null) scope.launch {
 
                         val intent = Intent(this@SocketService, ChatActivity::class.java)
                         intent.putExtra("chatId", chatId)
@@ -551,6 +553,29 @@ class SocketService : LifecycleService() {
 
         }
 
+        //CREATE CHAT LISTENER
+        mSocket.on("createChat") { chatArgs ->
+
+            Log.d("debug", "get createChat ${chatArgs[0]}")
+
+            val chat = Json.decodeFromString<Chat>(chatArgs[0].toString())
+
+            val participant = if (chat.participant2 == userLiveData.value!!.id) chat.participant1 else chat.participant2
+
+            mSocket.emit("getUser", participant)
+            mSocket.once("getUser") { userArgs -> scope.launch { withContext(Dispatchers.Main) {
+
+                Log.d("debug", "createChat user ${userArgs[0]}")
+
+                val user = Json.decodeFromString<List<User>>(userArgs[0].toString())[0]
+
+                repository.addUser(user)
+                repository.addChat(chat)
+
+            } } }
+
+        }
+
         mSocket.connect()
 
         Log.d("debug", "Service onCreate()")
@@ -572,8 +597,7 @@ class SocketService : LifecycleService() {
                     bio = bio,
                     birthdate = user.birthdate,
                     phoneNumber = user.phoneNumber,
-                    createdAt = user.createdAt,
-                    updatedAt = user.updatedAt
+                    createdAt = user.createdAt
                 )
 
                 scope.launch {
@@ -632,8 +656,7 @@ class SocketService : LifecycleService() {
                     bio = user.bio,
                     birthdate = user.birthdate,
                     phoneNumber = user.phoneNumber,
-                    createdAt = user.createdAt,
-                    updatedAt = user.updatedAt
+                    createdAt = user.createdAt
                 )
 
                 scope.launch {
@@ -674,6 +697,34 @@ class SocketService : LifecycleService() {
                     }
                 }
             }
+        }
+
+    }
+
+    fun searchUsers(text: String, callback: (List<User>) -> Unit) {
+
+        mSocket.emit("userSearch", text)
+        mSocket.once("userSearch") { args ->
+
+            val users = emptyList<User>().toMutableList()
+
+            for (element in Json.decodeFromString<List<JsonElement>>(args[0].toString())) {
+                val json = JSONObject(element.toString())
+                val id = json.get("id").toString().toLong()
+                if (id == userLiveData.value!!.id) continue
+                users += User(
+                    id = id,
+                    nickname = json.get("nickname").toString(),
+                    name = json.get("name").toString(),
+                    bio = json.get("bio").toString(),
+                    birthdate = json.get("birthdate").toString(),
+                    phoneNumber = json.get("phoneNumber").toString(),
+                    createdAt = json.get("createdAt").toString()
+                )
+            }
+
+            callback(users)
+
         }
 
     }
