@@ -104,17 +104,17 @@ class ChatActivity : AppCompatActivity() {
             participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
             chatViewModel.readUser(participant!!).observeOnce(this) { user ->
                 binding.chatName.text = user.name
+            }
 
-                binding.userLogo.setOnClickListener {
+            binding.userLogo.setOnClickListener {
 
-                    val intent = Intent(
-                        this,
-                        ProfileActivity::class.java
-                    )
-                    intent.putExtra("user", Json.encodeToString(user))
-                    startActivity(intent)
+                val intent = Intent(
+                    this,
+                    ProfileActivity::class.java
+                )
+                intent.putExtra("user", participant)
+                startActivity(intent)
 
-                }
             }
 
             chatViewModel.readAllMessages(chat).observe(this) { messages ->
