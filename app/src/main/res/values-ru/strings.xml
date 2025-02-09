@@ -14,12 +14,12 @@
     <string name="create">Создать</string>
     <string name="empty_chat_name">Название чата пустое, введите правильное название</string>
     <string name="sql_constraint_error">Что-то пошло не так, возможно чат с таким именем уже существует</string>
-    <string name="my_birthdate_is">День рождения:</string>
+    <string name="birthdate_is">День рождения:</string>
     <string name="created_at">"Дата создания: "</string>
     <string name="my_biography">Моя биография</string>
     <string name="empty_nickname">Пустой никнейм!</string>
     <string name="write_biography">Напишите свою биографию…</string>
-    <string name="empty_biography">Ваша биография пуста!</string>
+    <string name="empty_biography">Биография пуста!</string>
     <string name="empty_phonenumber">Пожалуйста, введите свой номер телефона</string>
     <string name="accept_call">Ответить на звонок</string>
     <string name="reject_call">Отклонить звонок</string>

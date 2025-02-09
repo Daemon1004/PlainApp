@@ -8,15 +8,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.plainapp.ui.MainActivity
 import com.example.plainapp.R
-import com.example.plainapp.databinding.FragmentProfileBinding
+import com.example.plainapp.databinding.FragmentMyProfileBinding
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-class ProfileFragment : Fragment() {
+class MyProfileFragment : Fragment() {
 
-    private var binding: FragmentProfileBinding? = null
+    private var binding: FragmentMyProfileBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,7 +24,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding = FragmentMyProfileBinding.inflate(inflater, container, false)
 
         val mainActivity = activity as MainActivity
 

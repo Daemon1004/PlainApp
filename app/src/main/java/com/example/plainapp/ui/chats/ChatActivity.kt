@@ -23,10 +23,13 @@ import com.example.plainapp.R
 import com.example.plainapp.SocketService
 import com.example.plainapp.data.ChatViewModel
 import com.example.plainapp.data.User
-import com.example.plainapp.observeOnce
 import com.example.plainapp.databinding.ActivityChatBinding
+import com.example.plainapp.observeOnce
 import com.example.plainapp.ui.calls.CallActivity
+import com.example.plainapp.ui.profile.ProfileActivity
 import kotlin.properties.Delegates
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 
 class ChatActivity : AppCompatActivity() {
 
@@ -74,8 +77,6 @@ class ChatActivity : AppCompatActivity() {
         serviceLiveData.observeOnce(this) { service -> service?.markAsRead(chatId) }
         bindService(Intent(this, SocketService::class.java), sConn, Context.BIND_AUTO_CREATE)
 
-        binding.profile.visibility = View.GONE
-
     }
 
     private var inited = false
@@ -103,7 +104,17 @@ class ChatActivity : AppCompatActivity() {
             participant = if (chat.participant1 == myUser.id) chat.participant2 else chat.participant1
             chatViewModel.readUser(participant!!).observeOnce(this) { user ->
                 binding.chatName.text = user.name
-                binding.bio.text = user.bio
+
+                binding.userLogo.setOnClickListener {
+
+                    val intent = Intent(
+                        this,
+                        ProfileActivity::class.java
+                    )
+                    intent.putExtra("user", Json.encodeToString(user))
+                    startActivity(intent)
+
+                }
             }
 
             chatViewModel.readAllMessages(chat).observe(this) { messages ->
@@ -137,12 +148,6 @@ class ChatActivity : AppCompatActivity() {
             val intent = Intent(this, CallActivity::class.java)
             intent.putExtra("chatId", chatId)
             startActivity(intent)
-
-        }
-
-        binding.userLogo.setOnClickListener {
-            
-            binding.profile.visibility = if (binding.profile.visibility == View.GONE) View.VISIBLE else View.GONE
 
         }
 

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.profile.MyProfileFragment"
+    android:background="?attr/colorPlateBackground">
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded_edge"
+        android:backgroundTint="?attr/colorPlate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myName" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/rounded_edge2"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/myImage"
+        app:layout_constraintEnd_toEndOf="@+id/myImage"
+        app:layout_constraintStart_toStartOf="@id/myImage"
+        app:layout_constraintTop_toTopOf="@+id/myImage" />
+
+    <ImageView
+        android:id="@+id/myImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        android:importantForAccessibility="no"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_user_black_24dp"
+        app:tint="?attr/colorOnPrimary" />
+
+    <TextView
+        android:id="@+id/myName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:maxWidth="188dp"
+        android:text="My User Names"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/view2"
+        app:layout_constraintTop_toTopOf="@+id/view2"
+        tools:ignore="HardcodedText" />
+
+    <ImageButton
+        android:id="@+id/nameEdit"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        android:backgroundTint="?attr/colorPlateBackground"
+        android:contentDescription="@string/edit_name"
+        android:padding="10dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/myName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/myName"
+        app:srcCompat="@drawable/edit_icon"
+        app:tint="?attr/colorPrimary" />
+
+    <TextView
+        android:id="@+id/myNickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:maxWidth="220dp"
+        android:text="My Nickname"
+        android:singleLine="true"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/view2"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/bioLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="70dp"
+        android:text="@string/my_biography"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <ImageButton
+        android:id="@+id/bioEdit"
+        app:srcCompat="@drawable/edit_icon"
+        android:padding="10dp"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="30dp"
+        android:contentDescription="@string/edit_bio"
+        android:backgroundTint="?attr/colorPlate"
+        app:layout_constraintBottom_toBottomOf="@+id/bioLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bioLabel"
+        app:tint="?attr/colorSecondary"/>
+
+    <ImageButton
+        android:id="@+id/bioAccept"
+        app:srcCompat="@drawable/ic_done_black_24dp"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="30dp"
+        android:contentDescription="@string/edit_bio"
+        android:backgroundTint="?attr/colorPlate"
+        android:textColor="?attr/colorSecondary"
+        app:layout_constraintBottom_toBottomOf="@+id/bioLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bioLabel"
+        app:tint="?attr/colorSecondary"/>
+
+    <EditText
+        android:id="@+id/myBio"
+        android:autofillHints=""
+        android:enabled="false"
+        android:gravity="top"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="12dp"
+        android:hint="@string/empty_biography"
+        android:inputType="textMultiLine"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/birthdateLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bioLabel" />
+
+    <TextView
+        android:id="@+id/birthdateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:text="@string/birthdate_is"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/createdAtLabel"
+        app:layout_constraintStart_toStartOf="@+id/createdAtLabel" />
+
+    <TextView
+        android:id="@+id/birthdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="35dp"
+        android:text="01.01.2000"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/birthdateLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/birthdateLabel"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/createdAtLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:text="@string/created_at"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/createdAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="35dp"
+        android:text="29.12.2024"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/createdAtLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/createdAtLabel"
+        tools:ignore="HardcodedText" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/editNameLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="18dp"
+        android:background="@drawable/rounded_edge"
+        android:backgroundTint="?attr/colorPlate"
+        android:elevation="20dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_user_name"
+            android:textColor="?attr/colorSecondary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/newName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:autofillHints=""
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:singleLine="true"
+            app:layout_constraintEnd_toStartOf="@+id/newNameAccept"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <ImageButton
+            android:id="@+id/newNameAccept"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:backgroundTint="?attr/colorPlate"
+            android:contentDescription="@string/edit_name"
+            android:textColor="?attr/colorSecondary"
+            app:layout_constraintBottom_toBottomOf="@+id/newName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/newName"
+            app:srcCompat="@drawable/ic_done_black_24dp"
+            app:tint="?attr/colorSecondary" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

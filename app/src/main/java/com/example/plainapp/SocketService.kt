@@ -85,14 +85,28 @@ class SocketService : LifecycleService() {
 
             if (args[0] != null) {
 
-                val user = Json.decodeFromString<User>(args[0].toString())
-                scope.launch { userLiveData.postValue(user) }.join()
+                val json = JSONObject(args[0].toString())
+
+                val user = User(
+                    id = json["id"].toString().toLong(),
+                    nickname = json["nickname"] as String,
+                    name = json["name"] as String,
+                    bio = json["bio"] as String,
+                    birthdate = json["birthdate"].toString(),
+                    phoneNumber = phoneNumber,
+                    createdAt = json["createdAt"].toString(),
+                    updatedAt = json["updatedAt"].toString()
+                )
 
                 Log.d("debug", "Get user: $user")
 
-                writeUserToFile(user)
+                scope.launch { withContext(Dispatchers.Main) {
 
-                signIn { updateAll() }
+                    userLiveData.observeOnce(this@SocketService) { signIn { updateChats() } }
+                    scope.launch { userLiveData.postValue(user) }.join()
+                    writeUserToFile(user)
+
+                } }
 
             } else {
 
@@ -118,7 +132,7 @@ class SocketService : LifecycleService() {
 
     private fun signIn(callback: () -> Unit) {
 
-        Log.d("debug", "SignIn")
+        Log.d("debug", "SignIn ${userLiveData.value}")
 
         mSocket.emit("signin", userLiveData.value!!.id)
         mSocket.once("signin") { signInArgs ->
@@ -137,12 +151,6 @@ class SocketService : LifecycleService() {
 
             }
         }
-
-    }
-
-    private fun updateAll() {
-
-        updateChats()
 
     }
 
@@ -187,7 +195,8 @@ class SocketService : LifecycleService() {
 
                 Log.d("debug", "Updating chats: get users")
 
-                scope.launch { repository.addUsers(Json.decodeFromString<List<User>>(getUsersArgs[0].toString())) }.join()
+                val myJson = Json { ignoreUnknownKeys = true }
+                scope.launch { repository.addUsers(myJson.decodeFromString<List<User>>(getUsersArgs[0].toString())) }.join()
 
                 scope.launch { withContext(Dispatchers.Main) {
                     repository.readAllChats.observeOnce(this@SocketService) { localChats -> scope.launch {
@@ -317,6 +326,37 @@ class SocketService : LifecycleService() {
 
     }
 
+    private fun getString(json: JSONObject, key: String): String? {
+        return try {
+            json.get(key) as String
+        } catch (_: Exception) { null }
+    }
+
+    private fun updateUser(userId: Long, json: JSONObject) {
+
+        scope.launch { withContext(Dispatchers.Main) {
+            repository.readUser(userId).observeOnce(this@SocketService) { oldUser -> scope.launch {
+
+                try {
+                    repository.addUser(
+                        User(
+                            id = userId,
+                            nickname = getString(json, "nickname") ?: oldUser.nickname,
+                            name = getString(json, "name") ?: oldUser.name,
+                            bio = getString(json, "bio") ?: oldUser.bio,
+                            birthdate = getString(json, "birthdate") ?: oldUser.birthdate,
+                            phoneNumber = getString(json, "phoneNumber") ?: oldUser.phoneNumber,
+                            createdAt = getString(json, "createdAt") ?: oldUser.createdAt,
+                            updatedAt = getString(json, "updatedAt") ?: oldUser.updatedAt
+                        )
+                    )
+                } catch (_: Exception) {}
+
+            } }
+        } }
+
+    }
+
     private fun resetUpdatedUsers() {
 
         mSocket.emit("updatedContacts")
@@ -325,7 +365,14 @@ class SocketService : LifecycleService() {
 
             Log.d("debug", "get updatedContacts ${args[0]}")
 
-            scope.launch { repository.updateUsers(Json.decodeFromString<List<User>>(args[0].toString())) }
+            for (jsonElement in Json.decodeFromString<List<JsonElement>>(args[0].toString())) {
+
+                val json = JSONObject(jsonElement.toString())
+                val id = json.get("id").toString().toLong()
+
+                updateUser(id, json)
+
+            }
 
         }
 
@@ -499,10 +546,8 @@ class SocketService : LifecycleService() {
 
             val id = args[0].toString().toLong()
             val json = JSONObject(args[1].toString())
-            json.put("id", id)
-            val user = Json.decodeFromString<User>(json.toString())
 
-            scope.launch { repository.updateUser(user) }
+            updateUser(id, json)
 
         }
 
@@ -528,8 +573,7 @@ class SocketService : LifecycleService() {
                     birthdate = user.birthdate,
                     phoneNumber = user.phoneNumber,
                     createdAt = user.createdAt,
-                    updatedAt = user.updatedAt,
-                    lastConnected = user.lastConnected
+                    updatedAt = user.updatedAt
                 )
 
                 scope.launch {
@@ -589,8 +633,7 @@ class SocketService : LifecycleService() {
                     birthdate = user.birthdate,
                     phoneNumber = user.phoneNumber,
                     createdAt = user.createdAt,
-                    updatedAt = user.updatedAt,
-                    lastConnected = user.lastConnected
+                    updatedAt = user.updatedAt
                 )
 
                 scope.launch {

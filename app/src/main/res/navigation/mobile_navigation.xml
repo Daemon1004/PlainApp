@@ -17,9 +17,9 @@
 
     <fragment
         android:id="@+id/navigation_status"
-        android:name="com.example.plainapp.ui.profile.ProfileFragment"
+        android:name="com.example.plainapp.ui.profile.MyProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_my_profile" />
 
     <fragment
         android:id="@+id/navigation_calls"

@@ -12,11 +12,9 @@
     <string name="create">Crear</string>
     <string name="empty_chat_name">El nombre del chat está vacío, por favor escribe el nombre correcto</string>
     <string name="sql_constraint_error">Algo salió mal, ¿quizás este nombre de chat ya existe?</string>
-    <string name="my_birthdate_is">Mi fecha de nacimiento:</string>
     <string name="created_at">Creado en:</string>
     <string name="my_biography">Mi biografía</string>
     <string name="empty_nickname">Apodo vacío!</string>
     <string name="write_biography">Escribe tu biografía…</string>
-    <string name="empty_biography">Tu biografía está vacía!</string>
     <string name="empty_phonenumber">Por favor, escribe tu número de teléfono</string>
 </resources>
