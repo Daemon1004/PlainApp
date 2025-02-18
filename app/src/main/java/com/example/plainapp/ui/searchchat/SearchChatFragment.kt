@@ -57,7 +57,7 @@ class SearchChatFragment : Fragment() {
 
             val text = binding.chatName.text.toString()
 
-            if (text.trim().length <= -1) {
+            if (text.trim().length <= 4) {
 
                 binding.progressBar.visibility = View.GONE
 
