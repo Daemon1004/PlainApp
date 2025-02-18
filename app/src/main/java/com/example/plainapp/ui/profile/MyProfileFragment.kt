@@ -110,6 +110,12 @@ class MyProfileFragment : Fragment() {
             }
 
         }
+
+        binding!!.exitButton.setOnClickListener {
+
+            mainActivity.serviceLiveData.value?.logOut()
+
+        }
         
         return binding!!.root
     }

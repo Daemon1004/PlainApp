@@ -101,7 +101,8 @@ class SocketService : LifecycleService() {
 
                 scope.launch { withContext(Dispatchers.Main) {
 
-                    userLiveData.observeOnce(this@SocketService) { signIn { updateChats() } }
+                    userLiveData.observeOnce(this@SocketService)
+                    { user -> if (user != null) signIn { updateChats() } }
                     scope.launch { userLiveData.postValue(user) }.join()
                     writeUserToFile(user)
 
@@ -114,6 +115,15 @@ class SocketService : LifecycleService() {
             }
 
         } }
+
+    }
+
+    fun logOut() {
+
+        scope.launch { userLiveData.postValue(null) }
+
+        val file = File(filesDir, userFileName)
+        if (file.exists()) file.delete()
 
     }
 
