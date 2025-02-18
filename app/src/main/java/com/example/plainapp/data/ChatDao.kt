@@ -78,4 +78,7 @@ interface ChatDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun  updateUser(user: User)
 
+    @Query("SELECT id FROM chat_table WHERE participant1 = :userId OR participant2 = :userId")
+    fun readChatIdUser(userId: Long): LiveData<Long>
+
 }

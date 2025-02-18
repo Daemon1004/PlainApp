@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.plainapp.data.User
 import com.example.plainapp.databinding.UserPreviewViewBinding
+import com.example.plainapp.ui.MainActivity
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class UserPreviewAdapter() : RecyclerView.Adapter<UserPreviewAdapter.UserPreviewViewHolder>(), View.OnClickListener {
+class UserPreviewAdapter(private var mainActivity: MainActivity) : RecyclerView.Adapter<UserPreviewAdapter.UserPreviewViewHolder>(), View.OnClickListener {
 
     private var data: List<User> = emptyList()
 
@@ -49,6 +50,8 @@ class UserPreviewAdapter() : RecyclerView.Adapter<UserPreviewAdapter.UserPreview
     override fun onClick(view: View) {
 
         val user = data[view.tag as Int]
+
+        mainActivity.fromSearchToChats(user)
 
         val intent = Intent(view.context, ProfileActivity::class.java)
         intent.putExtra("data", Json.encodeToString(user))

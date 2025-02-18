@@ -27,7 +27,7 @@ class SearchChatFragment : Fragment() {
         val mainActivity = activity as MainActivity
 
         val manager = LinearLayoutManager(mainActivity)
-        val adapter = UserPreviewAdapter()
+        val adapter = UserPreviewAdapter(mainActivity)
 
         binding.recyclerView.layoutManager = manager
         binding.recyclerView.adapter = adapter
@@ -57,7 +57,7 @@ class SearchChatFragment : Fragment() {
 
             val text = binding.chatName.text.toString()
 
-            if (text.trim().length <= 4) {
+            if (text.trim().length < 4) {
 
                 binding.progressBar.visibility = View.GONE
 

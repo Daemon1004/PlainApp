@@ -29,4 +29,6 @@ class ChatRepository(private val chatDao: ChatDao) {
     suspend fun updateUser(user: User) { chatDao.updateUser(user) }
     suspend fun updateUsers(users: List<User>) { chatDao.updateUsers(users) }
 
+    fun readChatIdUser(userId: Long): LiveData<Long> { return chatDao.readChatIdUser(userId) }
+
 }

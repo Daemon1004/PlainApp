@@ -80,6 +80,8 @@ class ProfileActivity : AppCompatActivity() {
 
                             binding.add.visibility = View.GONE
 
+                            finish()
+
                         }
 
                     }

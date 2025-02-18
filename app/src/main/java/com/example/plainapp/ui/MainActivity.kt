@@ -7,18 +7,22 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.IBinder
-import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.plainapp.R
 import com.example.plainapp.SocketService
+import com.example.plainapp.data.ChatViewModel
+import com.example.plainapp.data.User
 import com.example.plainapp.databinding.ActivityMainBinding
+import com.example.plainapp.ui.chats.ChatActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -123,6 +127,37 @@ class MainActivity : AppCompatActivity() {
             LoginActivity::class.java
         )
         startActivity(intent)
+
+    }
+
+    fun fromSearchToChats(user: User) {
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        navController.navigate(R.id.action_navigation_create_chat_to_navigation_chats)
+
+        val timer = object : CountDownTimer(2000, 2000) {
+            override fun onTick(millisUntilFinished: Long) {  }
+            override fun onFinish() {
+
+                val chatViewModel = ViewModelProvider(this@MainActivity)[ChatViewModel::class.java]
+
+                chatViewModel.readChatIdUser(user.id).observe(this@MainActivity) { chatId ->
+
+                    if (chatId != null) {
+
+                        val intent = Intent(this@MainActivity, ChatActivity::class.java)
+                        intent.putExtra("chatId", chatId)
+                        startActivity(intent)
+
+                    }
+
+                }
+
+            }
+        }
+        timer.start()
 
     }
 

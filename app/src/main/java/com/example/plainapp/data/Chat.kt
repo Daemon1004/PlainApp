@@ -18,9 +18,7 @@ import kotlinx.serialization.Serializable
 data class Chat (
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    @ColumnInfo(name = "participant1")
     val participant1: Long,
-    @ColumnInfo(name = "participant2")
     val participant2: Long,
     val updatedAt: String,
     val createdAt: String
